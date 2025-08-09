@@ -84,7 +84,7 @@ onBeforeUnmount(() => {
 
 .nav-bg {
   position: absolute;
-  top: 50%;
+  top: 0;
   left: 0;
   background-color: #3b82f6;
   border-radius: 50%;
