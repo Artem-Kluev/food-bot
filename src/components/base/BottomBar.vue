@@ -4,7 +4,7 @@
     <div
       class="highlight"
       :style="{
-        width: highlightWidth + 'px',
+        width: '48px',
         left: highlightLeft + 'px',
       }"
     ></div>
@@ -47,7 +47,6 @@ const items: NavItem[] = [
 
 const activeIndex = ref(0)
 const highlightLeft = ref(0)
-const highlightWidth = ref(0)
 
 const navRef = ref<HTMLElement | null>(null)
 const buttonRefs: HTMLButtonElement[] = []
@@ -58,6 +57,7 @@ const navigateTo = (path: string, index: number) => {
   router.push(path)
 }
 
+// Оптимізована функція для переміщення підсвічування
 const moveHighlight = (index: number, withAnimation = true) => {
   const btn = buttonRefs[index]
   const nav = navRef.value
@@ -66,36 +66,43 @@ const moveHighlight = (index: number, withAnimation = true) => {
   const btnRect = btn.getBoundingClientRect()
   const navRect = nav.getBoundingClientRect()
 
-  // Для круглого highlight використовуємо однакову ширину і висоту
-  const size = 48
-  const newWidth = size
-  const newLeft = Math.round(btnRect.left - navRect.left + (btnRect.width - newWidth) / 2)
-
-  highlightWidth.value = newWidth
+  // Фіксована ширина для круглого підсвічування
+  const newLeft = Math.round(btnRect.left - navRect.left + (btnRect.width - 48) / 2)
   highlightLeft.value = newLeft
 
+  // Оптимізація анімації для слабших пристроїв
   if (!withAnimation) {
-    nav.style.setProperty('--highlight-transition', 'none')
+    nav.classList.add('no-transition')
+    // Використовуємо одиночний requestAnimationFrame для кращої продуктивності
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        nav.style.removeProperty('--highlight-transition')
-      })
+      nav.classList.remove('no-transition')
     })
   }
 }
 
+// Використовуємо debounce для обробника resize для зменшення навантаження
+let resizeTimer: number | null = null
 const handleResize = () => {
-  moveHighlight(activeIndex.value, false)
+  if (resizeTimer) {
+    window.clearTimeout(resizeTimer)
+  }
+  resizeTimer = window.setTimeout(() => {
+    moveHighlight(activeIndex.value, false)
+    resizeTimer = null
+  }, 100) // Затримка 100мс для debounce
 }
 
 onMounted(() => {
   nextTick(() => {
     moveHighlight(activeIndex.value, false)
   })
-  window.addEventListener('resize', handleResize)
+  window.addEventListener('resize', handleResize, { passive: true })
 })
 
 onBeforeUnmount(() => {
+  if (resizeTimer) {
+    window.clearTimeout(resizeTimer)
+  }
   window.removeEventListener('resize', handleResize)
 })
 </script>
@@ -119,6 +126,12 @@ onBeforeUnmount(() => {
   border-radius: 32px;
   box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
   z-index: 1000;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+  
+  &.no-transition .highlight {
+    transition: none !important;
+  }
 }
 
 .highlight {
@@ -127,11 +140,14 @@ onBeforeUnmount(() => {
   height: calc(100% - 8px);
   border-radius: 50%;
   background: $main-color;
-  transition:
-    left 360ms cubic-bezier(0.22, 1, 0.36, 1),
-    width 260ms ease;
+  transition: left 360ms cubic-bezier(0.22, 1, 0.36, 1);
   z-index: 0;
   pointer-events: none;
+  transform: translate3d(0, 0, 0);
+  will-change: transform, left;
+  backface-visibility: hidden;
+  perspective: 1000;
+  contain: layout paint size;
 }
 
 .nav-btn {
@@ -151,11 +167,15 @@ onBeforeUnmount(() => {
   justify-content: center;
   color: $background;
   user-select: none;
+  contain: content;
+  touch-action: manipulation;
 
   &__icon {
     width: 24px;
     height: 24px;
     transition: transform 200ms ease;
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
   }
 
   &.active {
@@ -164,8 +184,19 @@ onBeforeUnmount(() => {
       color 200ms ease;
 
     .nav-btn__icon {
-      transform: scale(1.05);
+      transform: scale(1.05) translate3d(0, 0, 0);
     }
+  }
+}
+
+/* Медіа-запит для слабших пристроїв або коли користувач вибрав режим зменшеної анімації */
+@media (prefers-reduced-motion: reduce), (max-width: 480px) {
+  .highlight {
+    transition: left 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  
+  .nav-btn__icon {
+    transition: transform 100ms ease;
   }
 }
 </style>
