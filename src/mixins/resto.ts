@@ -1,11 +1,14 @@
 import type { Slide } from '@/mixins/interfaces'
+import { useImageUrl } from '@/composable/useImageUrl'
+
+const { getImageUrl } = useImageUrl()
 
 export const sliders: Array<Slide> = [
   {
     title: 'Швидко суші',
     image: {
-      base: '/public/images/resto/resto_1.jpg',
-      webP: '/public/images/resto/resto_1.webp',
+      base: getImageUrl('/images/resto/resto_1.jpg'),
+      webP: getImageUrl('/images/resto/resto_1.webp'),
     },
     type: 'resto',
     tags: [
@@ -20,8 +23,8 @@ export const sliders: Array<Slide> = [
   {
     title: 'Піца Маргарита',
     image: {
-      base: '/public/images/resto/resto_2.jpg',
-      webP: '/public/images/resto/resto_2.webp',
+      base: getImageUrl('/images/resto/resto_2.jpg'),
+      webP: getImageUrl('/images/resto/resto_2.webp'),
     },
     type: 'food',
     tags: [
@@ -39,8 +42,8 @@ export const sliders: Array<Slide> = [
   {
     title: 'Бургер класичний',
     image: {
-      base: '/public/images/resto/resto_3.jpg',
-      webP: '/public/images/resto/resto_3.webp',
+      base: getImageUrl('/public/images/resto/resto_3.jpg'),
+      webP: getImageUrl('/public/images/resto/resto_3.webp'),
     },
     type: 'food',
     tags: [
