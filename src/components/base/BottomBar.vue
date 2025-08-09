@@ -3,27 +3,37 @@
     <div class="nav-bg" :style="bgStyle" aria-hidden="true"></div>
     <button
       v-for="(tab, index) in tabs"
-      :key="tab"
+      :key="tab.name"
       :class="['nav-btn', { active: index === selectedIndex }]"
       @click="selectTab(index)"
       type="button"
       :aria-pressed="index === selectedIndex"
     >
-      {{ tab }}
+      {{ tab.name }}
     </button>
   </nav>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { useRouter } from 'vue-router'
 
-const tabs = ['Перший', 'Другий', 'Третій', 'Четвертий', 'Пʼятий']
+const router = useRouter()
+
+const tabs = [
+  { name: 'Головна', path: '/' },
+  { name: 'Ресторани', path: '/resto' },
+  { name: 'Замовлення', path: '/order' },
+  { name: 'Кошик', path: '/basket' },
+]
+
 const selectedIndex = ref(0)
 const navRef = ref<HTMLElement | null>(null)
 const btnWidth = ref(0)
 
 function selectTab(index: number) {
   selectedIndex.value = index
+  router.push(tabs[index].path)
 }
 
 const bgStyle = computed(() => ({
@@ -42,6 +52,13 @@ function updateBtnWidth() {
 onMounted(() => {
   updateBtnWidth()
   window.addEventListener('resize', updateBtnWidth)
+
+  // Встановлюємо активний таб на основі поточного шляху
+  const currentPath = router.currentRoute.value.path
+  const foundIndex = tabs.findIndex((tab) => tab.path === currentPath)
+  if (foundIndex !== -1) {
+    selectedIndex.value = foundIndex
+  }
 })
 
 onBeforeUnmount(() => {
@@ -51,7 +68,9 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .nav-bar {
-  position: relative;
+  position: fixed;
+  bottom: 15px;
+  z-index: 10;
   display: flex;
   width: 100%;
   height: auto;
