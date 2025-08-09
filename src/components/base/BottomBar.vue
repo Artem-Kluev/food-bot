@@ -1,6 +1,6 @@
 <template>
   <nav class="bottom-nav">
-    <div class="highlight" :style="{ left: `${(100 / items.length) * activeIndex}%` }"></div>
+    <div class="highlight" :style="{ transform: `translateX(${progress}px)` }"></div>
 
     <button
       v-for="(item, idx) in items"
@@ -33,10 +33,11 @@ const activeIndex = ref(0)
 const width = ref(0)
 
 const progress = computed(() => {
-  const onePoint = width.value / items.length
+  const onePoint = window.innerWidth / items.length
+
   console.log(onePoint)
 
-  return onePoint * 1.13 * activeIndex.value
+  return onePoint * activeIndex.value
 })
 
 const items: NavItem[] = [
@@ -78,14 +79,14 @@ function navigateTo(path: string, index: number) {
 .highlight {
   position: absolute;
   top: 0;
-  width: 20%;
+  width: 48px;
   left: 0;
   height: 100%;
   border-radius: 50%;
   background: $main-color;
   z-index: 0;
   pointer-events: none;
-  transition: left 300ms ease;
+  transition: transform 300ms ease;
 }
 
 .nav-btn {
