@@ -52,7 +52,7 @@ const isLiked = ref(false)
   width: 100%;
   border-radius: 8px;
   overflow: hidden;
-  background-color: $background;
+
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.16);
   margin-bottom: 15px;
 
