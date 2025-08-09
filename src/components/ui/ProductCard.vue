@@ -11,8 +11,16 @@
       </picture>
 
       <BaseRating v-if="slideData.rating" :rating="slideData.rating" class="product__rating" />
-      <BaseTime v-if="slideData.type === 'resto' && slideData.time" :time="slideData.time" class="product__time" />
-      <BasePrice v-if="slideData.type === 'food' && slideData.price" :price="slideData.price" class="product__price" />
+      <BaseTime
+        v-if="slideData.type === 'resto' && slideData.time"
+        :time="slideData.time"
+        class="product__time"
+      />
+      <BasePrice
+        v-if="slideData.type === 'food' && slideData.price"
+        :price="slideData.price"
+        class="product__price"
+      />
     </div>
     <div class="product__info">
       <h3 class="product__name">{{ slideData.title }}</h3>
@@ -88,7 +96,7 @@ const isLiked = ref(false)
     bottom: 8px;
     left: 8px;
   }
-  
+
   &__price {
     position: absolute;
     bottom: 8px;
