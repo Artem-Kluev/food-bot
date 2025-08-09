@@ -1,129 +1,104 @@
 <template>
-  <nav class="bottom-nav">
-    <div class="highlight" :style="{ transform: `translateX(${progress}px)` }"></div>
-
+  <nav class="nav-bar" ref="navRef">
+    <div class="nav-bg" :style="bgStyle" aria-hidden="true"></div>
     <button
-      v-for="(item, idx) in items"
-      :key="idx"
-      class="nav-btn"
-      :class="{ active: activeIndex === idx }"
-      @click="navigateTo(item.link, idx)"
-      :aria-label="item.label"
+      v-for="(tab, index) in tabs"
+      :key="tab"
+      :class="['nav-btn', { active: index === selectedIndex }]"
+      @click="selectTab(index)"
+      type="button"
+      :aria-pressed="index === selectedIndex"
     >
-      <BaseSvg :id="item.icon" class="nav-btn__icon" />
+      {{ tab }}
     </button>
   </nav>
-
-  {{ width }}
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, useTemplateRef, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import BaseSvg from '@/components/base/BaseSvg.vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 
-interface NavItem {
-  icon: string
-  label: string
-  link: string
+const tabs = ['Перший', 'Другий', 'Третій', 'Четвертий', 'Пʼятий']
+const selectedIndex = ref(0)
+const navRef = ref<HTMLElement | null>(null)
+const btnWidth = ref(0)
+
+function selectTab(index: number) {
+  selectedIndex.value = index
 }
 
-const router = useRouter()
-const activeIndex = ref(0)
-const width = ref(0)
+const bgStyle = computed(() => ({
+  width: btnWidth.value + 'px',
+  height: btnWidth.value + 'px', // квадратний, щоб бути круглим
+  transform: `translateX(${selectedIndex.value * btnWidth.value}px) scale(0.6)`,
+}))
 
-const progress = computed(() => {
-  const onePoint = window.innerWidth / items.length
+function updateBtnWidth() {
+  if (navRef.value) {
+    const navWidth = navRef.value.clientWidth
+    btnWidth.value = navWidth / tabs.length
+  }
+}
 
-  console.log(onePoint)
-
-  return onePoint * activeIndex.value
+onMounted(() => {
+  updateBtnWidth()
+  window.addEventListener('resize', updateBtnWidth)
 })
 
-const items: NavItem[] = [
-  { icon: 'main-logo', label: 'Головна', link: '/' },
-  { icon: 'resto-logo', label: 'Ресторани', link: '/resto' },
-  { icon: 'order-logo', label: 'Замовлення', link: '/order' },
-  { icon: 'backet-logo', label: 'Кошик', link: '/basket' },
-  { icon: 'like-logo', label: 'Кошик2', link: '/basket' },
-]
-
-function navigateTo(path: string, index: number) {
-  activeIndex.value = index
-  router.push(path)
-}
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', updateBtnWidth)
+})
 </script>
 
-<style scoped lang="scss">
-@use '@/assets/styles/vars.scss' as *;
-
-.bottom-nav {
-  position: fixed;
-  left: 0;
-  right: 0;
-  margin: 0 15px;
-  bottom: 15px;
-  height: 52px;
-  padding: 0;
-  box-sizing: border-box;
+<style scoped>
+.nav-bar {
+  position: relative;
   display: flex;
-  align-items: center;
+  width: 100%;
+  height: auto;
+  padding: 12px 0;
+  background-color: transparent;
+  user-select: none;
+  overflow: visible;
   justify-content: space-between;
-  background: $text;
-  border-radius: 32px;
-  border: 2px solid $text;
-  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
-  z-index: 10;
+  gap: 0;
 }
 
-.highlight {
+.nav-bg {
   position: absolute;
-  top: 0;
-  width: 48px;
+  top: 50%;
   left: 0;
-  height: 100%;
+  background-color: #3b82f6;
   border-radius: 50%;
-  background: $main-color;
+  transition:
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.3s;
+  will-change: transform, width;
   z-index: 0;
-  pointer-events: none;
-  transition: transform 300ms ease;
+  transform: translateY(-50%);
 }
 
 .nav-btn {
-  appearance: none;
-  background: none;
-  border: 0;
-  outline: 0;
-  padding: 10px;
-  margin: 0;
-  width: 48px;
-  height: 48px;
-  cursor: pointer;
-  position: relative;
+  flex: 1 1 0;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
   z-index: 1;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  user-select: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: $background;
-
-  &__icon {
-    width: 24px;
-    height: 24px;
-    transition: transform 200ms ease;
-  }
-
-  &.active .nav-btn__icon {
-    transform: scale(1.05);
-  }
+  transition: color 0.3s;
+  padding: 0;
+  /* Щоб текст був у центрі */
 }
 
-@media (prefers-reduced-motion: reduce), (max-width: 480px) {
-  .highlight {
-    transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .nav-btn__icon {
-    transition: transform 100ms ease;
-  }
+.nav-btn.active {
+  color: white;
 }
 </style>
