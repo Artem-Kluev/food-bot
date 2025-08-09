@@ -117,8 +117,8 @@ export const sliders: Array<Slide> = [
   {
     title: 'Десерт Тірамісу',
     image: {
-      base: '/public/images/resto/resto_1.jpg',
-      webP: '/public/images/resto/resto_1.webp',
+      base: '/images/resto/resto_1.jpg',
+      webP: '/images/resto/resto_1.webp',
     },
     type: 'food',
     tags: [
@@ -135,8 +135,8 @@ export const sliders: Array<Slide> = [
   {
     title: 'Морепродукти гриль',
     image: {
-      base: '/public/images/resto/resto_2.jpg',
-      webP: '/public/images/resto/resto_2.webp',
+      base: '/images/resto/resto_2.jpg',
+      webP: '/images/resto/resto_2.webp',
     },
     type: 'food',
     tags: [
@@ -154,8 +154,8 @@ export const sliders: Array<Slide> = [
   {
     title: 'Вегетаріанська піца',
     image: {
-      base: '/public/images/resto/resto_3.jpg',
-      webP: '/public/images/resto/resto_3.webp',
+      base: '/images/resto/resto_3.jpg',
+      webP: '/images/resto/resto_3.webp',
     },
     type: 'food',
     tags: [
@@ -175,8 +175,8 @@ export const popularRestaurants: Array<Slide> = [
   {
     title: 'Італійська кухня "Bella Italia"',
     image: {
-      base: '/public/images/resto/resto_3.jpg',
-      webP: '/public/images/resto/resto_3.webp',
+      base: '/images/resto/resto_3.jpg',
+      webP: '/images/resto/resto_3.webp',
     },
     tags: [
       {
@@ -188,8 +188,8 @@ export const popularRestaurants: Array<Slide> = [
   {
     title: 'Сімейний ресторан "Затишок"',
     image: {
-      base: '/public/images/resto/resto_1.jpg',
-      webP: '/public/images/resto/resto_1.webp',
+      base: '/images/resto/resto_1.jpg',
+      webP: '/images/resto/resto_1.webp',
     },
     tags: [
       {
@@ -214,8 +214,8 @@ export const popularRestaurants: Array<Slide> = [
   {
     title: 'Морський ресторан "Хвилі"',
     image: {
-      base: '/public/images/resto/resto_2.jpg',
-      webP: '/public/images/resto/resto_2.webp',
+      base: '/images/resto/resto_2.jpg',
+      webP: '/images/resto/resto_2.webp',
     },
     tags: [
       {
@@ -227,8 +227,8 @@ export const popularRestaurants: Array<Slide> = [
   {
     title: 'Азіатський фьюжн "Східні спеції"',
     image: {
-      base: '/public/images/resto/resto_5.jpg',
-      webP: '/public/images/resto/resto_5.webp',
+      base: '/images/resto/resto_5.jpg',
+      webP: '/images/resto/resto_5.webp',
     },
     tags: [
       {
@@ -240,8 +240,8 @@ export const popularRestaurants: Array<Slide> = [
   {
     title: 'Кав\'ярня-пекарня "Аромат"',
     image: {
-      base: '/public/images/resto/resto_4.jpg',
-      webP: '/public/images/resto/resto_4.webp',
+      base: '/images/resto/resto_4.jpg',
+      webP: '/images/resto/resto_4.webp',
     },
     tags: [
       {
