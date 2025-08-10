@@ -1,13 +1,13 @@
 <template>
-  <div class="card-slider">
+  <div class="banner-slider">
     <swiper
       :spaceBetween="5"
       :modules="modules"
       :slidesPerView="1"
-      class="card-slider__swiper"
+      class="banner-slider__swiper"
       loop
     >
-      <swiper-slide v-for="slide in sliders" :key="slide.title" class="card-slider__slide">
+      <swiper-slide v-for="slide in sliders" :key="slide.title" class="banner-slider__slide">
         <BannerCard :bannerData="slide" />
       </swiper-slide>
     </swiper>
@@ -32,9 +32,9 @@ const modules = [Navigation]
 <style lang="scss">
 @use '@/assets/styles/vars.scss' as *;
 
-.card-slider {
+.banner-slider {
   width: 100%;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
 
   &__swiper {
     height: 100%;

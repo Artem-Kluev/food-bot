@@ -46,7 +46,6 @@ const modules = [Navigation]
 
 .card-slider {
   width: 100%;
-  margin-bottom: 15px;
 
   &__title {
     margin-bottom: 15px;
