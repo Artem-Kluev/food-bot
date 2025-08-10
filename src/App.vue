@@ -7,9 +7,11 @@ import UiSearch from '@/components/ui/UiSearch.vue'
 import { onMounted, ref } from 'vue'
 
 const tg = ref<any>(null)
+const tgAvailable = ref(false)
 
 onMounted(() => {
-  tg.value = window.Telegram?.WebApp || null
+  tg.value = window.Telegram?.WebApp ?? null
+  tgAvailable.value = tg.value !== null
 })
 </script>
 
@@ -21,7 +23,10 @@ onMounted(() => {
     <main class="main">
       <RouterView />
     </main>
-    {{ tg }}
+
+    <!-- Виводимо простий текст замість обʼєкту -->
+    <div>Telegram WebApp доступний: {{ tgAvailable ? 'Так' : 'Ні' }}</div>
+
     <BottomBar class="bottom" />
   </div>
 
