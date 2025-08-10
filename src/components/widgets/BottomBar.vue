@@ -7,6 +7,7 @@
         v-for="(item, idx) in items"
         :key="idx"
         class="bottom-nav__btn"
+        :class="{ active: activeIndex === idx }"
         @click="navigateTo(item.link, idx)"
         :aria-label="item.label"
       >
@@ -14,13 +15,11 @@
       </button>
     </nav>
   </div>
-
-  {{ progress }}
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, computed, useTemplateRef } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, onBeforeUnmount, computed, useTemplateRef, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import BaseSvg from '@/components/base/BaseSvg.vue'
 
 interface NavItem {
@@ -30,6 +29,7 @@ interface NavItem {
 }
 
 const router = useRouter()
+const route = useRoute()
 const nav = useTemplateRef<HTMLDivElement>('nav')
 
 const items: NavItem[] = [
@@ -47,24 +47,40 @@ function updateWidth() {
   navWidth.value = nav.value?.clientWidth || 0
 }
 
+function updateActiveTab() {
+  const currentPath = route.path
+  const index = items.findIndex((item) => item.link === currentPath)
+  if (index !== -1) {
+    activeIndex.value = index
+  }
+}
+
 const progress = computed(() => {
   const point = navWidth.value / items.length
   return `translateX(${activeIndex.value * (point * 1.017)}px)`
 })
 
 const navigateTo = (path: string, index: number) => {
-  activeIndex.value = index
   router.push(path)
 }
 
 onMounted(() => {
   updateWidth()
+  updateActiveTab() // Визначаємо активний таб при монтуванні компонента
   window.addEventListener('resize', updateWidth)
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', updateWidth)
 })
+
+// Відстежуємо зміни маршруту
+watch(
+  () => route.path,
+  () => {
+    updateActiveTab()
+  },
+)
 </script>
 
 <style scoped lang="scss">

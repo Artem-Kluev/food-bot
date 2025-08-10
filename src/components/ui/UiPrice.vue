@@ -10,12 +10,12 @@ defineProps<Props>()
 </script>
 
 <template>
-  <div class="price">
-    <div class="price__value">
-      <span :class="{ 'price__value-current': price.old, 'price__value-base': !price.old }"
+  <div class="ui-price">
+    <div class="ui-price__value">
+      <span :class="{ 'ui-price__value-current': price.old, 'ui-price__value-base': !price.old }"
         >{{ price.base }} ₴</span
       >
-      <span v-if="price.old" class="price__value-old">{{ price.old }} ₴</span>
+      <span v-if="price.old" class="ui-price__value-old">{{ price.old }} ₴</span>
     </div>
   </div>
 </template>
@@ -23,7 +23,7 @@ defineProps<Props>()
 <style lang="scss" scoped>
 @use '@/assets/styles/vars.scss' as *;
 
-.price {
+.ui-price {
   display: flex;
   align-items: center;
   gap: 4px;

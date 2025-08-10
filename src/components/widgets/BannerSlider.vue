@@ -1,16 +1,14 @@
 <template>
   <div class="card-slider">
-    <div class="card-slider__title">{{ title }}</div>
-
     <swiper
-      :spaceBetween="12"
+      :spaceBetween="5"
       :modules="modules"
-      :slidesPerView="1.3"
+      :slidesPerView="1"
       class="card-slider__swiper"
       loop
     >
       <swiper-slide v-for="slide in sliders" :key="slide.title" class="card-slider__slide">
-        <ProductCard :slideData="slide" />
+        <BannerCard :bannerData="slide" />
       </swiper-slide>
     </swiper>
   </div>
@@ -19,12 +17,11 @@
 <script lang="ts" setup>
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Navigation } from 'swiper/modules'
-import ProductCard from '@/components/ui/ProductCard.vue'
-import type { Slide } from '@/mixins/interfaces'
+import BannerCard from '@/components/widgets/BannerCard.vue'
+import type { Banner } from '@/mixins/interfaces'
 
 interface Props {
-  sliders: Array<Slide>
-  title: string
+  sliders: Array<Banner>
 }
 
 defineProps<Props>()
@@ -37,15 +34,7 @@ const modules = [Navigation]
 
 .card-slider {
   width: 100%;
-  margin-bottom: 15px;
-
-  &__title {
-    margin-bottom: 15px;
-    font-size: 20px;
-
-    font-weight: 700;
-    color: $text;
-  }
+  margin-bottom: 30px;
 
   &__swiper {
     height: 100%;
@@ -53,6 +42,7 @@ const modules = [Navigation]
 
   &__slide {
     height: 100%;
+    padding: 0 10px;
   }
 
   &__item {

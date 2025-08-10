@@ -1,5 +1,7 @@
 <template>
   <div class="main-page">
+    <BannerSlider :sliders="banners" />
+
     <CardsSlider :sliders="sliders" title="Безкоштовна доставка" />
 
     <CardsSlider :sliders="popularRestaurants" title="Оплата при отриманні" />
@@ -13,7 +15,8 @@
 </template>
 
 <script setup lang="ts">
-import CardsSlider from '@/components/ui/CardsSlider.vue'
+import CardsSlider from '@/components/widgets/CardsSlider.vue'
+import BannerSlider from '@/components/widgets/BannerSlider.vue'
 import {
   sliders,
   popularRestaurants,
@@ -21,12 +24,9 @@ import {
   discountRestaurants,
   premiumRestaurants,
 } from '@/mixins/resto'
+import { banners } from '@/mixins/banners'
 </script>
 
 <style scoped lang="scss">
 @use '@/assets/styles/vars.scss' as *;
-
-.main-page {
-  padding: 20px;
-}
 </style>

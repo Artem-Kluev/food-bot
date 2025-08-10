@@ -16,3 +16,8 @@ export interface Slide {
   rating?: number
   time?: number
 }
+
+export interface Banner {
+  title: string
+  animation: string
+}

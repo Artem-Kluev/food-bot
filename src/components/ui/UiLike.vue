@@ -1,11 +1,11 @@
 <template>
-  <button class="base-like" :class="{ 'base-like_active': modelValue }" @click="toggleLike">
-    <BaseSvg class="base-like__icon" :id="modelValue ? 'like-logo' : 'like-outline-logo'" />
+  <button class="ui-like" :class="{ 'ui-like_active': modelValue }" @click="toggleLike">
+    <BaseSvg class="ui-like__icon" :id="modelValue ? 'like-logo' : 'like-outline-logo'" />
   </button>
 </template>
 
 <script setup lang="ts">
-import BaseSvg from './BaseSvg.vue'
+import BaseSvg from '@/components/base/BaseSvg.vue'
 
 interface Props {
   modelValue: boolean
@@ -24,7 +24,7 @@ function toggleLike() {
 <style lang="scss" scoped>
 @use '@/assets/styles/vars.scss' as *;
 
-.base-like {
+.ui-like {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -49,7 +49,7 @@ function toggleLike() {
   &_active {
     background-color: $background;
 
-    .base-like__icon {
+    .ui-like__icon {
       color: $main-color;
       opacity: 1;
     }
@@ -58,11 +58,11 @@ function toggleLike() {
   &:hover {
     transform: scale(1.05);
 
-    .base-like__icon {
+    .ui-like__icon {
       opacity: 0.8;
     }
 
-    &.base-like_active .base-like__icon {
+    &.ui-like_active .ui-like__icon {
       opacity: 1;
     }
   }

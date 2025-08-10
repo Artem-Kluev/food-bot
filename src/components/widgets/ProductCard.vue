@@ -1,7 +1,7 @@
 <template>
   <div class="product">
     <div class="product__like">
-      <BaseLike v-model="isLiked" />
+      <UiLike v-model="isLiked" />
     </div>
 
     <div class="product__image">
@@ -10,13 +10,13 @@
         <img :src="slideData.image.base" alt="product image" />
       </picture>
 
-      <BaseRating v-if="slideData.rating" :rating="slideData.rating" class="product__rating" />
-      <BaseTime
+      <UiRating v-if="slideData.rating" :rating="slideData.rating" class="product__rating" />
+      <UiTime
         v-if="slideData.type === 'resto' && slideData.time"
         :time="slideData.time"
         class="product__time"
       />
-      <BasePrice
+      <UiPrice
         v-if="slideData.type === 'food' && slideData.price"
         :price="slideData.price"
         class="product__price"
@@ -30,10 +30,10 @@
 
 <script setup lang="ts">
 import type { Slide } from '@/mixins/interfaces'
-import BaseLike from '@/components/base/BaseLike.vue'
-import BaseRating from '@/components/base/BaseRating.vue'
-import BaseTime from '@/components/base/BaseTime.vue'
-import BasePrice from '@/components/base/BasePrice.vue'
+import UiLike from '@/components/ui/UiLike.vue'
+import UiRating from '@/components/ui/UiRating.vue'
+import UiTime from '@/components/ui/UiTime.vue'
+import UiPrice from '@/components/ui/UiPrice.vue'
 import { ref } from 'vue'
 
 interface Props {
@@ -59,7 +59,7 @@ const isLiked = ref(false)
   &__like {
     position: absolute;
     top: 8px;
-    right: 8px;
+    right: 18px;
     z-index: 1;
   }
 

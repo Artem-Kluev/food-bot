@@ -1,26 +1,33 @@
 <script setup lang="ts">
 import BaseSvg from '@/components/base/BaseSvg.vue'
+import { computed } from 'vue'
 
 interface Props {
-  time: number
+  rating: number
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
+
+// Форматування рейтингу як X.Y з 5
+const formattedRating = computed(() => {
+  const value = props.rating / 2
+  return value.toFixed(1)
+})
 </script>
 
 <template>
-  <div class="time">
-    <div class="time__icon">
-      <BaseSvg id="time-logo" />
+  <div class="ui-rating">
+    <div class="ui-rating__value">{{ formattedRating }}</div>
+    <div class="ui-rating__icon">
+      <BaseSvg id="star-logo" />
     </div>
-    <div class="time__value">{{ time }} min</div>
   </div>
 </template>
 
 <style lang="scss" scoped>
 @use '@/assets/styles/vars.scss' as *;
 
-.time {
+.ui-rating {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -30,9 +37,9 @@ defineProps<Props>()
   z-index: 1;
 
   &__icon {
-    width: 16px;
-    height: 16px;
-    color: $text;
+    width: 20px;
+    height: 20px;
+    color: $yellow;
   }
 
   &__value {

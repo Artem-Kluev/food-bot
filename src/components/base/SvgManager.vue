@@ -85,5 +85,35 @@
         d="m12.6 11.503l3.891 3.891l-.848.849L11.4 12V6h1.2zM12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m0-1.2a8.8 8.8 0 1 0 0-17.6a8.8 8.8 0 0 0 0 17.6"
       />
     </symbol>
+
+    <symbol viewBox="0 0 12 24" id="arrow-logo">
+      <path
+        fill="currentColor"
+        fill-rule="evenodd"
+        d="M10.157 12.711L4.5 18.368l-1.414-1.414l4.95-4.95l-4.95-4.95L4.5 5.64l5.657 5.657a1 1 0 0 1 0 1.414"
+      />
+    </symbol>
+
+    <symbol viewBox="0 0 24 24" id="search-icon">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M15.5 15.5L19 19M5 11a6 6 0 1 0 12 0a6 6 0 0 0-12 0Z"
+      />
+    </symbol>
+
+    <symbol viewBox="0 0 24 24" id="close-icon">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M18 6L6 18M6 6l12 12"
+      />
+    </symbol>
   </svg>
 </template>
