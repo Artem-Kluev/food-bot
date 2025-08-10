@@ -11,6 +11,8 @@ const tg = ref<any>('212')
 onMounted(() => {
   tg.value = window.Telegram?.WebApp
 
+  console.log(tg.value)
+
   if (tg.value) {
     tg.value.disableVerticalSwipes()
     tg.value.expand()
