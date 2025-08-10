@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, useTemplateRef } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, useTemplateRef } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseSvg from '@/components/base/BaseSvg.vue'
 
@@ -32,10 +32,6 @@ interface NavItem {
 const router = useRouter()
 const nav = useTemplateRef<HTMLDivElement>('nav')
 
-onMounted(() => {
-  console.log(nav.value)
-})
-
 const items: NavItem[] = [
   { icon: 'main-logo', label: 'Головна', link: '/' },
   { icon: 'resto-logo', label: 'Ресторани', link: '/resto' },
@@ -45,21 +41,30 @@ const items: NavItem[] = [
 ]
 
 const activeIndex = ref(0)
+const navWidth = ref(0)
 
-function getWidth() {
-  return nav.value?.clientWidth || 0
+function updateWidth() {
+  navWidth.value = nav.value?.clientWidth || 0
 }
 
 const progress = computed(() => {
-  const point = getWidth() / items.length
-
-  return `translateX(${activeIndex.value * (point * 1.015)}px)`
+  const point = navWidth.value / items.length
+  return `translateX(${activeIndex.value * (point * 1.017)}px)`
 })
 
 const navigateTo = (path: string, index: number) => {
   activeIndex.value = index
   router.push(path)
 }
+
+onMounted(() => {
+  updateWidth()
+  window.addEventListener('resize', updateWidth)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', updateWidth)
+})
 </script>
 
 <style scoped lang="scss">
@@ -75,7 +80,7 @@ const navigateTo = (path: string, index: number) => {
 
   &__nav {
     aspect-ratio: 5 / 1;
-    max-width: 400px;
+    max-width: 380px;
     margin: 0 auto;
     box-sizing: border-box;
     display: flex;
