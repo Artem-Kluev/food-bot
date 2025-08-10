@@ -9,13 +9,7 @@ import { onMounted, ref } from 'vue'
 const tg = ref<any>(null)
 
 onMounted(() => {
-  const tg = window.Telegram?.WebApp || null
-
-  function sendData() {
-    tg?.sendData(JSON.stringify({ foo: 'bar' }))
-  }
-
-  sendData()
+  tg.value = window.Telegram?.WebApp || null
 })
 </script>
 

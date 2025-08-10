@@ -15,4 +15,10 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  server: {
+    allowedHosts: [
+      '665a74efc926.ngrok-free.app', // Додаємо твій ngrok хост сюди
+      // можна додати ще інші, наприклад 'localhost'
+    ],
+  },
 })
