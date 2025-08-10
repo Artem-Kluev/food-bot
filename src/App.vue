@@ -1,8 +1,16 @@
-<script setup lang="ts">
+<script setup>
 import { RouterView } from 'vue-router'
 import SvgManager from '@/components/base/SvgManager.vue'
 import BottomBar from '@/components/widgets/BottomBar.vue'
 import UiSearch from '@/components/ui/UiSearch.vue'
+
+import { onMounted } from 'vue'
+
+onMounted(() => {
+  if (window.Telegram?.WebApp) {
+    window.Telegram.WebApp.expand()
+  }
+})
 </script>
 
 <template>
