@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { RouterView } from 'vue-router'
 import SvgManager from '@/components/base/SvgManager.vue'
 import BottomBar from '@/components/widgets/BottomBar.vue'
