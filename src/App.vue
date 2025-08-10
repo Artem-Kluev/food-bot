@@ -9,15 +9,11 @@ import { onMounted, ref } from 'vue'
 const tg = ref<any>(null)
 
 onMounted(() => {
-  if (window.Telegram?.WebApp) {
-    tg.value = window.Telegram.WebApp
-    console.log('Telegram WebApp initialized:', tg.value)
-
-    // Розширюємо вікно на весь екран
-    tg.value.expand()
+  if (window.Telegram) {
+    tg.value = window.Telegram
   } else {
     console.warn('Telegram WebApp is not available. Running in browser mode.')
-    tg.value = 'empty2'
+    tg.value = 'empty'
   }
 })
 </script>
