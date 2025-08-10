@@ -1,13 +1,20 @@
-export {} // Щоб файл вважався модулем
+export {}
 
 declare global {
+  interface TelegramWebApp {
+    expand: () => void
+    themeParams?: {
+      isVerticalSwipesEnabled?: boolean
+      [key: string]: any
+    }
+    onEvent: (event: string, callback: (params: any) => void) => void
+    [key: string]: any
+  }
+
   interface Window {
     Telegram?: {
-      WebApp?: {
-        expand: () => void
-        // Тут можна додати інші методи, якщо потрібно
-        [key: string]: any
-      }
+      WebApp?: TelegramWebApp
+      [key: string]: any
     }
   }
 }

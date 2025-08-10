@@ -7,8 +7,19 @@ import UiSearch from '@/components/ui/UiSearch.vue'
 import { onMounted } from 'vue'
 
 onMounted(() => {
-  if (window.Telegram?.WebApp) {
-    window.Telegram.WebApp.expand()
+  const tg = window.Telegram?.WebApp
+  if (tg) {
+    tg.expand()
+
+    if (tg.themeParams?.isVerticalSwipesEnabled) {
+      tg.themeParams.isVerticalSwipesEnabled = false
+    }
+
+    tg.onEvent('themeChanged', ({ themeParams }) => {
+      if (themeParams?.isVerticalSwipesEnabled) {
+        tg.themeParams!.isVerticalSwipesEnabled = false
+      }
+    })
   }
 })
 </script>
