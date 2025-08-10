@@ -26,3 +26,17 @@ img {
   height: 100%;
   object-fit: cover;
 }
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  overflow: hidden; /* Запобігає "зависанню" скролу */
+}
+
+#app > div {
+  height: 100vh; /* Якщо потрібно */
+  overflow-y: auto; /* Включає вертикальний скрол в потрібному контейнері */
+  -webkit-overflow-scrolling: touch; /* Плавний скрол на iOS */
+}
