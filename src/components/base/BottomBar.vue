@@ -1,31 +1,25 @@
 <template>
-  <nav class="bottom-nav" ref="navRef">
+  <nav class="bottom-nav">
     <!-- чорний фон -->
-    <div
-      class="highlight"
-      :style="{
-        width: highlightWidth + 'px',
-        left: highlightLeft + 'px',
-      }"
-    ></div>
+    <div class="highlight" :style="{ transform: progress }"></div>
 
     <!-- кнопки -->
     <button
       v-for="(item, idx) in items"
       :key="idx"
-      :ref="(el) => (buttonRefs[idx] = el as HTMLButtonElement)"
       class="nav-btn"
-      :class="{ active: activeIndex === idx }"
       @click="navigateTo(item.link, idx)"
       :aria-label="item.label"
     >
       <BaseSvg :id="item.icon" class="nav-btn__icon" />
     </button>
   </nav>
+
+  {{ progress }}
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, onBeforeUnmount } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseSvg from '@/components/base/BaseSvg.vue'
 
@@ -46,58 +40,21 @@ const items: NavItem[] = [
 ]
 
 const activeIndex = ref(0)
-const highlightLeft = ref(0)
-const highlightWidth = ref(0)
 
-const navRef = ref<HTMLElement | null>(null)
-const buttonRefs: HTMLButtonElement[] = []
+function getWidth() {
+  return window.innerWidth - 38
+}
+
+const progress = computed(() => {
+  const point = getWidth() / items.length
+
+  return `translateX(${activeIndex.value * (point * 1.02)}px)`
+})
 
 const navigateTo = (path: string, index: number) => {
   activeIndex.value = index
-  moveHighlight(index)
   router.push(path)
 }
-
-const moveHighlight = (index: number, withAnimation = true) => {
-  const btn = buttonRefs[index]
-  const nav = navRef.value
-  if (!btn || !nav) return
-
-  const btnRect = btn.getBoundingClientRect()
-  const navRect = nav.getBoundingClientRect()
-
-  // Для круглого highlight використовуємо однакову ширину і висоту
-  const size = 48
-  const newWidth = size
-  const newLeft = Math.round(btnRect.left - navRect.left + (btnRect.width - newWidth) / 2)
-
-  highlightWidth.value = newWidth
-  highlightLeft.value = newLeft
-
-  if (!withAnimation) {
-    nav.style.setProperty('--highlight-transition', 'none')
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        nav.style.removeProperty('--highlight-transition')
-      })
-    })
-  }
-}
-
-const handleResize = () => {
-  moveHighlight(activeIndex.value, false)
-}
-
-onMounted(() => {
-  nextTick(() => {
-    moveHighlight(activeIndex.value, false)
-  })
-  window.addEventListener('resize', handleResize)
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', handleResize)
-})
 </script>
 
 <style scoped lang="scss">
@@ -109,27 +66,28 @@ onBeforeUnmount(() => {
   right: 0;
   margin: 0 15px;
   bottom: 15px;
-  height: 56px;
-  padding: 0 4px;
+  aspect-ratio: 5 / 1;
+
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
   background: $text;
-  border-radius: 32px;
+  border: 3px solid $text;
+  border-radius: 100px;
   box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
-  z-index: 1000;
+  z-index: 10;
 }
 
 .highlight {
   position: absolute;
-  top: 4px;
-  height: calc(100% - 8px);
+  left: 0;
+  height: 100%;
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
+
   background: $main-color;
-  transition:
-    left 360ms cubic-bezier(0.22, 1, 0.36, 1),
-    width 260ms ease;
+  transition: transform 360ms;
   z-index: 0;
   pointer-events: none;
 }
@@ -139,10 +97,10 @@ onBeforeUnmount(() => {
   background: none;
   border: 0;
   outline: 0;
-  padding: 10px;
   margin: 0;
-  width: 48px;
-  height: 48px;
+  height: 100%;
+  aspect-ratio: 1/1;
+  padding: 0;
   cursor: pointer;
   position: relative;
   z-index: 1;
