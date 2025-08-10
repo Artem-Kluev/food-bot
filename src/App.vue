@@ -9,12 +9,13 @@ import { onMounted, ref } from 'vue'
 const tg = ref<any>(null)
 
 onMounted(() => {
-  if (window.Telegram) {
-    tg.value = window.Telegram
-  } else {
-    console.warn('Telegram WebApp is not available. Running in browser mode.')
-    tg.value = 'empty'
+  const tg = window.Telegram?.WebApp || null
+
+  function sendData() {
+    tg?.sendData(JSON.stringify({ foo: 'bar' }))
   }
+
+  sendData()
 })
 </script>
 
