@@ -13,36 +13,11 @@ onMounted(() => {
     tg.value = window.Telegram.WebApp
     console.log('Telegram WebApp initialized:', tg.value)
 
+    // Розширюємо вікно на весь екран
     tg.value.expand()
-
-    if (tg.value.themeParams) {
-      document.documentElement.style.setProperty(
-        '--tg-theme-bg-color',
-        tg.value.themeParams.bg_color || '#ffffff',
-      )
-      document.documentElement.style.setProperty(
-        '--tg-theme-text-color',
-        tg.value.themeParams.text_color || '#000000',
-      )
-      document.documentElement.style.setProperty(
-        '--tg-theme-hint-color',
-        tg.value.themeParams.hint_color || '#999999',
-      )
-      document.documentElement.style.setProperty(
-        '--tg-theme-link-color',
-        tg.value.themeParams.link_color || '#2678b6',
-      )
-      document.documentElement.style.setProperty(
-        '--tg-theme-button-color',
-        tg.value.themeParams.button_color || '#2678b6',
-      )
-      document.documentElement.style.setProperty(
-        '--tg-theme-button-text-color',
-        tg.value.themeParams.button_text_color || '#ffffff',
-      )
-    }
   } else {
     console.warn('Telegram WebApp is not available. Running in browser mode.')
+    tg.value = 'empty'
   }
 })
 </script>
