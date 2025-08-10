@@ -1,5 +1,5 @@
 <template>
-  <div class="bottom-nav">
+  <div v-show="isBottomBarVisible" class="bottom-nav">
     <nav class="bottom-nav__nav" ref="nav">
       <div class="bottom-nav__highlight" :style="{ transform: progress }"></div>
 
@@ -21,6 +21,7 @@
 import { ref, onMounted, onBeforeUnmount, computed, useTemplateRef, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import BaseSvg from '@/components/base/BaseSvg.vue'
+import { isBottomBarVisible } from '@/composable/useBottomBar'
 
 interface NavItem {
   icon: string

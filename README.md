@@ -1,5 +1,26 @@
 # telegram-food
 
+## Керування видимістю нижньої панелі навігації
+
+Для керування видимістю нижньої панелі навігації використовуйте функцію `toggleBottomBar` з файлу `src/mixins/bottomBarControl.ts`:
+
+```typescript
+// Імпорт функції та змінної стану
+import { toggleBottomBar, isBottomBarVisible } from '@/mixins/bottomBarControl'
+
+// Приховати панель
+toggleBottomBar(false)
+
+// Показати панель
+toggleBottomBar(true)
+
+// Переключити стан (якщо була видима - приховати, якщо прихована - показати)
+toggleBottomBar()
+
+// Отримати поточний стан видимості (реактивна змінна)
+console.log(isBottomBarVisible.value) // true або false
+```
+
 ## Recommended IDE Setup
 
 [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).

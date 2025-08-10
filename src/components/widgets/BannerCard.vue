@@ -36,7 +36,7 @@ const isLiked = ref(false)
 
 .banner {
   width: 100%;
-  background-color: $main-color;
+  background-color: #ff4a158a;
   border-radius: 8px;
   aspect-ratio: 2 / 1;
   display: flex;

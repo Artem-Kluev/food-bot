@@ -7,6 +7,8 @@
         type="text"
         placeholder="Пошук..."
         @input="onInput"
+        @focus="toggleBottomBar(false)"
+        @blur="toggleBottomBar(true)"
       />
       <BaseSvg class="ui-search__icon" id="search-icon" />
       <button v-if="searchQuery" class="ui-search__clear" @click="clearSearch">
@@ -39,6 +41,12 @@
           </div>
         </div>
       </div>
+
+      <button class="ui-search__button">
+        <BaseSvg class="ui-search__button-icon" id="search-icon" />
+
+        <span>Пошук</span>
+      </button>
     </div>
   </div>
 </template>
@@ -48,6 +56,7 @@ import { ref, watch } from 'vue'
 import BaseSvg from '@/components/base/BaseSvg.vue'
 import BaseLottie from '@/components/base/BaseLottie.vue'
 import UiPrice from '@/components/ui/UiPrice.vue'
+import { toggleBottomBar } from '@/composable/useBottomBar'
 
 interface SearchItem {
   id: number
@@ -302,6 +311,35 @@ function handleEscKey(event: KeyboardEvent) {
     font-size: 14px;
     color: rgba($text, 0.7);
     margin-bottom: 8px;
+  }
+
+  &__button {
+    position: fixed;
+    bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(100% - 50px);
+    height: 48px;
+    border-radius: 30px;
+    margin: 0 25px;
+    border: none;
+    outline: none;
+    background-color: $main-color;
+    color: $white;
+    font-size: 20px;
+    gap: 5px;
+    transition: transform 0.2s ease;
+    text-transform: uppercase;
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    &-icon {
+      width: 25px;
+      height: 25px;
+    }
   }
 }
 </style>
