@@ -4,14 +4,17 @@ import SvgManager from '@/components/base/SvgManager.vue'
 import BottomBar from '@/components/widgets/BottomBar.vue'
 import UiSearch from '@/components/ui/UiSearch.vue'
 
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
+
+const tg = ref<any>('212')
 
 onMounted(() => {
-  const tg = window.Telegram?.WebApp
+  tg.value = window.Telegram?.WebApp
 
-  if (tg) {
-    tg.disableVerticalSwipes()
-    tg.expand()
+  if (tg.value) {
+    tg.value.disableVerticalSwipes()
+    tg.value.expand()
+    tg.value.setHeaderColor('bg_color')
   }
 })
 </script>
@@ -24,7 +27,7 @@ onMounted(() => {
     <main class="main">
       <RouterView />
     </main>
-
+    {{ tg }}
     <BottomBar class="bottom" />
   </div>
 
