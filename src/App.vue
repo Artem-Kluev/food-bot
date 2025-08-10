@@ -11,7 +11,11 @@ const tgAvailable = ref(false)
 
 onMounted(() => {
   tg.value = window.Telegram?.WebApp ?? null
-  tgAvailable.value = tg.value !== null
+  if (tg.value) {
+    tg.value.expand()
+    tg.value.disableVerticalSwipes()
+    tgAvailable.value = true
+  }
 })
 </script>
 
