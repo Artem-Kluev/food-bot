@@ -29,7 +29,7 @@ onMounted(() => {
     <main class="main">
       <RouterView />
     </main>
-    {{ tg }}
+    {{ tg }} 11
     <BottomBar class="bottom" />
   </div>
 
