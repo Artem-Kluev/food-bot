@@ -17,7 +17,7 @@ onMounted(() => {
     tg.value.expand()
   } else {
     console.warn('Telegram WebApp is not available. Running in browser mode.')
-    tg.value = 'empty'
+    tg.value = 'empty2'
   }
 })
 </script>
