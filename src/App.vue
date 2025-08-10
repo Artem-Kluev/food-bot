@@ -8,18 +8,10 @@ import { onMounted } from 'vue'
 
 onMounted(() => {
   const tg = window.Telegram?.WebApp
+
   if (tg) {
+    tg.disableVerticalSwipes()
     tg.expand()
-
-    if (tg.themeParams?.isVerticalSwipesEnabled) {
-      tg.themeParams.isVerticalSwipesEnabled = false
-    }
-
-    tg.onEvent('themeChanged', ({ themeParams }) => {
-      if (themeParams?.isVerticalSwipesEnabled) {
-        tg.themeParams!.isVerticalSwipesEnabled = false
-      }
-    })
   }
 })
 </script>
