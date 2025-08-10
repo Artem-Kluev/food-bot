@@ -19,6 +19,10 @@ onMounted(() => {
     tg.value.setHeaderColor('bg_color')
   }
 })
+
+setTimeout(() => {
+  tg.value = window.Telegram?.WebApp
+}, 3000)
 </script>
 
 <template>
