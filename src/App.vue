@@ -8,6 +8,7 @@ import { onMounted, ref } from 'vue'
 
 const tg = ref<any>(null)
 const tgAvailable = ref(false)
+const tgUserName = ref<string | null>(null)
 
 onMounted(() => {
   tg.value = window.Telegram?.WebApp ?? null
@@ -15,6 +16,9 @@ onMounted(() => {
     tg.value.expand()
     tg.value.disableVerticalSwipes()
     tgAvailable.value = true
+
+    // Отримуємо ім'я користувача, якщо доступно
+    tgUserName.value = tg.value.initDataUnsafe?.user?.first_name ?? null
   }
 })
 </script>
@@ -28,8 +32,9 @@ onMounted(() => {
       <RouterView />
     </main>
 
-    <!-- Виводимо простий текст замість обʼєкту -->
     <div>Telegram WebApp доступний: {{ tgAvailable ? 'Так' : 'Ні' }}</div>
+    <div v-if="tgUserName">Привіт, {{ tgUserName }}!</div>
+    <div v-else>Привіт, гість!</div>
 
     <BottomBar class="bottom" />
   </div>
