@@ -94,6 +94,7 @@ watch(
   margin: 0 15px;
   bottom: 15px;
   z-index: 10;
+  display: none;
 
   &__nav {
     aspect-ratio: 5 / 1;

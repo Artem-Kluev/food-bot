@@ -9,7 +9,7 @@ import { onMounted, ref } from 'vue'
 const tg = ref<any>('212')
 
 onMounted(() => {
-  tg.value = window.Telegram?.WebApp
+  tg.value = window
 
   console.log(tg.value)
 
