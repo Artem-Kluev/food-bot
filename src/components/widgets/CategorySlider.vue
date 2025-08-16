@@ -63,10 +63,11 @@ function emitSelectedCategories() {
 
 .category-slider {
   width: 100%;
+  margin-bottom: 15px;
 
   &__title {
     padding: 10px 10px 5px;
-    font-size: 20px;
+    font-size: 16px;
   }
 
   &__swiper {

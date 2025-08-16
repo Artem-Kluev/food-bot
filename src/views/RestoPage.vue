@@ -3,16 +3,19 @@
 
   <ButtonSlider :buttons="delivery" title="Спосіб доставки" />
 
-  <ButtonSlider :buttons="offers" title="Пропозиції" />
-
   <ButtonSlider :buttons="payment" title="Спосіб оплати" />
 
+  <ButtonSlider :buttons="offers" title="Пропозиції" />
+  <!-- 
   <div class="toggle-container">
-    <span>Зараз працюють</span>
     <UiToggle v-model="darkMode" />
-  </div>
 
-  <div class="resto-container">
+    <span>Зараз працюють</span>
+  </div> -->
+
+  <UiTabs v-model="activeTab" :tabs="['Ресторани', 'Їжа']" class="ui-tabs" />
+
+  <div v-if="activeTab === 0" class="resto-container">
     <ProductCard
       v-for="restaurant in popularRestaurants"
       :key="restaurant.title"
@@ -24,7 +27,12 @@
         type: 'resto',
         tags: restaurant.tags,
       }"
+      modifier="resto"
     />
+  </div>
+
+  <div v-else-if="activeTab === 1" class="menu-container">
+    <ProductCard v-for="item in sliders" :key="item.title" :slide-data="item" modifier="resto" />
   </div>
 </template>
 
@@ -32,6 +40,7 @@
 import CategorySlider from '@/components/widgets/CategorySlider.vue'
 import ButtonSlider from '@/components/widgets/ButtonSlider.vue'
 import UiToggle from '@/components/ui/UiToggle.vue'
+import UiTabs from '@/components/ui/UiTabs.vue'
 import { ref } from 'vue'
 import type { Category } from '@/mixins/interfaces'
 import ProductCard from '@/components/widgets/ProductCard.vue'
@@ -43,7 +52,8 @@ import {
   premiumRestaurants,
 } from '@/mixins/resto'
 
-const darkMode = ref(false)
+const darkMode = ref(true)
+const activeTab = ref(0)
 
 const payment = ref<Array<any>>([
   {
@@ -135,17 +145,23 @@ const categories = ref<Array<Category>>([
 
 .toggle-container {
   display: flex;
+
   align-items: center;
   justify-content: space-between;
   padding: 10px;
 
   span {
     font-size: 16px;
-    font-weight: 500;
   }
 }
 
-.resto-container {
+.ui-tabs {
+  margin-top: 25px;
+}
+
+.resto-container,
+.menu-container {
   padding: 10px;
+  margin-top: 20px;
 }
 </style>

@@ -1,26 +1,28 @@
 <template>
   <Transition name="fade-in" mode="out-in">
-    <div v-if="isBottomBarVisible" class="bottom-nav">
-      <nav class="bottom-nav__nav" ref="nav">
-        <div class="bottom-nav__highlight" :style="{ transform: progress }"></div>
+    <KeepAlive>
+      <div v-if="isBottomBarVisible" class="bottom-nav">
+        <nav class="bottom-nav__nav" ref="nav">
+          <div class="bottom-nav__highlight" :style="{ transform: progress }"></div>
 
-        <button
-          v-for="(item, idx) in items"
-          :key="idx"
-          class="bottom-nav__btn"
-          :class="{ active: activeIndex === idx }"
-          @click="navigateTo(item.link, idx)"
-          :aria-label="item.label"
-        >
-          <BaseSvg :id="item.icon" class="bottom-nav__btn-icon" />
-        </button>
-      </nav>
-    </div>
+          <button
+            v-for="(item, idx) in items"
+            :key="idx"
+            class="bottom-nav__btn"
+            :class="{ active: activeIndex === idx }"
+            @click="navigateTo(item.link, idx)"
+            :aria-label="item.label"
+          >
+            <BaseSvg :id="item.icon" class="bottom-nav__btn-icon" />
+          </button>
+        </nav>
+      </div>
+    </KeepAlive>
   </Transition>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, computed, useTemplateRef, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, useTemplateRef, watch, KeepAlive } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import BaseSvg from '@/components/base/BaseSvg.vue'
 import { isBottomBarVisible } from '@/composable/useBottomBar'
@@ -38,9 +40,9 @@ const nav = useTemplateRef<HTMLDivElement>('nav')
 const items: NavItem[] = [
   { icon: 'main-logo', label: 'Головна', link: '/' },
   { icon: 'resto-logo', label: 'Ресторани', link: '/resto' },
-  { icon: 'order-logo', label: 'Замовлення', link: '/order' },
   { icon: 'backet-logo', label: 'Кошик', link: '/basket' },
   { icon: 'like-logo', label: 'Кошик2', link: '/basket' },
+  { icon: 'order-logo', label: 'Замовлення', link: '/order' },
 ]
 
 const activeIndex = ref(0)
@@ -108,7 +110,7 @@ watch(
   right: 0;
   margin: 0 15px;
   bottom: 15px;
-  z-index: 10;
+  z-index: 5;
 
   &__nav {
     aspect-ratio: 5 / 1;

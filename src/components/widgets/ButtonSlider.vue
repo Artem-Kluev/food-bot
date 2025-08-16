@@ -1,6 +1,6 @@
 <template>
   <div class="button-slider">
-    <div class="button-slider__title">{{ title }}</div>
+    <div v-if="title" class="button-slider__title">{{ title }}</div>
 
     <swiper
       :spaceBetween="5"
@@ -31,7 +31,8 @@ import { ref, watch } from 'vue'
 
 interface Props {
   buttons: Array<any>
-  title: string
+  title?: string
+  radio?: boolean
 }
 
 const props = defineProps<Props>()
@@ -41,7 +42,17 @@ const modules = [Navigation]
 const selectedCategories = ref<Record<number, boolean>>({})
 
 function toggleCategory(index: number) {
-  selectedCategories.value[index] = !selectedCategories.value[index]
+  if (props.radio) {
+    // В режимі radio скидаємо всі вибрані категорії
+    for (const key in selectedCategories.value) {
+      selectedCategories.value[key] = false
+    }
+    // Встановлюємо тільки поточну категорію
+    selectedCategories.value[index] = true
+  } else {
+    // В звичайному режимі перемикаємо стан
+    selectedCategories.value[index] = !selectedCategories.value[index]
+  }
   emitSelectedCategories()
 }
 
@@ -58,16 +69,15 @@ function emitSelectedCategories() {
 
 .button-slider {
   width: 100%;
-  margin-bottom: 10px;
 
   &__title {
-    padding: 10px 10px 5px;
+    padding: 5px 10px;
     font-size: 16px;
   }
 
   &__swiper {
     height: 100%;
-    padding-left: 10px;
+    padding: 0 10px;
   }
 
   &__slide {

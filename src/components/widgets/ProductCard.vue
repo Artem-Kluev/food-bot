@@ -1,5 +1,9 @@
 <template>
-  <div class="product">
+  <div
+    class="product"
+    :class="{ ['product_' + modifier]: modifier === 'resto' }"
+    @click="toggleRestoBlock(true)"
+  >
     <div class="product__like">
       <UiLike v-model="isLiked" />
     </div>
@@ -31,10 +35,12 @@ import UiLike from '@/components/ui/UiLike.vue'
 import UiRating from '@/components/ui/UiRating.vue'
 import UiTime from '@/components/ui/UiTime.vue'
 import UiPrice from '@/components/ui/UiPrice.vue'
+import { toggleRestoBlock } from '@/composable/useRestoBlock'
 import { ref } from 'vue'
 
 interface Props {
   slideData: Slide
+  modifier?: 'resto'
 }
 
 defineProps<Props>()
@@ -51,6 +57,7 @@ const isLiked = ref(false)
   overflow: hidden;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.16);
   margin-bottom: 30px;
+  position: relative;
 
   &__like {
     position: absolute;
@@ -121,6 +128,14 @@ const isLiked = ref(false)
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  &_resto {
+    .product {
+      &__image {
+        aspect-ratio: 4/2.2;
+      }
+    }
   }
 }
 </style>

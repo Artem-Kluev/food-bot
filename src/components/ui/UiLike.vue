@@ -1,5 +1,9 @@
 <template>
-  <button class="ui-like" :class="{ 'ui-like_active': modelValue }" @click="toggleLike">
+  <button
+    class="ui-like"
+    :class="{ 'ui-like_active': modelValue, ['ui-like_' + modifier]: modifier === 'resto' }"
+    @click="toggleLike"
+  >
     <BaseSvg class="ui-like__icon" :id="modelValue ? 'like-logo' : 'like-outline-logo'" />
   </button>
 </template>
@@ -9,6 +13,7 @@ import BaseSvg from '@/components/base/BaseSvg.vue'
 
 interface Props {
   modelValue: boolean
+  modifier?: 'resto'
 }
 
 const props = defineProps<Props>()
@@ -64,6 +69,15 @@ function toggleLike() {
 
     &.ui-like_active .ui-like__icon {
       opacity: 1;
+    }
+  }
+
+  &_resto {
+    .ui-like {
+      &__icon {
+        width: 32px;
+        height: 32px;
+      }
     }
   }
 }

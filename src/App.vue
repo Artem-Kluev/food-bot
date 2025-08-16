@@ -1,6 +1,25 @@
+<template>
+  <div class="wrapper">
+    <div class="search-container">
+      <UiSearch />
+    </div>
+
+    <main class="main">
+      <RouterView />
+    </main>
+
+    <BottomBar class="bottom" />
+
+    <RestoBlock />
+  </div>
+
+  <SvgManager />
+</template>
+
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import SvgManager from '@/components/base/SvgManager.vue'
+import RestoBlock from '@/components/widgets/RestoBlock.vue'
 import BottomBar from '@/components/widgets/BottomBar.vue'
 import UiSearch from '@/components/ui/UiSearch.vue'
 
@@ -22,22 +41,6 @@ onMounted(() => {
   }
 })
 </script>
-
-<template>
-  <div class="wrapper">
-    <div class="search-container">
-      <UiSearch />
-    </div>
-
-    <main class="main">
-      <RouterView />
-    </main>
-
-    <BottomBar class="bottom" />
-  </div>
-
-  <SvgManager />
-</template>
 
 <style scoped lang="scss">
 @use '@/assets/styles/vars.scss' as *;
