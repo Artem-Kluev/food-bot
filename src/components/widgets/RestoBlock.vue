@@ -140,10 +140,6 @@ watch(isRestoBlockVisable, (newValue) => {
   &__main {
     overflow: auto;
     height: 100%;
-    // -webkit-overflow-scrolling: touch;
-    // will-change: scroll-position;
-    // transform: translateZ(0);
-    // perspective: 1000px;
   }
 
   &__wrapper {
@@ -181,6 +177,7 @@ watch(isRestoBlockVisable, (newValue) => {
 
   &__back {
     position: absolute;
+    z-index: 2;
     top: 15px;
     left: 15px;
     display: flex;
