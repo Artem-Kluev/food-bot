@@ -8,7 +8,7 @@
               <BaseSvg class="resto-block__back-icon" id="arrow-logo" />
             </div>
 
-            <img class="resto-block__img" src="/images/resto/resto_2.webp" alt="" />
+            <img class="resto-block__img" src="/images/resto/resto_2.webp" alt="" loading="lazy" />
           </div>
 
           <div class="resto-block__top">
@@ -32,6 +32,7 @@
           <div class="resto-block__cards">
             <ProductCard
               v-for="item in sliders"
+              v-memo="[item.title]"
               :key="item.title"
               :slide-data="item"
               modifier="resto"
@@ -139,6 +140,10 @@ watch(isRestoBlockVisable, (newValue) => {
   &__main {
     overflow: auto;
     height: 100%;
+    -webkit-overflow-scrolling: touch;
+    will-change: scroll-position;
+    transform: translateZ(0);
+    perspective: 1000px;
   }
 
   &__wrapper {
@@ -148,6 +153,8 @@ watch(isRestoBlockVisable, (newValue) => {
     transition: transform 0.3s ease;
     overflow: hidden;
     min-height: calc(100% - 80px);
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
 
   &__image {
@@ -160,6 +167,9 @@ watch(isRestoBlockVisable, (newValue) => {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      will-change: transform;
+      transform: translateZ(0);
+      backface-visibility: hidden;
     }
   }
 
@@ -212,7 +222,13 @@ watch(isRestoBlockVisable, (newValue) => {
   }
 
   &__cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
     padding: 0 10px;
+    contain: content;
+    will-change: transform;
+    transform: translateZ(0);
   }
 }
 </style>

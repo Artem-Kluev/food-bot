@@ -32,7 +32,6 @@ import { ref, watch } from 'vue'
 interface Props {
   buttons: Array<any>
   title?: string
-  radio?: boolean
 }
 
 const props = defineProps<Props>()
@@ -42,17 +41,7 @@ const modules = [Navigation]
 const selectedCategories = ref<Record<number, boolean>>({})
 
 function toggleCategory(index: number) {
-  if (props.radio) {
-    // В режимі radio скидаємо всі вибрані категорії
-    for (const key in selectedCategories.value) {
-      selectedCategories.value[key] = false
-    }
-    // Встановлюємо тільки поточну категорію
-    selectedCategories.value[index] = true
-  } else {
-    // В звичайному режимі перемикаємо стан
-    selectedCategories.value[index] = !selectedCategories.value[index]
-  }
+  selectedCategories.value[index] = !selectedCategories.value[index]
   emitSelectedCategories()
 }
 
