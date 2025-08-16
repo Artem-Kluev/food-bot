@@ -11,6 +11,21 @@
     <span>Зараз працюють</span>
     <UiToggle v-model="darkMode" />
   </div>
+
+  <div class="resto-container">
+    <ProductCard
+      v-for="restaurant in popularRestaurants"
+      :key="restaurant.title"
+      :slide-data="{
+        title: restaurant.title,
+        image: restaurant.image,
+        rating: 4.3,
+        time: 25,
+        type: 'resto',
+        tags: restaurant.tags,
+      }"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -19,6 +34,14 @@ import ButtonSlider from '@/components/widgets/ButtonSlider.vue'
 import UiToggle from '@/components/ui/UiToggle.vue'
 import { ref } from 'vue'
 import type { Category } from '@/mixins/interfaces'
+import ProductCard from '@/components/widgets/ProductCard.vue'
+import {
+  sliders,
+  popularRestaurants,
+  newRestaurants,
+  discountRestaurants,
+  premiumRestaurants,
+} from '@/mixins/resto'
 
 const darkMode = ref(false)
 
@@ -120,5 +143,9 @@ const categories = ref<Array<Category>>([
     font-size: 16px;
     font-weight: 500;
   }
+}
+
+.resto-container {
+  padding: 10px;
 }
 </style>
