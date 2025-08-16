@@ -1,5 +1,5 @@
 <template>
-  111111111111111
+  22222222222222222222
   <CategorySlider :categories="categories" @selected="console.log($event)" />
 
   <ButtonSlider :buttons="delivery" title="Спосіб доставки" />

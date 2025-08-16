@@ -1,6 +1,6 @@
 <template>
   <Transition name="fade-slide">
-    <div v-show="isRestoBlockVisable" class="resto-block">
+    <div v-if="isRestoBlockVisable" class="resto-block">
       <div class="resto-block__main" @click.self="toggleRestoBlock(false)">
         <div class="resto-block__wrapper">
           <div class="resto-block__image">
@@ -8,7 +8,7 @@
               <BaseSvg class="resto-block__back-icon" id="arrow-logo" />
             </div>
 
-            <img class="resto-block__img" src="/images/resto/resto_2.webp" alt="" loading="lazy" />
+            <img class="resto-block__img" src="/images/resto/resto_2.webp" />
           </div>
 
           <div class="resto-block__top">
@@ -222,13 +222,13 @@ watch(isRestoBlockVisable, (newValue) => {
   }
 
   &__cards {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    // display: grid;
+    // grid-template-columns: repeat(2, 1fr);
+    // gap: 10px;
     padding: 0 10px;
-    contain: content;
-    will-change: transform;
-    transform: translateZ(0);
+    // contain: content;
+    // will-change: transform;
+    // transform: translateZ(0);
   }
 }
 </style>
