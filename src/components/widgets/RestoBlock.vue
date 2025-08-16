@@ -222,13 +222,13 @@ watch(isRestoBlockVisable, (newValue) => {
   }
 
   &__cards {
-    // display: grid;
-    // grid-template-columns: repeat(2, 1fr);
-    // gap: 10px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
     padding: 0 10px;
-    // contain: content;
-    // will-change: transform;
-    // transform: translateZ(0);
+    contain: content;
+    will-change: transform;
+    transform: translateZ(0);
   }
 }
 </style>
