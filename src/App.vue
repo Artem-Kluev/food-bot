@@ -28,13 +28,10 @@ onMounted(() => {
     <div class="search-container">
       <UiSearch />
     </div>
+
     <main class="main">
       <RouterView />
     </main>
-
-    <div>Telegram WebApp доступний: {{ tgAvailable ? 'Так' : 'Ні' }}</div>
-    <div v-if="tgUserName">Привіт, {{ tgUserName }}!</div>
-    <div v-else>Привіт, гість!</div>
 
     <BottomBar class="bottom" />
   </div>

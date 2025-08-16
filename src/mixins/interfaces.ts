@@ -1,9 +1,6 @@
 export interface Slide {
   title: string
-  image: {
-    base: string
-    webP: string
-  }
+  image: string
   type?: 'resto' | 'food'
   price?: {
     base: number
@@ -20,4 +17,10 @@ export interface Slide {
 export interface Banner {
   title: string
   animation: string
+}
+
+export interface Category {
+  title: string
+  image: string
+  id: number
 }

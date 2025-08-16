@@ -5,10 +5,7 @@
     </div>
 
     <div class="product__image">
-      <picture>
-        <source :srcset="slideData.image.webP" type="image/webp" />
-        <img :src="slideData.image.base" alt="product image" />
-      </picture>
+      <img :src="slideData.image" alt="product image" />
 
       <UiRating v-if="slideData.rating" :rating="slideData.rating" class="product__rating" />
       <UiTime

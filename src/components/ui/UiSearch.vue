@@ -8,9 +8,11 @@
         placeholder="Пошук..."
         @input="onInput"
         @focus="toggleBottomBar(false)"
-        @blur="toggleBottomBar(true)"
+        @blur="searchQuery || toggleBottomBar()"
       />
+
       <BaseSvg class="ui-search__icon" id="search-icon" />
+
       <button v-if="searchQuery" class="ui-search__clear" @click="clearSearch">
         <BaseSvg id="close-icon" />
       </button>
@@ -19,10 +21,27 @@
     <div v-if="searchQuery" class="ui-search__overlay" @click.self="closeSearch">
       <div class="ui-search__results">
         <div v-if="loading" class="ui-search__loading">
-          <!-- <BaseLottie :path="'/animations/loading.json'" /> -->
+          <BaseLottie
+            class="ui-search__animation"
+            :src="'/animations/5/animate.json'"
+            :loop="true"
+            :autoplay="true"
+          />
         </div>
-        <div v-else-if="!searchQuery" class="ui-search__empty">Введіть текст для пошуку</div>
-        <div v-else-if="results.length === 0" class="ui-search__empty">Нічого не знайдено</div>
+
+        <!-- <div v-else-if="results.length === 0" class="ui-search__empty">Нічого не знайдено</div> -->
+
+        <div v-else-if="true" class="ui-search__empty">
+          <BaseLottie
+            class="ui-search__animation"
+            :src="'/animations/6/animate.json'"
+            :loop="true"
+            :autoplay="true"
+          />
+
+          <div class="ui-search__empty-text">Нічого не знайдено</div>
+        </div>
+
         <div v-else class="ui-search__items">
           <div
             v-for="(item, index) in results"
@@ -42,7 +61,7 @@
         </div>
       </div>
 
-      <button class="ui-search__button">
+      <button v-show="!loading && false" class="ui-search__button" @click="onInput">
         <BaseSvg class="ui-search__button-icon" id="search-icon" />
 
         <span>Пошук</span>
@@ -132,6 +151,7 @@ function mockSearch(query: string) {
 function clearSearch() {
   searchQuery.value = ''
   results.value = []
+  toggleBottomBar(true)
 }
 
 function closeSearch() {
@@ -210,12 +230,13 @@ function handleEscKey(event: KeyboardEvent) {
 
   &__clear {
     position: absolute;
-    right: 16px;
+    right: 6px;
     top: 50%;
     transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
-    padding: 0;
+    width: 40px;
+    height: 40px;
+    padding: 10px;
+
     border: none;
     background: none;
     cursor: pointer;
@@ -244,7 +265,7 @@ function handleEscKey(event: KeyboardEvent) {
   &__results {
     background-color: $white;
 
-    padding: 80px 0 20px;
+    padding: 60px 0 0;
     flex-grow: 1;
     overflow-y: auto;
     max-height: 100vh;
@@ -252,16 +273,23 @@ function handleEscKey(event: KeyboardEvent) {
 
   &__loading,
   &__empty {
+    height: 100%;
     display: flex;
-    justify-content: center;
     align-items: center;
-    height: 200px;
-    color: rgba($text, 0.5);
-    font-size: 18px;
+    justify-content: center;
+    flex-direction: column;
+
+    &-text {
+      margin-top: -15px;
+      font-size: 12px;
+    }
+  }
+
+  &__animation {
+    max-height: 100px;
   }
 
   &__loading {
-    height: 100px;
   }
 
   &__items {

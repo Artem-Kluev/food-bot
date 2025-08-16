@@ -1,20 +1,22 @@
 <template>
-  <div v-show="isBottomBarVisible" class="bottom-nav">
-    <nav class="bottom-nav__nav" ref="nav">
-      <div class="bottom-nav__highlight" :style="{ transform: progress }"></div>
+  <Transition name="fade-in" mode="out-in">
+    <div v-if="isBottomBarVisible" class="bottom-nav">
+      <nav class="bottom-nav__nav" ref="nav">
+        <div class="bottom-nav__highlight" :style="{ transform: progress }"></div>
 
-      <button
-        v-for="(item, idx) in items"
-        :key="idx"
-        class="bottom-nav__btn"
-        :class="{ active: activeIndex === idx }"
-        @click="navigateTo(item.link, idx)"
-        :aria-label="item.label"
-      >
-        <BaseSvg :id="item.icon" class="bottom-nav__btn-icon" />
-      </button>
-    </nav>
-  </div>
+        <button
+          v-for="(item, idx) in items"
+          :key="idx"
+          class="bottom-nav__btn"
+          :class="{ active: activeIndex === idx }"
+          @click="navigateTo(item.link, idx)"
+          :aria-label="item.label"
+        >
+          <BaseSvg :id="item.icon" class="bottom-nav__btn-icon" />
+        </button>
+      </nav>
+    </div>
+  </Transition>
 </template>
 
 <script setup lang="ts">
@@ -87,6 +89,19 @@ watch(
 <style scoped lang="scss">
 @use '@/assets/styles/vars.scss' as *;
 
+.fade-in-enter-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-in-leave-active {
+  transition: opacity 0s;
+}
+
+.fade-in-enter-from,
+.fade-in-leave-to {
+  opacity: 0;
+}
+
 .bottom-nav {
   position: fixed;
   left: 0;
@@ -94,7 +109,6 @@ watch(
   margin: 0 15px;
   bottom: 15px;
   z-index: 10;
-  display: none;
 
   &__nav {
     aspect-ratio: 5 / 1;

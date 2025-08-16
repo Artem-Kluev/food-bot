@@ -3,10 +3,7 @@ import type { Slide } from '@/mixins/interfaces'
 export const sliders: Array<Slide> = [
   {
     title: 'Швидко суші',
-    image: {
-      base: '/images/resto/resto_1.jpg',
-      webP: '/images/resto/resto_1.webp',
-    },
+    image: '/images/resto/resto_1.webp',
     type: 'resto',
     tags: [
       {
@@ -19,10 +16,7 @@ export const sliders: Array<Slide> = [
   },
   {
     title: 'Піца Маргарита',
-    image: {
-      base: '/images/resto/resto_2.jpg',
-      webP: '/images/resto/resto_2.webp',
-    },
+    image: '/images/resto/resto_2.webp',
     type: 'food',
     tags: [
       {
@@ -38,10 +32,7 @@ export const sliders: Array<Slide> = [
   },
   {
     title: 'Бургер класичний',
-    image: {
-      base: '/images/resto/resto_3.jpg',
-      webP: '/images/resto/resto_3.webp',
-    },
+    image: '/images/resto/resto_3.webp',
     type: 'food',
     tags: [
       {
@@ -56,10 +47,7 @@ export const sliders: Array<Slide> = [
   },
   {
     title: 'Салат Цезар',
-    image: {
-      base: '/images/resto/resto_4.jpg',
-      webP: '/images/resto/resto_4.webp',
-    },
+    image: '/images/resto/resto_4.webp',
     type: 'food',
     rating: 3,
     price: {
@@ -68,10 +56,7 @@ export const sliders: Array<Slide> = [
   },
   {
     title: 'Паста Карбонара',
-    image: {
-      base: '/images/resto/resto_5.jpg',
-      webP: '/images/resto/resto_5.webp',
-    },
+    image: '/images/resto/resto_5.webp',
     type: 'food',
     tags: [
       {
@@ -86,10 +71,7 @@ export const sliders: Array<Slide> = [
   },
   {
     title: 'Стейк Рібай',
-    image: {
-      base: '/images/resto/resto_6.jpg',
-      webP: '/images/resto/resto_6.webp',
-    },
+    image: '/images/resto/resto_6.webp',
     type: 'food',
     tags: [
       {
@@ -104,10 +86,7 @@ export const sliders: Array<Slide> = [
   },
   {
     title: 'Суп грибний',
-    image: {
-      base: '/images/resto/resto_7.jpg',
-      webP: '/images/resto/resto_7.webp',
-    },
+    image: '/images/resto/resto_7.webp',
     type: 'food',
     rating: 6,
     price: {
@@ -116,10 +95,7 @@ export const sliders: Array<Slide> = [
   },
   {
     title: 'Десерт Тірамісу',
-    image: {
-      base: '/images/resto/resto_1.jpg',
-      webP: '/images/resto/resto_1.webp',
-    },
+    image: '/images/resto/resto_1.webp',
     type: 'food',
     tags: [
       {
@@ -134,10 +110,7 @@ export const sliders: Array<Slide> = [
   },
   {
     title: 'Морепродукти гриль',
-    image: {
-      base: '/images/resto/resto_2.jpg',
-      webP: '/images/resto/resto_2.webp',
-    },
+    image: '/images/resto/resto_2.webp',
     type: 'food',
     tags: [
       {
@@ -153,10 +126,7 @@ export const sliders: Array<Slide> = [
   },
   {
     title: 'Вегетаріанська піца',
-    image: {
-      base: '/images/resto/resto_3.jpg',
-      webP: '/images/resto/resto_3.webp',
-    },
+    image: '/images/resto/resto_3.webp',
     type: 'food',
     tags: [
       {
@@ -174,10 +144,7 @@ export const sliders: Array<Slide> = [
 export const popularRestaurants: Array<Slide> = [
   {
     title: 'Італійська кухня "Bella Italia"',
-    image: {
-      base: '/images/resto/resto_3.jpg',
-      webP: '/images/resto/resto_3.webp',
-    },
+    image: '/images/resto/resto_3.webp',
     tags: [
       {
         title: 'Італійська кухня',
@@ -187,10 +154,7 @@ export const popularRestaurants: Array<Slide> = [
   },
   {
     title: 'Сімейний ресторан "Затишок"',
-    image: {
-      base: '/images/resto/resto_1.jpg',
-      webP: '/images/resto/resto_1.webp',
-    },
+    image: '/images/resto/resto_1.webp',
     tags: [
       {
         title: 'Сімейний',
@@ -200,10 +164,7 @@ export const popularRestaurants: Array<Slide> = [
   },
   {
     title: 'Стейк-хаус "М\'ясо і вино"',
-    image: {
-      base: '/images/resto/resto_6.jpeg',
-      webP: '/images/resto/resto_6.webp',
-    },
+    image: '/images/resto/resto_6.webp',
     tags: [
       {
         title: 'Стейки',
@@ -213,10 +174,7 @@ export const popularRestaurants: Array<Slide> = [
   },
   {
     title: 'Морський ресторан "Хвилі"',
-    image: {
-      base: '/images/resto/resto_2.jpg',
-      webP: '/images/resto/resto_2.webp',
-    },
+    image: '/images/resto/resto_2.webp',
     tags: [
       {
         title: 'Морепродукти',
@@ -226,10 +184,7 @@ export const popularRestaurants: Array<Slide> = [
   },
   {
     title: 'Азіатський фьюжн "Східні спеції"',
-    image: {
-      base: '/images/resto/resto_5.jpg',
-      webP: '/images/resto/resto_5.webp',
-    },
+    image: '/images/resto/resto_5.webp',
     tags: [
       {
         title: 'Азіатська кухня',
@@ -239,10 +194,7 @@ export const popularRestaurants: Array<Slide> = [
   },
   {
     title: 'Кав\'ярня-пекарня "Аромат"',
-    image: {
-      base: '/images/resto/resto_4.jpg',
-      webP: '/images/resto/resto_4.webp',
-    },
+    image: '/images/resto/resto_4.webp',
     tags: [
       {
         title: 'Свіжа випічка',
@@ -252,10 +204,7 @@ export const popularRestaurants: Array<Slide> = [
   },
   {
     title: 'Вегетаріанське кафе "Зелень"',
-    image: {
-      base: '/images/resto/resto_7.jpeg',
-      webP: '/images/resto/resto_7.webp',
-    },
+    image: '/images/resto/resto_7.webp',
     tags: [
       {
         title: 'Вегетаріанське',
@@ -268,10 +217,7 @@ export const popularRestaurants: Array<Slide> = [
 export const newRestaurants: Array<Slide> = [
   {
     title: 'Бургер-бар "Соковитий"',
-    image: {
-      base: '/images/resto/resto_4.jpg',
-      webP: '/images/resto/resto_4.webp',
-    },
+    image: '/images/resto/resto_4.webp',
     tags: [
       {
         title: 'Нове',
@@ -281,10 +227,7 @@ export const newRestaurants: Array<Slide> = [
   },
   {
     title: 'Піцерія "Неаполь"',
-    image: {
-      base: '/images/resto/resto_2.jpg',
-      webP: '/images/resto/resto_2.webp',
-    },
+    image: '/images/resto/resto_2.webp',
     tags: [
       {
         title: 'Нове',
@@ -294,10 +237,7 @@ export const newRestaurants: Array<Slide> = [
   },
   {
     title: 'Суші-бар "Токіо"',
-    image: {
-      base: '/images/resto/resto_7.jpeg',
-      webP: '/images/resto/resto_7.webp',
-    },
+    image: '/images/resto/resto_7.webp',
     tags: [
       {
         title: 'Нове',
@@ -307,10 +247,7 @@ export const newRestaurants: Array<Slide> = [
   },
   {
     title: 'Грузинський ресторан "Сакартвело"',
-    image: {
-      base: '/images/resto/resto_6.jpeg',
-      webP: '/images/resto/resto_6.webp',
-    },
+    image: '/images/resto/resto_6.webp',
     tags: [
       {
         title: 'Нове',
@@ -320,10 +257,7 @@ export const newRestaurants: Array<Slide> = [
   },
   {
     title: 'Паб "Старий дуб"',
-    image: {
-      base: '/images/resto/resto_5.jpg',
-      webP: '/images/resto/resto_5.webp',
-    },
+    image: '/images/resto/resto_5.webp',
     tags: [
       {
         title: 'Нове',
@@ -333,10 +267,7 @@ export const newRestaurants: Array<Slide> = [
   },
   {
     title: 'Французька пекарня "Круасан"',
-    image: {
-      base: '/images/resto/resto_1.jpg',
-      webP: '/images/resto/resto_1.webp',
-    },
+    image: '/images/resto/resto_1.webp',
     tags: [
       {
         title: 'Нове',
@@ -346,10 +277,7 @@ export const newRestaurants: Array<Slide> = [
   },
   {
     title: 'Вінотека "Бордо"',
-    image: {
-      base: '/images/resto/resto_3.jpg',
-      webP: '/images/resto/resto_3.webp',
-    },
+    image: '/images/resto/resto_3.webp',
     tags: [
       {
         title: 'Нове',
@@ -362,10 +290,7 @@ export const newRestaurants: Array<Slide> = [
 export const discountRestaurants: Array<Slide> = [
   {
     title: 'Ресторан "Смачно і точка"',
-    image: {
-      base: '/images/resto/resto_5.jpg',
-      webP: '/images/resto/resto_5.webp',
-    },
+    image: '/images/resto/resto_5.webp',
     tags: [
       {
         title: 'Знижка 20%',
@@ -375,10 +300,7 @@ export const discountRestaurants: Array<Slide> = [
   },
   {
     title: 'Тайський ресторан "Том Ям"',
-    image: {
-      base: '/images/resto/resto_7.jpeg',
-      webP: '/images/resto/resto_7.webp',
-    },
+    image: '/images/resto/resto_7.webp',
     tags: [
       {
         title: 'Знижка 15%',
@@ -388,10 +310,7 @@ export const discountRestaurants: Array<Slide> = [
   },
   {
     title: 'Піцерія "Маргарита"',
-    image: {
-      base: '/images/resto/resto_3.jpg',
-      webP: '/images/resto/resto_3.webp',
-    },
+    image: '/images/resto/resto_3.webp',
     tags: [
       {
         title: 'Знижка 25%',
@@ -401,10 +320,7 @@ export const discountRestaurants: Array<Slide> = [
   },
   {
     title: 'Кафе "Сніданки 24/7"',
-    image: {
-      base: '/images/resto/resto_1.jpg',
-      webP: '/images/resto/resto_1.webp',
-    },
+    image: '/images/resto/resto_1.webp',
     tags: [
       {
         title: 'Знижка 10%',
@@ -414,10 +330,7 @@ export const discountRestaurants: Array<Slide> = [
   },
   {
     title: 'Стейк-хаус "Ранчо"',
-    image: {
-      base: '/images/resto/resto_6.jpeg',
-      webP: '/images/resto/resto_6.webp',
-    },
+    image: '/images/resto/resto_6.webp',
     tags: [
       {
         title: 'Знижка 30%',
@@ -427,10 +340,7 @@ export const discountRestaurants: Array<Slide> = [
   },
   {
     title: 'Суші-бар "Сакура"',
-    image: {
-      base: '/images/resto/resto_2.jpg',
-      webP: '/images/resto/resto_2.webp',
-    },
+    image: '/images/resto/resto_2.webp',
     tags: [
       {
         title: 'Знижка 15%',
@@ -440,10 +350,7 @@ export const discountRestaurants: Array<Slide> = [
   },
   {
     title: 'Кав\'ярня "Еспресо"',
-    image: {
-      base: '/images/resto/resto_4.jpg',
-      webP: '/images/resto/resto_4.webp',
-    },
+    image: '/images/resto/resto_4.webp',
     tags: [
       {
         title: 'Знижка 20%',
@@ -456,10 +363,7 @@ export const discountRestaurants: Array<Slide> = [
 export const premiumRestaurants: Array<Slide> = [
   {
     title: 'Ресторан високої кухні "Гурман"',
-    image: {
-      base: '/images/resto/resto_6.jpeg',
-      webP: '/images/resto/resto_6.webp',
-    },
+    image: '/images/resto/resto_6.webp',
     tags: [
       {
         title: 'Преміум',
@@ -469,10 +373,7 @@ export const premiumRestaurants: Array<Slide> = [
   },
   {
     title: 'Винний ресторан "Бордо"',
-    image: {
-      base: '/images/resto/resto_3.jpg',
-      webP: '/images/resto/resto_3.webp',
-    },
+    image: '/images/resto/resto_3.webp',
     tags: [
       {
         title: 'Преміум',
@@ -482,10 +383,7 @@ export const premiumRestaurants: Array<Slide> = [
   },
   {
     title: 'Японський ресторан "Кіото"',
-    image: {
-      base: '/images/resto/resto_7.jpeg',
-      webP: '/images/resto/resto_7.webp',
-    },
+    image: '/images/resto/resto_7.webp',
     tags: [
       {
         title: 'Преміум',
@@ -495,10 +393,7 @@ export const premiumRestaurants: Array<Slide> = [
   },
   {
     title: 'Панорамний ресторан "Висота"',
-    image: {
-      base: '/images/resto/resto_2.jpg',
-      webP: '/images/resto/resto_2.webp',
-    },
+    image: '/images/resto/resto_2.webp',
     tags: [
       {
         title: 'Преміум',
@@ -508,10 +403,7 @@ export const premiumRestaurants: Array<Slide> = [
   },
   {
     title: 'Ресторан молекулярної кухні "Елемент"',
-    image: {
-      base: '/images/resto/resto_5.jpg',
-      webP: '/images/resto/resto_5.webp',
-    },
+    image: '/images/resto/resto_5.webp',
     tags: [
       {
         title: 'Преміум',
@@ -521,10 +413,7 @@ export const premiumRestaurants: Array<Slide> = [
   },
   {
     title: 'Ресторан-сад "Едем"',
-    image: {
-      base: '/images/resto/resto_1.jpg',
-      webP: '/images/resto/resto_1.webp',
-    },
+    image: '/images/resto/resto_1.webp',
     tags: [
       {
         title: 'Преміум',
@@ -534,10 +423,7 @@ export const premiumRestaurants: Array<Slide> = [
   },
   {
     title: 'Стейк-хаус "Прайм"',
-    image: {
-      base: '/images/resto/resto_4.jpg',
-      webP: '/images/resto/resto_4.webp',
-    },
+    image: '/images/resto/resto_4.webp',
     tags: [
       {
         title: 'Преміум',
