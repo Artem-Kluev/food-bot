@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 
-export const isRestoBlockVisable = ref(true)
+export const isRestoBlockVisable = ref(false)
 
 export function toggleRestoBlock(value: boolean) {
   isRestoBlockVisable.value = value
