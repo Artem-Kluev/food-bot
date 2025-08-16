@@ -1,6 +1,6 @@
 <template>
   <Transition name="fade-slide">
-    <div v-if="isRestoBlockVisable" class="resto-block">
+    <div v-show="isRestoBlockVisable" class="resto-block">
       <div class="resto-block__main" @click.self="toggleRestoBlock(false)">
         <div class="resto-block__wrapper">
           <div class="resto-block__image">
