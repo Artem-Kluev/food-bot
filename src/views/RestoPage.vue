@@ -1,5 +1,5 @@
 <template>
-  <CategorySlider :categories="categories" @selected="console.log($event)" />
+  <CategorySlider :categories="categories" />
 
   <ButtonSlider :buttons="delivery" title="Спосіб доставки" />
 

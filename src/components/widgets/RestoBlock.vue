@@ -103,31 +103,6 @@ watch(isRestoBlockVisable, (newValue) => {
 <style scoped lang="scss">
 @use '@/assets/styles/vars.scss' as *;
 
-.fade-slide-enter-active,
-.fade-slide-leave-active {
-  transition: opacity 0.3s;
-
-  .resto-block__wrapper {
-    transition: transform 0.3s;
-  }
-}
-
-.fade-slide-enter-from {
-  opacity: 0;
-
-  .resto-block__wrapper {
-    transform: translateY(100%);
-  }
-}
-
-.fade-slide-leave-to {
-  opacity: 0;
-
-  .resto-block__wrapper {
-    transform: translateY(100%);
-  }
-}
-
 .resto-block {
   position: fixed;
   z-index: 11;
@@ -149,8 +124,6 @@ watch(isRestoBlockVisable, (newValue) => {
     transition: transform 0.3s ease;
     overflow: hidden;
     min-height: calc(100% - 80px);
-    transform: translateZ(0);
-    backface-visibility: hidden;
   }
 
   &__image {
@@ -163,9 +136,6 @@ watch(isRestoBlockVisable, (newValue) => {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      will-change: transform;
-      transform: translateZ(0);
-      backface-visibility: hidden;
     }
   }
 
@@ -223,9 +193,22 @@ watch(isRestoBlockVisable, (newValue) => {
     grid-template-columns: 1fr;
     gap: 10px;
     padding: 0 10px;
-    contain: content;
-    will-change: transform;
-    transform: translateZ(0);
   }
+}
+
+.fade-slide-enter-active {
+  transition:
+    transform 0.3s,
+    background-color 0.2s 0.3s;
+}
+
+.fade-slide-leave-active {
+  transition: transform 0.3s;
+}
+
+.fade-slide-leave-to,
+.fade-slide-enter-from {
+  transform: translateY(100%);
+  background-color: unset;
 }
 </style>

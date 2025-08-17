@@ -73,6 +73,8 @@ function toggleLike() {
   }
 
   &_resto {
+    box-shadow: unset;
+
     .ui-like {
       &__icon {
         width: 32px;

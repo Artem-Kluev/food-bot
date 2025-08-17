@@ -14,7 +14,7 @@
         class="ui-tabs__indicator"
         :style="{
           transform: `translateX(${100 * modelValue}%)`,
-          width: `${100 / tabs.length}%`
+          width: `${100 / tabs.length}%`,
         }"
       ></div>
     </div>
