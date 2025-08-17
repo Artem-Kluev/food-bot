@@ -36,8 +36,11 @@
               :key="item.title"
               :slide-data="item"
               modifier="resto"
+              counter
             />
           </div>
+
+          <div class="resto-block__button">Перейти в корзину</div>
         </div>
       </div>
     </div>
@@ -193,6 +196,18 @@ watch(isRestoBlockVisable, (newValue) => {
     grid-template-columns: 1fr;
     gap: 10px;
     padding: 0 10px;
+    transform: translateZ(0);
+  }
+
+  &__button {
+    width: 100%;
+    height: 40px;
+    border-radius: 20px;
+    background-color: $main-color;
+    color: $white;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0 5px;
   }
 }
 

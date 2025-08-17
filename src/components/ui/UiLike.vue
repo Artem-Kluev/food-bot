@@ -2,7 +2,7 @@
   <button
     class="ui-like"
     :class="{ 'ui-like_active': modelValue, ['ui-like_' + modifier]: modifier === 'resto' }"
-    @click="toggleLike"
+    @click.stop="toggleLike"
   >
     <BaseSvg class="ui-like__icon" :id="modelValue ? 'like-logo' : 'like-outline-logo'" />
   </button>

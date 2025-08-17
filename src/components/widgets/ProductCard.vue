@@ -25,6 +25,8 @@
     </div>
     <div class="product__info">
       <h3 class="product__name">{{ slideData.title }}</h3>
+
+      <UiCounter v-if="counter" v-model="productCount" class="product__counter" />
     </div>
   </div>
 </template>
@@ -35,17 +37,20 @@ import UiLike from '@/components/ui/UiLike.vue'
 import UiRating from '@/components/ui/UiRating.vue'
 import UiTime from '@/components/ui/UiTime.vue'
 import UiPrice from '@/components/ui/UiPrice.vue'
+import UiCounter from '@/components/ui/UiCounter.vue'
 import { toggleRestoBlock } from '@/composable/useRestoBlock'
 import { ref } from 'vue'
 
 interface Props {
   slideData: Slide
   modifier?: 'resto'
+  counter?: boolean
 }
 
 defineProps<Props>()
 
 const isLiked = ref(false)
+const productCount = ref(0)
 </script>
 
 <style lang="scss" scoped>
@@ -115,9 +120,15 @@ const isLiked = ref(false)
 
   &__info {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
     gap: 8px;
     padding: 12px;
+  }
+
+  &__counter {
+    align-self: flex-start;
+    margin-top: 4px;
   }
 
   &__name {
