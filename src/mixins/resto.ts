@@ -1,10 +1,12 @@
-import type { Slide } from '@/mixins/interfaces'
+import type { Resto } from '@/mixins/interfaces'
 
-export const sliders: Array<Slide> = [
+export const sliders: Array<Resto> = [
   {
-    title: 'Швидко суші',
+    title: 'Сакура',
     image: '/images/resto/resto_1.webp',
     type: 'resto',
+    description:
+      'Автентичний японський ресторан з найсвіжішими суші та ролами. Традиційний інтерєр та атмосфера.',
     tags: [
       {
         title: 'Безкоштовна доставка',
@@ -13,11 +15,14 @@ export const sliders: Array<Slide> = [
     ],
     rating: 8,
     time: 25,
+    id: 1,
   },
   {
-    title: 'Піца Маргарита',
+    title: 'Наполетано',
     image: '/images/resto/resto_2.webp',
-    type: 'food',
+    type: 'resto',
+    description:
+      'Італійський ресторан з найкращою піцою в місті. Справжня дровяна піч та рецепти прямо з Неаполя.',
     tags: [
       {
         title: 'Популярне',
@@ -25,15 +30,19 @@ export const sliders: Array<Slide> = [
       },
     ],
     rating: 9,
+    time: 30,
     price: {
       base: 199,
       old: 249,
     },
+    id: 2,
   },
   {
-    title: 'Бургер класичний',
+    title: 'Бургер Хаус',
     image: '/images/resto/resto_3.webp',
-    type: 'food',
+    type: 'resto',
+    description:
+      'Американський ресторан з соковитими бургерами та стейками. Великі порції та домашня атмосфера.',
     tags: [
       {
         title: 'Хіт продажів',
@@ -41,23 +50,31 @@ export const sliders: Array<Slide> = [
       },
     ],
     rating: 7,
+    time: 20,
     price: {
       base: 159,
     },
+    id: 3,
   },
   {
-    title: 'Салат Цезар',
+    title: 'Зелений Сад',
     image: '/images/resto/resto_4.webp',
-    type: 'food',
+    type: 'resto',
+    description:
+      'Вегетаріанський ресторан зі свіжими салатами та здоровими стравами. Органічні продукти та еко-підхід.',
     rating: 3,
+    time: 15,
     price: {
       base: 129,
     },
+    id: 4,
   },
   {
-    title: 'Паста Карбонара',
+    title: 'Тратторія',
     image: '/images/resto/resto_5.webp',
-    type: 'food',
+    type: 'resto',
+    description:
+      'Сімейний італійський ресторан з домашньою пастою та соусами. Затишна атмосфера та привітний персонал.',
     tags: [
       {
         title: 'Нове',
@@ -65,14 +82,18 @@ export const sliders: Array<Slide> = [
       },
     ],
     rating: 8,
+    time: 35,
     price: {
       base: 179,
     },
+    id: 5,
   },
   {
-    title: 'Стейк Рібай',
+    title: 'Мясний Двір',
     image: '/images/resto/resto_6.webp',
-    type: 'food',
+    type: 'resto',
+    description:
+      'Преміум стейк-хаус з найкращими відбірними стейками. Професійні кухарі та вишукана винна карта.',
     tags: [
       {
         title: 'Преміум',
@@ -80,23 +101,31 @@ export const sliders: Array<Slide> = [
       },
     ],
     rating: 9,
+    time: 40,
     price: {
       base: 399,
     },
+    id: 6,
   },
   {
-    title: 'Суп грибний',
+    title: 'Домашня Кухня',
     image: '/images/resto/resto_7.webp',
-    type: 'food',
+    type: 'resto',
+    description:
+      'Ресторан української кухні з домашніми стравами. Борщ, вареники та інші традиційні страви.',
     rating: 6,
+    time: 25,
     price: {
       base: 99,
     },
+    id: 7,
   },
   {
-    title: 'Десерт Тірамісу',
+    title: 'Солодкий Рай',
     image: '/images/resto/resto_1.webp',
-    type: 'food',
+    type: 'resto',
+    description:
+      'Кондитерська з найкращими десертами та тістечками. Домашня випічка та авторські десерти.',
     tags: [
       {
         title: 'Солодощі',
@@ -104,14 +133,18 @@ export const sliders: Array<Slide> = [
       },
     ],
     rating: 9,
+    time: 15,
     price: {
       base: 129,
     },
+    id: 9,
   },
   {
-    title: 'Морепродукти гриль',
+    title: 'Морська Хвиля',
     image: '/images/resto/resto_2.webp',
-    type: 'food',
+    type: 'resto',
+    description:
+      'Ресторан морепродуктів з найсвіжішими дарами моря. Риба, креветки, мідії та інші морепродукти.',
     tags: [
       {
         title: 'Морепродукти',
@@ -119,15 +152,19 @@ export const sliders: Array<Slide> = [
       },
     ],
     rating: 8,
+    time: 35,
     price: {
       base: 299,
       old: 349,
     },
+    id: 10,
   },
   {
-    title: 'Вегетаріанська піца',
+    title: 'Зелений Куточок',
     image: '/images/resto/resto_3.webp',
-    type: 'food',
+    type: 'resto',
+    description:
+      'Вегетаріанський ресторан з великим вибором страв без мяса. Свіжі інгредієнти та креативні рецепти.',
     tags: [
       {
         title: 'Вегетаріанське',
@@ -135,300 +172,10 @@ export const sliders: Array<Slide> = [
       },
     ],
     rating: 7,
+    time: 30,
     price: {
       base: 189,
     },
-  },
-]
-
-export const popularRestaurants: Array<Slide> = [
-  {
-    title: 'Італійська кухня "Bella Italia"',
-    image: '/images/resto/resto_3.webp',
-    tags: [
-      {
-        title: 'Італійська кухня',
-        background: '#ff4a15',
-      },
-    ],
-  },
-  {
-    title: 'Сімейний ресторан "Затишок"',
-    image: '/images/resto/resto_1.webp',
-    tags: [
-      {
-        title: 'Сімейний',
-        background: '#ff4a15',
-      },
-    ],
-  },
-  {
-    title: 'Стейк-хаус "М\'ясо і вино"',
-    image: '/images/resto/resto_6.webp',
-    tags: [
-      {
-        title: 'Стейки',
-        background: '#ff4a15',
-      },
-    ],
-  },
-  {
-    title: 'Морський ресторан "Хвилі"',
-    image: '/images/resto/resto_2.webp',
-    tags: [
-      {
-        title: 'Морепродукти',
-        background: '#ff4a15',
-      },
-    ],
-  },
-  {
-    title: 'Азіатський фьюжн "Східні спеції"',
-    image: '/images/resto/resto_5.webp',
-    tags: [
-      {
-        title: 'Азіатська кухня',
-        background: '#ff4a15',
-      },
-    ],
-  },
-  {
-    title: 'Кав\'ярня-пекарня "Аромат"',
-    image: '/images/resto/resto_4.webp',
-    tags: [
-      {
-        title: 'Свіжа випічка',
-        background: '#ff4a15',
-      },
-    ],
-  },
-  {
-    title: 'Вегетаріанське кафе "Зелень"',
-    image: '/images/resto/resto_7.webp',
-    tags: [
-      {
-        title: 'Вегетаріанське',
-        background: '#ff4a15',
-      },
-    ],
-  },
-]
-
-export const newRestaurants: Array<Slide> = [
-  {
-    title: 'Бургер-бар "Соковитий"',
-    image: '/images/resto/resto_4.webp',
-    tags: [
-      {
-        title: 'Нове',
-        background: '#ff4a15',
-      },
-    ],
-  },
-  {
-    title: 'Піцерія "Неаполь"',
-    image: '/images/resto/resto_2.webp',
-    tags: [
-      {
-        title: 'Нове',
-        background: '#ff4a15',
-      },
-    ],
-  },
-  {
-    title: 'Суші-бар "Токіо"',
-    image: '/images/resto/resto_7.webp',
-    tags: [
-      {
-        title: 'Нове',
-        background: '#ff4a15',
-      },
-    ],
-  },
-  {
-    title: 'Грузинський ресторан "Сакартвело"',
-    image: '/images/resto/resto_6.webp',
-    tags: [
-      {
-        title: 'Нове',
-        background: '#ff4a15',
-      },
-    ],
-  },
-  {
-    title: 'Паб "Старий дуб"',
-    image: '/images/resto/resto_5.webp',
-    tags: [
-      {
-        title: 'Нове',
-        background: '#ff4a15',
-      },
-    ],
-  },
-  {
-    title: 'Французька пекарня "Круасан"',
-    image: '/images/resto/resto_1.webp',
-    tags: [
-      {
-        title: 'Нове',
-        background: '#ff4a15',
-      },
-    ],
-  },
-  {
-    title: 'Вінотека "Бордо"',
-    image: '/images/resto/resto_3.webp',
-    tags: [
-      {
-        title: 'Нове',
-        background: '#ff4a15',
-      },
-    ],
-  },
-]
-
-export const discountRestaurants: Array<Slide> = [
-  {
-    title: 'Ресторан "Смачно і точка"',
-    image: '/images/resto/resto_5.webp',
-    tags: [
-      {
-        title: 'Знижка 20%',
-        background: '#ff4a15',
-      },
-    ],
-  },
-  {
-    title: 'Тайський ресторан "Том Ям"',
-    image: '/images/resto/resto_7.webp',
-    tags: [
-      {
-        title: 'Знижка 15%',
-        background: '#ff4a15',
-      },
-    ],
-  },
-  {
-    title: 'Піцерія "Маргарита"',
-    image: '/images/resto/resto_3.webp',
-    tags: [
-      {
-        title: 'Знижка 25%',
-        background: '#ff4a15',
-      },
-    ],
-  },
-  {
-    title: 'Кафе "Сніданки 24/7"',
-    image: '/images/resto/resto_1.webp',
-    tags: [
-      {
-        title: 'Знижка 10%',
-        background: '#ff4a15',
-      },
-    ],
-  },
-  {
-    title: 'Стейк-хаус "Ранчо"',
-    image: '/images/resto/resto_6.webp',
-    tags: [
-      {
-        title: 'Знижка 30%',
-        background: '#ff4a15',
-      },
-    ],
-  },
-  {
-    title: 'Суші-бар "Сакура"',
-    image: '/images/resto/resto_2.webp',
-    tags: [
-      {
-        title: 'Знижка 15%',
-        background: '#ff4a15',
-      },
-    ],
-  },
-  {
-    title: 'Кав\'ярня "Еспресо"',
-    image: '/images/resto/resto_4.webp',
-    tags: [
-      {
-        title: 'Знижка 20%',
-        background: '#ff4a15',
-      },
-    ],
-  },
-]
-
-export const premiumRestaurants: Array<Slide> = [
-  {
-    title: 'Ресторан високої кухні "Гурман"',
-    image: '/images/resto/resto_6.webp',
-    tags: [
-      {
-        title: 'Преміум',
-        background: '#ff4a15',
-      },
-    ],
-  },
-  {
-    title: 'Винний ресторан "Бордо"',
-    image: '/images/resto/resto_3.webp',
-    tags: [
-      {
-        title: 'Преміум',
-        background: '#ff4a15',
-      },
-    ],
-  },
-  {
-    title: 'Японський ресторан "Кіото"',
-    image: '/images/resto/resto_7.webp',
-    tags: [
-      {
-        title: 'Преміум',
-        background: '#ff4a15',
-      },
-    ],
-  },
-  {
-    title: 'Панорамний ресторан "Висота"',
-    image: '/images/resto/resto_2.webp',
-    tags: [
-      {
-        title: 'Преміум',
-        background: '#ff4a15',
-      },
-    ],
-  },
-  {
-    title: 'Ресторан молекулярної кухні "Елемент"',
-    image: '/images/resto/resto_5.webp',
-    tags: [
-      {
-        title: 'Преміум',
-        background: '#ff4a15',
-      },
-    ],
-  },
-  {
-    title: 'Ресторан-сад "Едем"',
-    image: '/images/resto/resto_1.webp',
-    tags: [
-      {
-        title: 'Преміум',
-        background: '#ff4a15',
-      },
-    ],
-  },
-  {
-    title: 'Стейк-хаус "Прайм"',
-    image: '/images/resto/resto_4.webp',
-    tags: [
-      {
-        title: 'Преміум',
-        background: '#ff4a15',
-      },
-    ],
+    id: 11,
   },
 ]

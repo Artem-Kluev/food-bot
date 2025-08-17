@@ -28,11 +28,11 @@
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Navigation } from 'swiper/modules'
 import ProductCard from '@/components/widgets/ProductCard.vue'
-import type { Slide } from '@/mixins/interfaces'
+import type { Resto, Food } from '@/mixins/interfaces'
 import BaseSvg from '@/components/base/BaseSvg.vue'
 
 interface Props {
-  sliders: Array<Slide>
+  sliders: Array<Resto | Food>
   title: string
 }
 

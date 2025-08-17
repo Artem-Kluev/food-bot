@@ -4,26 +4,20 @@
 
     <CardsSlider :sliders="sliders" title="Безкоштовна доставка" />
 
-    <CardsSlider :sliders="popularRestaurants" title="Оплата при отриманні" />
+    <CardsSlider :sliders="sliders" title="Оплата при отриманні" />
 
-    <CardsSlider :sliders="newRestaurants" title="Суші" />
+    <CardsSlider :sliders="sliders" title="Суші" />
 
-    <CardsSlider :sliders="discountRestaurants" title="Піцца" />
+    <CardsSlider :sliders="sliders" title="Піцца" />
 
-    <CardsSlider :sliders="premiumRestaurants" title="Швидка доставка" />
+    <CardsSlider :sliders="sliders" title="Швидка доставка" />
   </div>
 </template>
 
 <script setup lang="ts">
 import CardsSlider from '@/components/widgets/CardsSlider.vue'
 import BannerSlider from '@/components/widgets/BannerSlider.vue'
-import {
-  sliders,
-  popularRestaurants,
-  newRestaurants,
-  discountRestaurants,
-  premiumRestaurants,
-} from '@/mixins/resto'
+import { sliders } from '@/mixins/resto'
 import { banners } from '@/mixins/banners'
 </script>
 

@@ -33,7 +33,7 @@ function updateValue() {
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/vars.scss';
+@use '@/assets/styles/vars.scss' as *;
 
 .toggle {
   position: relative;

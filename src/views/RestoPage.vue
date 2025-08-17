@@ -17,22 +17,20 @@
 
   <div v-if="activeTab === 0" class="resto-container">
     <ProductCard
-      v-for="restaurant in popularRestaurants"
+      v-for="restaurant in sliders"
       :key="restaurant.title"
-      :slide-data="{
-        title: restaurant.title,
-        image: restaurant.image,
-        rating: 4.3,
-        time: 25,
-        type: 'resto',
-        tags: restaurant.tags,
-      }"
+      :slide-data="restaurant"
       modifier="resto"
     />
   </div>
 
   <div v-else-if="activeTab === 1" class="menu-container">
-    <ProductCard v-for="item in sliders" :key="item.title" :slide-data="item" modifier="resto" />
+    <ProductCard
+      v-for="item in foodSliders"
+      :key="item.title"
+      :slide-data="item"
+      modifier="resto"
+    />
   </div>
 </template>
 
@@ -44,13 +42,8 @@ import UiTabs from '@/components/ui/UiTabs.vue'
 import { ref } from 'vue'
 import type { Category } from '@/mixins/interfaces'
 import ProductCard from '@/components/widgets/ProductCard.vue'
-import {
-  sliders,
-  popularRestaurants,
-  newRestaurants,
-  discountRestaurants,
-  premiumRestaurants,
-} from '@/mixins/resto'
+import { sliders } from '@/mixins/resto'
+import { foodSliders } from '@/mixins/food'
 
 const darkMode = ref(true)
 const activeTab = ref(0)

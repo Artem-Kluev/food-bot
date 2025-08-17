@@ -20,33 +20,25 @@
           <div class="resto-block__title">Resto name</div>
 
           <div class="resto-block__description">
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Omnis nulla error vitae enim
-            incidunt esse nostrum libero perspiciatis placeat maiores consequatur minima fugit
-            accusantium consectetur, in quidem temporibus. Dolore, at. Lorem ipsum dolor sit amet
-            consectetur adipisicing elit. Impedit autem, ullam aliquam vel laudantium labore sit
-            voluptates asperiores. Expedita placeat eveniet eaque voluptate eligendi voluptatum quam
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Omnis nulla error vitae enim incidunt esse nostrum libero perspiciatis
+            placeat maiores consequatur minima fugit accusantium consectetur, in quidem temporibus. Dolore, at. Lorem ipsum dolor sit amet
+            consectetur adipisicing elit. Impedit autem, ullam aliquam vel laudantium labore sit voluptates asperiores. Expedita placeat
+            eveniet eaque voluptate eligendi voluptatum quam
           </div>
 
           <ButtonSlider :buttons="payment" class="resto-block__filters" radio />
 
           <div class="resto-block__cards">
-            <ProductCard
-              v-for="item in sliders"
-              v-memo="[item.title]"
-              :key="item.title"
-              :slide-data="item"
-              modifier="resto"
-              counter
-            />
+            <ProductCard v-for="item in foodSliders" v-memo="[item.title]" :key="item.title" :slide-data="item" modifier="resto" counter />
           </div>
 
-          <div class="resto-block__button">
+          <div class="resto-block__button" @click="navigateToBasket">
             <div class="resto-block__button-text">Перейти в корзину</div>
 
             <hr class="resto-block__button-line" />
 
             <div class="resto-block__button-price">
-              <div class="resto-block__button-sum">546</div>
+              <div class="resto-block__button-sum">{{ totalPrice }}</div>
               грн
             </div>
           </div>
@@ -59,26 +51,37 @@
 <script setup lang="ts">
 import { isRestoBlockVisable, toggleRestoBlock } from '@/composable/useRestoBlock'
 import { useScrollLock } from '@/composable/useScrollLock'
-import { watch, ref } from 'vue'
+import { watch, ref, computed } from 'vue'
 import ButtonSlider from '@/components/widgets/ButtonSlider.vue'
+import { useBasket } from '@/composable/useBasket'
+import { useRouter } from 'vue-router'
 
 import BaseSvg from '@/components/base/BaseSvg.vue'
 import UiStarRating from '@/components/ui/UiStarRating.vue'
 import UiLike from '@/components/ui/UiLike.vue'
 import ProductCard from '@/components/widgets/ProductCard.vue'
-import {
-  sliders,
-  popularRestaurants,
-  newRestaurants,
-  discountRestaurants,
-  premiumRestaurants,
-} from '@/mixins/resto'
+import { foodSliders } from '@/mixins/food'
 
 const { lockScroll, unlockScroll } = useScrollLock()
+const router = useRouter()
+
+function navigateToBasket() {
+  router.push('/basket')
+  toggleRestoBlock(false)
+}
 
 const isLiked = ref(false)
 
 const rating = ref(4.5)
+
+const { getTotalPrice, getAllProduct, on } = useBasket()
+const totalPrice = computed(() => getTotalPrice())
+
+const basketProducts = ref(0)
+
+on(() => {
+  basketProducts.value = getTotalPrice()
+})
 
 const payment = ref<Array<any>>([
   {
