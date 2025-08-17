@@ -40,7 +40,16 @@
             />
           </div>
 
-          <div class="resto-block__button">Перейти в корзину</div>
+          <div class="resto-block__button">
+            <div class="resto-block__button-text">Перейти в корзину</div>
+
+            <hr class="resto-block__button-line" />
+
+            <div class="resto-block__button-price">
+              <div class="resto-block__button-sum">546</div>
+              грн
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -118,6 +127,10 @@ watch(isRestoBlockVisable, (newValue) => {
   &__main {
     overflow: auto;
     height: 100%;
+    -webkit-overflow-scrolling: touch;
+    will-change: scroll-position;
+    transform: translateZ(0);
+    perspective: 1000px;
   }
 
   &__wrapper {
@@ -194,20 +207,47 @@ watch(isRestoBlockVisable, (newValue) => {
   &__cards {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 10px;
     padding: 0 10px;
     transform: translateZ(0);
   }
 
   &__button {
-    width: 100%;
-    height: 40px;
-    border-radius: 20px;
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    height: 50px;
+    border-radius: 30px;
     background-color: $main-color;
     color: $white;
-    font-weight: 500;
     cursor: pointer;
-    padding: 0 5px;
+    user-select: none;
+    text-align: center;
+    line-height: 50px;
+    margin: 0 40px;
+    padding: 0 25px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.16);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: transform 0.2s;
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    &-line {
+      height: 30px;
+      width: 1px;
+      border-radius: 2px;
+      background-color: $background;
+    }
+
+    &-price {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
   }
 }
 

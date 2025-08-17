@@ -121,5 +121,9 @@ function decrease() {
     text-align: center;
     font-weight: 500;
   }
+
+  &_active {
+    background-color: $text;
+  }
 }
 </style>
