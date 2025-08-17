@@ -127,10 +127,6 @@ watch(isRestoBlockVisable, (newValue) => {
   &__main {
     overflow: auto;
     height: 100%;
-    -webkit-overflow-scrolling: touch;
-    will-change: scroll-position;
-    transform: translateZ(0);
-    perspective: 1000px;
   }
 
   &__wrapper {
@@ -208,7 +204,6 @@ watch(isRestoBlockVisable, (newValue) => {
     display: grid;
     grid-template-columns: 1fr;
     padding: 0 10px;
-    transform: translateZ(0);
     contain: content;
     will-change: transform;
     transform: translateZ(0);
