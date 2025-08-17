@@ -209,6 +209,9 @@ watch(isRestoBlockVisable, (newValue) => {
     grid-template-columns: 1fr;
     padding: 0 10px;
     transform: translateZ(0);
+    contain: content;
+    will-change: transform;
+    transform: translateZ(0);
   }
 
   &__button {
