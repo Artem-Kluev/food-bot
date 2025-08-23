@@ -12,7 +12,7 @@
       <UiPrice v-if="slideData.type === 'food' && slideData.price" :price="slideData.price" class="product__price" />
     </div>
     <div class="product__info">
-      <h3 class="product__name">{{ slideData.title }}</h3>
+      <h3 class="product__name">{{ slideData.title }} {{ slideData.type === 'food' ? slideData.restoId : '' }}</h3>
 
       <UiCounter
         v-if="counter && slideData.type === 'food'"
@@ -23,7 +23,7 @@
       />
     </div>
   </div>
-  
+
   <UiConfirmModal
     ref="confirmModal"
     text="Товар з іншого ресторану. Додавання цього товару очистить вашу корзину. Продовжити?"
@@ -43,7 +43,7 @@ import UiCounter from '@/components/ui/UiCounter.vue'
 import { setRestoBlockData } from '@/composable/useRestoBlock'
 import { setFoodBlockData } from '@/composable/useFoodBlock'
 import { useBasket } from '@/composable/useBasket'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import UiConfirmModal from '@/components/ui/UiConfirmModal.vue'
 
@@ -62,7 +62,24 @@ const confirmModal = ref()
 const pendingProduct = ref<{ id: number; title: string; image: string; price: number; restoId: number } | null>(null)
 const pendingCount = ref(0)
 
-const { getProduct, add, remove } = useBasket()
+const { getProduct, add, remove, on } = useBasket()
+
+// Зберігаємо функцію відписки, щоб викликати її при розмонтуванні
+const unsubscribe = on(() => {
+  if (props.counter && props.slideData.type === 'food') {
+    const basketProduct = getProduct(props.slideData.id)
+
+    if (basketProduct) productCount.value = basketProduct.count
+    else {
+      productCount.value = 0
+    }
+  }
+})
+
+// Відписуємося від слухача при розмонтуванні компонента
+onUnmounted(() => {
+  unsubscribe()
+})
 
 function handleProductClick() {
   if (props.slideData.type === 'resto') {
@@ -89,8 +106,9 @@ function updateBasket(newCount: number) {
 
   if (newCount > 0) {
     const { restoId: basketRestoId, getAllProduct, clear } = useBasket()
-    
-    // Перевіряємо, чи є товари в корзині з іншого ресторану
+
+    console.log(basketRestoId.value, props.slideData.restoId)
+
     if (basketRestoId.value !== null && basketRestoId.value !== props.slideData.restoId && getAllProduct().length > 0) {
       // Зберігаємо дані про товар, який хочемо додати
       pendingProduct.value = {
@@ -101,12 +119,12 @@ function updateBasket(newCount: number) {
         restoId: props.slideData.restoId,
       }
       pendingCount.value = newCount
-      
+
       // Показуємо модальне вікно підтвердження
       confirmModal.value.openModal()
       return
     }
-    
+
     // Якщо корзина порожня або товари з того ж ресторану, додаємо товар
     add(
       {
@@ -127,13 +145,13 @@ function handleConfirm(value: boolean) {
   if (value && pendingProduct.value) {
     // Користувач підтвердив додавання товару з іншого ресторану
     const { clear } = useBasket()
-    
+
     // Очищаємо корзину
     clear()
-    
+
     // Додаємо новий товар
     add(pendingProduct.value, pendingCount.value)
-    
+
     // Скидаємо тимчасові дані
     pendingProduct.value = null
     pendingCount.value = 0
@@ -218,13 +236,14 @@ function handleConfirm(value: boolean) {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 8px;
+    gap: 15px;
     padding: 12px;
   }
 
   &__counter {
     align-self: flex-start;
     margin-top: 4px;
+    flex-shrink: 0;
   }
 
   &__name {

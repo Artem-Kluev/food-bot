@@ -6,16 +6,10 @@
           <div class="ui-confirm-modal__title" v-if="title">{{ title }}</div>
           <div class="ui-confirm-modal__text">{{ text }}</div>
           <div class="ui-confirm-modal__buttons">
-            <button 
-              class="ui-confirm-modal__button ui-confirm-modal__button_cancel" 
-              @click="handleButtonClick(false)"
-            >
+            <button class="ui-confirm-modal__button ui-confirm-modal__button_cancel" @click="handleButtonClick(false)">
               {{ cancelText }}
             </button>
-            <button 
-              class="ui-confirm-modal__button ui-confirm-modal__button_confirm" 
-              @click="handleButtonClick(true)"
-            >
+            <button class="ui-confirm-modal__button ui-confirm-modal__button_confirm" @click="handleButtonClick(true)">
               {{ confirmText }}
             </button>
           </div>
@@ -80,7 +74,7 @@ function handleButtonClick(value: boolean) {
 
 defineExpose({
   openModal,
-  closeModal
+  closeModal,
 })
 </script>
 
@@ -100,7 +94,7 @@ defineExpose({
   justify-content: center;
   overflow-y: auto;
   padding: 20px 0;
-  
+
   &__content {
     background-color: $background;
     border-radius: 20px;
@@ -109,7 +103,7 @@ defineExpose({
     max-width: 320px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
-  
+
   &__title {
     font-size: 20px;
     font-weight: 600;
@@ -117,20 +111,20 @@ defineExpose({
     text-align: center;
     color: $main-color;
   }
-  
+
   &__text {
     font-size: 18px;
     margin-bottom: 20px;
     text-align: center;
     color: $text;
   }
-  
+
   &__buttons {
     display: flex;
     justify-content: space-between;
     gap: 10px;
   }
-  
+
   &__button {
     flex: 1;
     padding: 12px;
@@ -140,16 +134,16 @@ defineExpose({
     font-weight: 500;
     cursor: pointer;
     transition: transform 0.2s;
-    
+
     &:active {
       transform: scale(0.95);
     }
-    
+
     &_cancel {
       background-color: $beige;
       color: $text;
     }
-    
+
     &_confirm {
       background-color: $main-color;
       color: $white;

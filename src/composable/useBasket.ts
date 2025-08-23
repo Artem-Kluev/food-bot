@@ -123,6 +123,8 @@ function basket(): BasketReturn {
       products.value.splice(index, 1)
       saveToStorage()
     }
+
+    if (products.value.length === 0) restoId.value = null
   }
 
   // Отримання продукту за id

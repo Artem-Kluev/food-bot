@@ -74,7 +74,7 @@
 <script setup lang="ts">
 import { isFoodBlockVisable, closeFoodBlock, currentFood, isLiked, rating, currentResto } from '@/composable/useFoodBlock'
 import { useScrollLock } from '@/composable/useScrollLock'
-import { watch, ref, computed } from 'vue'
+import { watch, ref, computed, onUnmounted } from 'vue'
 import UiCounter from '@/components/ui/UiCounter.vue'
 import UiPrice from '@/components/ui/UiPrice.vue'
 import { useBasket } from '@/composable/useBasket'
@@ -109,8 +109,14 @@ const totalPrice = computed(() => getTotalPrice())
 
 const basketProducts = ref(0)
 
-on(() => {
+// Зберігаємо функцію відписки, щоб викликати її при розмонтуванні
+const unsubscribe = on(() => {
   basketProducts.value = getTotalPrice()
+})
+
+// Відписуємося від слухача при розмонтуванні компонента
+onUnmounted(() => {
+  unsubscribe()
 })
 
 function updateBasket(newCount: number) {
@@ -120,7 +126,7 @@ function updateBasket(newCount: number) {
 
   if (newCount > 0) {
     const { restoId: basketRestoId, getAllProduct, clear } = useBasket()
-    
+
     // Перевіряємо, чи є товари в корзині з іншого ресторану
     if (basketRestoId.value !== null && basketRestoId.value !== currentFood.value.restoId && getAllProduct().length > 0) {
       // Зберігаємо дані про товар, який хочемо додати
@@ -132,12 +138,12 @@ function updateBasket(newCount: number) {
         restoId: currentFood.value.restoId,
       }
       pendingCount.value = newCount
-      
+
       // Показуємо модальне вікно підтвердження
       confirmModal.value.openModal()
       return
     }
-    
+
     // Якщо корзина порожня або товари з того ж ресторану, додаємо товар
     add(
       {
@@ -184,13 +190,13 @@ function handleConfirm(value: boolean) {
   if (value && pendingProduct.value) {
     // Користувач підтвердив додавання товару з іншого ресторану
     const { clear } = useBasket()
-    
+
     // Очищаємо корзину
     clear()
-    
+
     // Додаємо новий товар
     add(pendingProduct.value, pendingCount.value)
-    
+
     // Скидаємо тимчасові дані
     pendingProduct.value = null
     pendingCount.value = 0

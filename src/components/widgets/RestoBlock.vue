@@ -26,7 +26,7 @@
           <ButtonSlider :buttons="payment" class="resto-block__filters" radio />
 
           <div class="resto-block__cards">
-            <ProductCard v-for="item in foodSliders" v-memo="[item.title]" :key="item.title" :slide-data="item" modifier="resto" counter />
+            <ProductCard v-for="item in foodSliders" :key="item.title" :slide-data="item" modifier="resto" counter />
           </div>
 
           <Transition name="fade-scale">
@@ -58,7 +58,7 @@
 <script setup lang="ts">
 import { isRestoBlockVisable, toggleRestoBlock, closeRestoBlock, currentResto, isLiked, rating } from '@/composable/useRestoBlock'
 import { useScrollLock } from '@/composable/useScrollLock'
-import { watch, ref, computed } from 'vue'
+import { watch, ref, computed, onUnmounted } from 'vue'
 import ButtonSlider from '@/components/widgets/ButtonSlider.vue'
 import { useBasket } from '@/composable/useBasket'
 import { useRouter } from 'vue-router'
@@ -90,13 +90,13 @@ function handleConfirm(value: boolean) {
   if (value && pendingProduct.value) {
     // Користувач підтвердив додавання товару з іншого ресторану
     const { clear } = useBasket()
-    
+
     // Очищаємо корзину
     clear()
-    
+
     // Додаємо новий товар
     add(pendingProduct.value, pendingCount.value)
-    
+
     // Скидаємо тимчасові дані
     pendingProduct.value = null
     pendingCount.value = 0
@@ -110,8 +110,14 @@ const totalPrice = computed(() => getTotalPrice())
 
 const basketProducts = ref(0)
 
-on(() => {
+// Зберігаємо функцію відписки, щоб викликати її при розмонтуванні
+const unsubscribe = on(() => {
   basketProducts.value = getTotalPrice()
+})
+
+// Відписуємося від слухача при розмонтуванні компонента
+onUnmounted(() => {
+  unsubscribe()
 })
 
 const payment = ref<Array<any>>([
@@ -166,6 +172,7 @@ watch(isRestoBlockVisable, (newValue) => {
   &__wrapper {
     background-color: $background;
     margin-top: 80px;
+    padding-bottom: 70px;
     border-radius: 30px 30px 0 0;
     transition: transform 0.3s ease;
     overflow: hidden;

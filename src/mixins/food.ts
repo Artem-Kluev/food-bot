@@ -36,7 +36,7 @@ export const foodSliders: Array<Food> = [
       old: 249,
     },
     id: 2,
-    restoId: 102,
+    restoId: 101,
   },
   {
     title: 'Бургер класичний',
@@ -54,7 +54,7 @@ export const foodSliders: Array<Food> = [
       base: 159,
     },
     id: 3,
-    restoId: 103,
+    restoId: 101,
   },
   {
     title: 'Салат Цезар',
