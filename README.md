@@ -18,7 +18,6 @@ toggleBottomBar(true)
 toggleBottomBar()
 
 // Отримати поточний стан видимості (реактивна змінна)
-console.log(isBottomBarVisible.value) // true або false
 ```
 
 ## Recommended IDE Setup

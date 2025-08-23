@@ -5,6 +5,7 @@ export const foodSliders: Array<Food> = [
     title: 'Швидко суші',
     image: '/images/eats/eat_1.webp',
     type: 'food',
+    description: 'Свіжі суші з лососем, тунцем та авокадо. Подаються з соєвим соусом та імбирем.',
     tags: [
       {
         title: 'Безкоштовна доставка',
@@ -22,6 +23,7 @@ export const foodSliders: Array<Food> = [
     title: 'Піца Маргарита',
     image: '/images/eats/eat_2.webp',
     type: 'food',
+    description: 'Класична італійська піца з томатним соусом, моцарелою та свіжим базиліком.',
     tags: [
       {
         title: 'Популярне',
@@ -40,6 +42,7 @@ export const foodSliders: Array<Food> = [
     title: 'Бургер класичний',
     image: '/images/eats/eat_3.webp',
     type: 'food',
+    description: 'Соковитий бургер з яловичою котлетою, сиром чеддер, свіжими овочами та фірмовим соусом.',
     tags: [
       {
         title: 'Хіт продажів',
@@ -57,6 +60,7 @@ export const foodSliders: Array<Food> = [
     title: 'Салат Цезар',
     image: '/images/eats/eat_4.webp',
     type: 'food',
+    description: 'Свіжий салат з куркою гриль, хрусткими грінками, пармезаном та фірмовим соусом Цезар.',
     rating: 3,
     price: {
       base: 129,
@@ -68,6 +72,7 @@ export const foodSliders: Array<Food> = [
     title: 'Паста Карбонара',
     image: '/images/eats/eat_5.webp',
     type: 'food',
+    description: 'Ніжна паста з беконом, вершковим соусом, яйцем та тертим пармезаном.',
     tags: [
       {
         title: 'Нове',
@@ -85,6 +90,7 @@ export const foodSliders: Array<Food> = [
     title: 'Стейк Рібай',
     image: '/images/eats/eat_6.webp',
     type: 'food',
+    description: 'Соковитий стейк з мармурової яловичини, приготований на грилі з ароматними травами.',
     tags: [
       {
         title: 'Преміум',
@@ -102,6 +108,7 @@ export const foodSliders: Array<Food> = [
     title: 'Суп грибний',
     image: '/images/eats/eat_7.webp',
     type: 'food',
+    description: 'Ароматний крем-суп з лісових грибів з додаванням вершків та трюфельної олії.',
     rating: 6,
     price: {
       base: 99,
@@ -113,6 +120,7 @@ export const foodSliders: Array<Food> = [
     title: 'Десерт Тірамісу',
     image: '/images/eats/eat_1.webp',
     type: 'food',
+    description: 'Класичний італійський десерт з маскарпоне, кави та какао.',
     tags: [
       {
         title: 'Солодощі',
@@ -130,6 +138,7 @@ export const foodSliders: Array<Food> = [
     title: 'Морепродукти гриль',
     image: '/images/eats/eat_2.webp',
     type: 'food',
+    description: 'Асорті з морепродуктів: креветки, кальмари, мідії та восьминіг, приготовані на грилі.',
     tags: [
       {
         title: 'Морепродукти',
@@ -148,6 +157,7 @@ export const foodSliders: Array<Food> = [
     title: 'Вегетаріанська піца',
     image: '/images/eats/eat_3.webp',
     type: 'food',
+    description: 'Піца з томатним соусом, моцарелою, свіжими овочами, грибами та оливками.',
     tags: [
       {
         title: 'Вегетаріанське',

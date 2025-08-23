@@ -1,20 +1,12 @@
 <template>
-  <div class="ui-counter" :class="{ 'ui-counter_active': isActive }">
+  <div class="ui-counter" :class="{ 'ui-counter_active': isActive, 'ui-counter_big': modifier === 'big' }">
     <button v-if="!isActive" class="ui-counter__button" @click="activate">В корзину</button>
     <template v-else>
-      <button
-        class="ui-counter__control ui-counter__minus"
-        @click="decrease"
-        :disabled="modelValue <= 0"
-      >
+      <button class="ui-counter__control ui-counter__minus" @click="decrease" :disabled="modelValue <= 0">
         <span class="ui-counter__icon">-</span>
       </button>
       <span class="ui-counter__value">{{ modelValue }}</span>
-      <button
-        class="ui-counter__control ui-counter__plus"
-        @click="increase"
-        :disabled="modelValue >= 100"
-      >
+      <button class="ui-counter__control ui-counter__plus" @click="increase" :disabled="modelValue >= 100">
         <span class="ui-counter__icon">+</span>
       </button>
     </template>
@@ -26,10 +18,12 @@ import { computed, ref, watch } from 'vue'
 
 interface Props {
   modelValue: number
+  modifier?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: 0,
+  modifier: '',
 })
 
 const emit = defineEmits<{
@@ -124,6 +118,10 @@ function decrease() {
 
   &_active {
     background-color: $text;
+  }
+
+  &_big {
+    width: 100%;
   }
 }
 </style>

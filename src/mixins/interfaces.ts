@@ -20,6 +20,7 @@ export interface Food {
   title: string
   image: string
   type: 'food'
+  description?: string
   price?: {
     base: number
     old?: number

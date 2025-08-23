@@ -1,14 +1,14 @@
 <template>
   <Transition name="fade-slide">
     <div v-if="isRestoBlockVisable" class="resto-block">
-      <div class="resto-block__main" @click.self="toggleRestoBlock(false)">
+      <div class="resto-block__main" @click.self="closeRestoBlock">
         <div class="resto-block__wrapper">
           <div class="resto-block__image">
-            <div class="resto-block__back" @click="toggleRestoBlock(false)">
+            <div class="resto-block__back" @click="closeRestoBlock">
               <BaseSvg class="resto-block__back-icon" id="arrow-logo" />
             </div>
 
-            <img class="resto-block__img" src="/images/resto/resto_2.webp" />
+            <img v-if="currentResto" class="resto-block__img" :src="currentResto.image" />
           </div>
 
           <div class="resto-block__top">
@@ -17,13 +17,10 @@
             <UiLike v-model="isLiked" modifier="resto" />
           </div>
 
-          <div class="resto-block__title">Resto name</div>
+          <div v-if="currentResto" class="resto-block__title">{{ currentResto.title }}</div>
 
-          <div class="resto-block__description">
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Omnis nulla error vitae enim incidunt esse nostrum libero perspiciatis
-            placeat maiores consequatur minima fugit accusantium consectetur, in quidem temporibus. Dolore, at. Lorem ipsum dolor sit amet
-            consectetur adipisicing elit. Impedit autem, ullam aliquam vel laudantium labore sit voluptates asperiores. Expedita placeat
-            eveniet eaque voluptate eligendi voluptatum quam
+          <div v-if="currentResto" class="resto-block__description">
+            {{ currentResto.description }}
           </div>
 
           <ButtonSlider :buttons="payment" class="resto-block__filters" radio />
@@ -32,24 +29,34 @@
             <ProductCard v-for="item in foodSliders" v-memo="[item.title]" :key="item.title" :slide-data="item" modifier="resto" counter />
           </div>
 
-          <div class="resto-block__button" @click="navigateToBasket">
-            <div class="resto-block__button-text">Перейти в корзину</div>
+          <Transition name="fade-scale">
+            <div v-if="totalPrice > 0" class="resto-block__button" @click="navigateToBasket">
+              <div class="resto-block__button-text">Перейти в корзину</div>
 
-            <hr class="resto-block__button-line" />
+              <hr class="resto-block__button-line" />
 
-            <div class="resto-block__button-price">
-              <div class="resto-block__button-sum">{{ totalPrice }}</div>
-              грн
+              <div class="resto-block__button-price">
+                <div class="resto-block__button-sum">{{ totalPrice }}</div>
+                грн
+              </div>
             </div>
-          </div>
+          </Transition>
         </div>
       </div>
     </div>
   </Transition>
+
+  <UiConfirmModal
+    ref="confirmModal"
+    text="Товар з іншого ресторану. Додавання цього товару очистить вашу корзину. Продовжити?"
+    confirm-text="Так"
+    cancel-text="Ні"
+    @confirm="handleConfirm"
+  />
 </template>
 
 <script setup lang="ts">
-import { isRestoBlockVisable, toggleRestoBlock } from '@/composable/useRestoBlock'
+import { isRestoBlockVisable, toggleRestoBlock, closeRestoBlock, currentResto, isLiked, rating } from '@/composable/useRestoBlock'
 import { useScrollLock } from '@/composable/useScrollLock'
 import { watch, ref, computed } from 'vue'
 import ButtonSlider from '@/components/widgets/ButtonSlider.vue'
@@ -60,21 +67,45 @@ import BaseSvg from '@/components/base/BaseSvg.vue'
 import UiStarRating from '@/components/ui/UiStarRating.vue'
 import UiLike from '@/components/ui/UiLike.vue'
 import ProductCard from '@/components/widgets/ProductCard.vue'
+import UiConfirmModal from '@/components/ui/UiConfirmModal.vue'
 import { foodSliders } from '@/mixins/food'
 
 const { lockScroll, unlockScroll } = useScrollLock()
 const router = useRouter()
+const confirmModal = ref()
 
 function navigateToBasket() {
   router.push('/basket')
-  toggleRestoBlock(false)
+  closeRestoBlock()
 }
 
-const isLiked = ref(false)
+function openConfirmModal() {
+  confirmModal.value.openModal()
+}
 
-const rating = ref(4.5)
+const pendingProduct = ref<{ id: number; title: string; image: string; price: number; restoId: number } | null>(null)
+const pendingCount = ref(0)
 
-const { getTotalPrice, getAllProduct, on } = useBasket()
+function handleConfirm(value: boolean) {
+  if (value && pendingProduct.value) {
+    // Користувач підтвердив додавання товару з іншого ресторану
+    const { clear } = useBasket()
+    
+    // Очищаємо корзину
+    clear()
+    
+    // Додаємо новий товар
+    add(pendingProduct.value, pendingCount.value)
+    
+    // Скидаємо тимчасові дані
+    pendingProduct.value = null
+    pendingCount.value = 0
+  }
+}
+
+// Використовуємо isLiked та rating з useRestoBlock
+
+const { getTotalPrice, getAllProduct, on, add, clear } = useBasket()
 const totalPrice = computed(() => getTotalPrice())
 
 const basketProducts = ref(0)
@@ -192,6 +223,8 @@ watch(isRestoBlockVisable, (newValue) => {
     font-size: 24px;
     font-weight: 500;
     padding: 10px;
+    cursor: pointer;
+    transition: color 0.2s;
   }
 
   &__description {
@@ -214,6 +247,7 @@ watch(isRestoBlockVisable, (newValue) => {
 
   &__button {
     position: fixed;
+    z-index: 2;
     bottom: 20px;
     left: 0;
     right: 0;
@@ -266,5 +300,16 @@ watch(isRestoBlockVisable, (newValue) => {
 .fade-slide-enter-from {
   transform: translateY(100%);
   background-color: unset;
+}
+
+.fade-scale-enter-active,
+.fade-scale-leave-active {
+  transition: all 0.3s ease;
+}
+
+.fade-scale-enter-from,
+.fade-scale-leave-to {
+  opacity: 0;
+  transform: scale(0.9);
 }
 </style>

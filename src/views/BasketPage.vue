@@ -32,9 +32,7 @@ function clearBasket() {
             <div class="basket-product__price">{{ product.price }} ₴</div>
             <div class="basket-product__count">Кількість: {{ product.count }}</div>
           </div>
-          <button class="basket-product__remove" @click="removeProduct(product.id)">
-            Видалити
-          </button>
+          <button class="basket-product__remove" @click="removeProduct(product.id)">Видалити</button>
         </div>
       </div>
 
@@ -58,7 +56,7 @@ function clearBasket() {
 @use '@/assets/styles/vars.scss' as *;
 
 .basket-page {
-  padding: 20px;
+  padding: 10px;
 
   &__title {
     font-size: 24px;

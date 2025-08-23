@@ -24,7 +24,6 @@ async function updateImagePaths() {
     
     // Write the updated content back to the file
     await writeFile(restoFilePath, updatedContent, 'utf8');
-    console.log('Successfully updated image paths in resto.ts');
   } catch (err) {
     console.error('Error:', err);
   }

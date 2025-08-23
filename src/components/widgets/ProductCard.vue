@@ -14,9 +14,23 @@
     <div class="product__info">
       <h3 class="product__name">{{ slideData.title }}</h3>
 
-      <UiCounter v-if="counter" v-model="productCount" class="product__counter" @click.stop />
+      <UiCounter
+        v-if="counter && slideData.type === 'food'"
+        v-model="productCount"
+        class="product__counter"
+        @update:modelValue="updateBasket"
+        @click.stop
+      />
     </div>
   </div>
+  
+  <UiConfirmModal
+    ref="confirmModal"
+    text="Товар з іншого ресторану. Додавання цього товару очистить вашу корзину. Продовжити?"
+    confirm-text="Так"
+    cancel-text="Ні"
+    @confirm="handleConfirm"
+  />
 </template>
 
 <script setup lang="ts">
@@ -26,10 +40,12 @@ import UiRating from '@/components/ui/UiRating.vue'
 import UiTime from '@/components/ui/UiTime.vue'
 import UiPrice from '@/components/ui/UiPrice.vue'
 import UiCounter from '@/components/ui/UiCounter.vue'
-import { toggleRestoBlock } from '@/composable/useRestoBlock'
+import { setRestoBlockData } from '@/composable/useRestoBlock'
+import { setFoodBlockData } from '@/composable/useFoodBlock'
 import { useBasket } from '@/composable/useBasket'
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import UiConfirmModal from '@/components/ui/UiConfirmModal.vue'
 
 interface Props {
   slideData: Resto | Food
@@ -42,58 +58,62 @@ const props = defineProps<Props>()
 const isLiked = ref(false)
 const productCount = ref(0)
 const router = useRouter()
+const confirmModal = ref()
+const pendingProduct = ref<{ id: number; title: string; image: string; price: number; restoId: number } | null>(null)
+const pendingCount = ref(0)
 
 const { getProduct, add, remove } = useBasket()
 
 function handleProductClick() {
   if (props.slideData.type === 'resto') {
-    toggleRestoBlock(true)
+    setRestoBlockData({
+      resto: props.slideData as Resto,
+    })
   } else if (props.slideData.type === 'food') {
-    // Якщо це продукт і він вже в кошику, перейти до кошика
-    // Інакше додати його в кошик
-    if (productCount.value > 0) {
-      router.push('/basket')
-    } else {
-      productCount.value = 1 // Це автоматично додасть продукт у кошик через watch
-    }
+    setFoodBlockData({
+      food: props.slideData as Food,
+    })
   }
 }
 
 onMounted(() => {
   if (props.counter && props.slideData.type === 'food') {
-    console.log('Ініціалізація лічильника для продукту:', props.slideData.title)
     const basketProduct = getProduct(props.slideData.id)
 
-    if (basketProduct) {
-      console.log('Знайдено продукт в кошику, кількість:', basketProduct.count)
-      productCount.value = basketProduct.count
-    }
+    if (basketProduct) productCount.value = basketProduct.count
   }
 })
 
-watch(productCount, (newCount) => {
-  console.log('Зміна кількості продукту:', props.slideData.title, 'нова кількість:', newCount)
-
-  if (!props.counter || props.slideData.type !== 'food') return
+function updateBasket(newCount: number) {
+  if (props.slideData.type !== 'food' || !props.counter || !props.slideData.price?.base || !props.slideData.restoId) return
 
   if (newCount > 0) {
-    // Перевіряємо наявність необхідних полів
-    if (!props.slideData.price?.base) {
-      console.warn('Відсутня ціна для продукту:', props.slideData.title)
+    const { restoId: basketRestoId, getAllProduct, clear } = useBasket()
+    
+    // Перевіряємо, чи є товари в корзині з іншого ресторану
+    if (basketRestoId.value !== null && basketRestoId.value !== props.slideData.restoId && getAllProduct().length > 0) {
+      // Зберігаємо дані про товар, який хочемо додати
+      pendingProduct.value = {
+        id: props.slideData.id,
+        title: props.slideData.title,
+        image: props.slideData.image,
+        price: props.slideData.price.base,
+        restoId: props.slideData.restoId,
+      }
+      pendingCount.value = newCount
+      
+      // Показуємо модальне вікно підтвердження
+      confirmModal.value.openModal()
       return
     }
     
-    if (!props.slideData.restoId) {
-      console.warn('Відсутній restoId для продукту:', props.slideData.title)
-      return
-    }
-    
+    // Якщо корзина порожня або товари з того ж ресторану, додаємо товар
     add(
       {
         id: props.slideData.id,
         title: props.slideData.title,
         image: props.slideData.image,
-        price: props.slideData.price.base, // Використовуємо price.base без fallback
+        price: props.slideData.price.base,
         restoId: props.slideData.restoId,
       },
       newCount,
@@ -101,7 +121,32 @@ watch(productCount, (newCount) => {
   } else {
     remove(props.slideData.id)
   }
-})
+}
+
+function handleConfirm(value: boolean) {
+  if (value && pendingProduct.value) {
+    // Користувач підтвердив додавання товару з іншого ресторану
+    const { clear } = useBasket()
+    
+    // Очищаємо корзину
+    clear()
+    
+    // Додаємо новий товар
+    add(pendingProduct.value, pendingCount.value)
+    
+    // Скидаємо тимчасові дані
+    pendingProduct.value = null
+    pendingCount.value = 0
+  } else {
+    // Користувач скасував додавання, повертаємо лічильник до попереднього значення
+    const basketProduct = getProduct(props.slideData.id)
+    if (basketProduct) {
+      productCount.value = basketProduct.count
+    } else {
+      productCount.value = 0
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

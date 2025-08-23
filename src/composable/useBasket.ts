@@ -31,32 +31,26 @@ export function useBasket(): BasketReturn {
 }
 
 function basket(): BasketReturn {
-  console.log('Створення кошика...')
   const STORAGE_KEY = 'telegram-food-basket'
   const products = ref<BasketProduct[]>([])
   const restoId = ref<number | null>(null)
   const callbacks: BasketChangeCallback[] = []
 
-  // Ініціалізація даних з localStorage
   function init() {
-    console.log('Ініціалізація кошика...')
     const storedData = localStorage.getItem(STORAGE_KEY)
     if (storedData) {
       try {
         products.value = JSON.parse(storedData)
-        console.log('Завантажено продуктів з localStorage:', products.value.length)
 
         // Встановлюємо restoId з першого продукту, якщо він є
         if (products.value.length > 0 && products.value[0].restoId) {
           restoId.value = products.value[0].restoId
-          console.log('Встановлено restoId:', restoId.value)
         }
       } catch (error) {
         console.error('Помилка при завантаженні кошика:', error)
         products.value = []
       }
     } else {
-      console.log('Кошик порожній')
     }
   }
 
@@ -134,9 +128,7 @@ function basket(): BasketReturn {
   // Отримання продукту за id
   function getProduct(productId: number) {
     const product = products.value.find((p) => p.id === productId) || null
-    if (!product) {
-      console.log(`Продукт з id=${productId} не знайдено в кошику`)
-    }
+
     return product
   }
 

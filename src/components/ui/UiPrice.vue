@@ -4,17 +4,16 @@ interface Props {
     base: number
     old?: number
   }
+  modifier?: 'big'
 }
 
 defineProps<Props>()
 </script>
 
 <template>
-  <div class="ui-price">
+  <div class="ui-price" :class="{ 'ui-price_big': modifier === 'big' }">
     <div class="ui-price__value">
-      <span :class="{ 'ui-price__value-current': price.old, 'ui-price__value-base': !price.old }"
-        >{{ price.base }} ₴</span
-      >
+      <span :class="{ 'ui-price__value-current': price.old, 'ui-price__value-base': !price.old }">{{ price.base }} ₴</span>
       <span v-if="price.old" class="ui-price__value-old">{{ price.old }} ₴</span>
     </div>
   </div>
@@ -53,6 +52,18 @@ defineProps<Props>()
     &-current {
       color: $red;
       font-weight: 700;
+    }
+  }
+
+  &_big {
+    .ui-price {
+      &__value {
+        font-size: 24px;
+
+        &-old {
+          font-size: 14px;
+        }
+      }
     }
   }
 }

@@ -41,7 +41,7 @@ const items: NavItem[] = [
   { icon: 'main-logo', label: 'Головна', link: '/' },
   { icon: 'resto-logo', label: 'Ресторани', link: '/resto' },
   { icon: 'backet-logo', label: 'Кошик', link: '/basket' },
-  { icon: 'like-logo', label: 'Кошик2', link: '/basket' },
+  { icon: 'like-logo', label: 'Кошик2', link: '/favorite' },
   { icon: 'order-logo', label: 'Замовлення', link: '/order' },
 ]
 

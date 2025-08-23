@@ -6,18 +6,12 @@ interface Props {
   rating: number
 }
 
-const props = defineProps<Props>()
-
-// Форматування рейтингу як X.Y з 5
-const formattedRating = computed(() => {
-  const value = props.rating / 2
-  return value.toFixed(1)
-})
+defineProps<Props>()
 </script>
 
 <template>
   <div class="ui-rating">
-    <div class="ui-rating__value">{{ formattedRating }}</div>
+    <div class="ui-rating__value">{{ rating.toFixed(1) }}</div>
     <div class="ui-rating__icon">
       <BaseSvg id="star-logo" />
     </div>

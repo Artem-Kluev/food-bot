@@ -11,6 +11,7 @@
     <BottomBar class="bottom" />
 
     <RestoBlock />
+    <FoodBlock/>
   </div>
 
   <SvgManager />
@@ -20,10 +21,12 @@
 import { RouterView } from 'vue-router'
 import SvgManager from '@/components/base/SvgManager.vue'
 import RestoBlock from '@/components/widgets/RestoBlock.vue'
+
 import BottomBar from '@/components/widgets/BottomBar.vue'
 import UiSearch from '@/components/ui/UiSearch.vue'
 
 import { onMounted, ref } from 'vue'
+import FoodBlock from './components/widgets/FoodBlock.vue'
 
 const tg = ref<any>(null)
 const tgAvailable = ref(false)

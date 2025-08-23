@@ -159,8 +159,7 @@ function closeSearch() {
 }
 
 function selectItem(item: SearchItem) {
-  // Тут буде логіка вибору елемента
-  console.log('Selected item:', item)
+
   closeSearch()
 }
 
