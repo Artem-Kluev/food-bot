@@ -62,7 +62,7 @@ function updateActiveTab() {
 
 const progress = computed(() => {
   const point = navWidth.value / items.length
-  return `translateX(${activeIndex.value * point}px)`
+  return `translateX(${activeIndex.value * (point * 1.02)}px)`
 })
 
 const navigateTo = (path: string, index: number) => {
