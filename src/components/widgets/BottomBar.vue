@@ -62,7 +62,7 @@ function updateActiveTab() {
 
 const progress = computed(() => {
   const point = navWidth.value / items.length
-  return `translateX(${activeIndex.value * (point * 1.017)}px)`
+  return `translateX(${activeIndex.value * point}px)`
 })
 
 const navigateTo = (path: string, index: number) => {
@@ -113,15 +113,15 @@ watch(
   z-index: 5;
 
   &__nav {
-    aspect-ratio: 5 / 1;
-    max-width: 380px;
+    height: 60px;
+    width: 280px;
     margin: 0 auto;
     box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: space-between;
     background: $text;
-    border: 3px solid $text;
+    border: 5px solid $text;
     border-radius: 100px;
     box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
     position: relative;

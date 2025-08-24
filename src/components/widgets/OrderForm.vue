@@ -11,56 +11,73 @@
           </div>
 
           <div class="order-form__content">
-            <div class="order-form__field">
-              <label class="order-form__label">Адреса доставки</label>
-              <input v-model="orderAddress" type="text" class="order-form__input" placeholder="Введіть адресу доставки" />
-            </div>
+            <Form @submit="submitOrder" :validation-schema="validationSchema" v-slot="{ handleSubmit }">
+              <div class="order-form__field">
+                <Field name="orderAddress" v-slot="{ field, errorMessage }">
+                  <UiInput
+                    v-model="formatDate.orderAddress"
+                    type="text"
+                    label="Адреса доставки"
+                    placeholder="Введіть адресу доставки"
+                    :error="errorMessage"
+                    v-bind="field"
+                  />
+                </Field>
+              </div>
 
-            <div class="order-form__field">
-              <label class="order-form__label">Номер телефону</label>
-              <input v-model="orderPhone" type="tel" class="order-form__input" placeholder="+380XXXXXXXXX" />
-            </div>
+              <div class="order-form__field">
+                <Field name="orderPhone" v-slot="{ field, errorMessage }">
+                  <UiInput
+                    v-model="formatDate.orderPhone"
+                    type="tel"
+                    label="Номер телефону"
+                    placeholder="+380XXXXXXXXX"
+                    :error="errorMessage"
+                    v-bind="field"
+                  />
+                </Field>
+              </div>
 
-            <div class="order-form__field">
-              <label class="order-form__label">Спосіб оплати</label>
-              <select v-model="orderPaymentMethod" class="order-form__select">
-                <option value="card">Картка</option>
-                <option value="cash">Готівка</option>
-              </select>
-            </div>
+              <div class="order-form__field">
+                <UiSelect
+                  v-model="formatDate.orderPaymentMethod"
+                  :options="[
+                    { value: 'card', label: 'Картка' },
+                    { value: 'cash', label: 'Готівка' },
+                  ]"
+                  label="Спосіб оплати"
+                />
+              </div>
 
-            <div class="order-form__summary">
-              <div class="order-form__summary-title">Ваше замовлення</div>
-              <div class="order-form__products">
-                <div v-for="product in products" :key="product.id" class="order-form__product">
-                  <div class="order-form__product-title">{{ product.title }}</div>
-                  <div class="order-form__product-count">{{ product.count }} шт.</div>
-                  <div class="order-form__product-price">{{ product.price * product.count }} ₴</div>
+              <div class="order-form__summary">
+                <div class="order-form__summary-title">Ваше замовлення</div>
+                <div class="order-form__products">
+                  <div v-for="product in products" :key="product.id" class="order-form__product">
+                    <div class="order-form__product-title">{{ product.title }}</div>
+                    <div class="order-form__product-count">{{ product.count }} шт.</div>
+                    <div class="order-form__product-price">{{ product.price * product.count }} ₴</div>
+                  </div>
+                </div>
+                <div class="order-form__total">
+                  <span>Загальна сума:</span>
+                  <span class="order-form__total-price">{{ totalPrice }} ₴</span>
                 </div>
               </div>
-              <div class="order-form__total">
-                <span>Загальна сума:</span>
-                <span class="order-form__total-price">{{ totalPrice }} ₴</span>
-              </div>
-            </div>
-          </div>
 
-          <Transition name="fade-scale">
-            <div 
-              class="order-form__button" 
-              @click="submitOrder"
-              :class="{ 'order-form__button--disabled': isSubmitting || !orderAddress || !orderPhone }"
-            >
-              <div class="order-form__button-text">
-                {{ isSubmitting ? 'Оформлення...' : 'Підтвердити замовлення' }}
-              </div>
-              <hr class="order-form__button-line" />
-              <div class="order-form__button-price">
-                <div class="order-form__button-sum">{{ totalPrice }}</div>
-                грн
-              </div>
-            </div>
-          </Transition>
+              <Transition name="fade-scale">
+                <button type="submit" class="order-form__button" @click="handleSubmit">
+                  <div class="order-form__button-text">
+                    {{ 'Підтвердити замовлення' }}
+                  </div>
+                  <hr class="order-form__button-line" />
+                  <div class="order-form__button-price">
+                    <div class="order-form__button-sum">{{ totalPrice }}</div>
+                    грн
+                  </div>
+                </button>
+              </Transition>
+            </Form>
+          </div>
         </div>
       </div>
     </div>
@@ -68,27 +85,39 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, reactive } from 'vue'
 import { useBasket } from '@/composable/useBasket'
 import { useScrollLock } from '@/composable/useScrollLock'
 import BaseSvg from '@/components/base/BaseSvg.vue'
-import { 
-  isOrderFormVisible, 
-  orderAddress, 
-  orderPhone, 
-  orderPaymentMethod, 
-  isSubmitting,
-  openOrderForm, 
-  closeOrderForm, 
-  resetOrderForm,
-  submitOrder 
-} from '@/composable/useOrderForm'
+import UiSelect from '@/components/ui/UiSelect.vue'
+import UiInput from '@/components/ui/UiInput.vue'
+import { useRouter } from 'vue-router'
+import type { OrderProduct } from '@/mixins/interfaces'
+import { isOrderFormVisible, openOrderForm, closeOrderForm } from '@/composable/useOrderForm'
+import { Form, Field, ErrorMessage, useField } from 'vee-validate'
+import * as yup from 'yup'
 
-const { getAllProduct, getTotalPrice } = useBasket()
+const { getAllProduct, getTotalPrice, clear } = useBasket()
 const products = ref(getAllProduct())
 const totalPrice = computed(() => getTotalPrice())
+const router = useRouter()
 
 const { lockScroll, unlockScroll } = useScrollLock()
+
+const formatDate = reactive({
+  orderAddress: '',
+  orderPhone: '',
+  orderPaymentMethod: 'card',
+})
+
+// Схема валідації для форми замовлення
+const validationSchema = yup.object({
+  orderAddress: yup.string().required("Адреса доставки обов'язкова").min(5, 'Адреса повинна містити мінімум 5 символів'),
+  orderPhone: yup
+    .string()
+    .required("Номер телефону обов'язковий")
+    .matches(/^(\+380|380|0)\d{9}$/, 'Введіть коректний номер телефону у форматі +380XXXXXXXXX, 380XXXXXXXXX або 0XXXXXXXXX'),
+})
 
 // Блокування прокрутки при відкритті форми
 watch(isOrderFormVisible, (newValue) => {
@@ -100,12 +129,25 @@ watch(isOrderFormVisible, (newValue) => {
   }
 })
 
-// Експортуємо функції для використання в інших компонентах
-defineExpose({
-  openOrderForm,
-  closeOrderForm,
-  isOrderFormVisible
-})
+function submitOrder(values: any) {
+  // Перевірка валідності форми перед відправкою
+  if (!values.orderAddress || !values.orderPhone) {
+    return
+  }
+
+  // Оновлюємо дані форми
+  formatDate.orderAddress = values.orderAddress
+  formatDate.orderPhone = values.orderPhone
+
+  // Очищаємо кошик
+  clear()
+
+  // Закриваємо форму
+  closeOrderForm()
+
+  // Переходимо на сторінку підтвердження
+  router.push('/order')
+}
 </script>
 
 <style scoped lang="scss">
@@ -164,20 +206,20 @@ defineExpose({
     &:active {
       transform: scale(0.95);
     }
-    
+
     &--disabled {
       background-color: #cccccc;
       cursor: not-allowed;
-      
+
       &:active {
         transform: none;
       }
     }
-    
+
     &--disabled {
       background-color: #cccccc;
       cursor: not-allowed;
-      
+
       &:active {
         transform: none;
       }
