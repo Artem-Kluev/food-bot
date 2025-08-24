@@ -10,10 +10,17 @@
           </div>
           <div class="basket-product__info">
             <h3 class="basket-product__title">{{ product.title }}</h3>
-            <div class="basket-product__price">{{ product.price }} ₴</div>
-            <div class="basket-product__count">Кількість: {{ product.count }}</div>
+
+            <div class="basket-product__data">
+              <div class="basket-product__price">{{ product.price * product.count }} ₴</div>
+              <div class="basket-product__count">
+                <UiCounter v-model="product.count" modifier="basket" @update:model-value="updateProductCount(product.id, $event)" />
+              </div>
+            </div>
           </div>
-          <button class="basket-product__remove" @click="removeProduct(product.id)">Видалити</button>
+          <button class="basket-product__remove" @click="removeProduct(product.id)">
+            <BaseSvg id="close-icon" />
+          </button>
         </div>
       </div>
 
@@ -40,8 +47,21 @@ import { useBasket } from '@/composable/useBasket'
 import { ref, onMounted, computed } from 'vue'
 import OrderForm from '@/components/widgets/OrderForm.vue'
 import { isOrderFormVisible, openOrderForm, closeOrderForm } from '@/composable/useOrderForm'
+import BaseSvg from '@/components/base/BaseSvg.vue'
+import UiCounter from '@/components/ui/UiCounter.vue'
 
-const { getAllProduct, getTotalPrice, remove, clear } = useBasket()
+const { getAllProduct, getTotalPrice, remove, clear, add } = useBasket()
+
+function updateProductCount(productId: number, count: number) {
+  const product = products.value.find((p) => p.id === productId)
+  if (product) {
+    if (count === 0) {
+      remove(productId)
+    } else {
+      add(product, count)
+    }
+  }
+}
 const products = ref(getAllProduct())
 const totalPrice = computed(() => getTotalPrice())
 
@@ -134,6 +154,8 @@ function clearBasket() {
 }
 
 .basket-product {
+  min-height: 85px;
+  position: relative;
   display: flex;
   background-color: $white;
   border-radius: 8px;
@@ -141,8 +163,8 @@ function clearBasket() {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
   &__image {
-    width: 80px;
-    height: 80px;
+    width: 85px;
+    height: 85px;
 
     img {
       width: 100%;
@@ -153,9 +175,15 @@ function clearBasket() {
 
   &__info {
     flex: 1;
-    padding: 10px;
+    padding: 5px 10px 8px 10px;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+  }
+
+  &__data {
+    display: flex;
+    align-items: flex-end;
     justify-content: space-between;
   }
 
@@ -164,6 +192,7 @@ function clearBasket() {
     font-weight: 500;
     color: $text;
     margin-bottom: 5px;
+    padding-right: 30px;
   }
 
   &__price {
@@ -174,16 +203,26 @@ function clearBasket() {
   &__count {
     font-size: 14px;
     color: $text;
+    display: flex;
+    align-items: center;
   }
 
   &__remove {
-    align-self: center;
+    position: absolute;
+    top: 0;
+    right: 0;
     background: none;
     border: none;
     color: $text;
-    padding: 0 10px;
+    padding: 10px;
     cursor: pointer;
-    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    margin-right: 5px;
+    margin-top: 5px;
 
     &:hover {
       color: $main-color;

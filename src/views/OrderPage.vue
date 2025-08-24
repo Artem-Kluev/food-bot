@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { orders } from '@/mixins/orders'
-import BaseSvg from '@/components/base/BaseSvg.vue'
+import OrderCard from '@/components/widgets/OrderCard.vue'
 
 const ordersList = ref(orders)
 const expandedOrders = ref<number[]>([])
@@ -18,15 +18,6 @@ function toggleOrder(orderId: number) {
 function isOrderExpanded(orderId: number) {
   return expandedOrders.value.includes(orderId)
 }
-
-function formatDate(dateString: string) {
-  const date = new Date(dateString)
-  return (
-    date.toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' }) +
-    ' ' +
-    date.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })
-  )
-}
 </script>
 
 <template>
@@ -34,61 +25,13 @@ function formatDate(dateString: string) {
     <h1 class="order-page__title">Історія замовлень</h1>
 
     <div v-if="ordersList.length" class="order-page__content">
-      <div v-for="order in ordersList" :key="order.id" class="order-card">
-        <div class="order-card__header" @click="toggleOrder(order.id)">
-          <div class="order-card__info">
-            <div class="order-card__number">Замовлення #{{ order.id }}</div>
-            <div class="order-card__date">{{ formatDate(order.date) }}</div>
-          </div>
-          <div class="order-card__header-right">
-            <div class="order-card__status" :class="`order-card__status_${order.status}`">
-              {{ order.status === 'completed' ? 'Виконано' : order.status === 'processing' ? 'В обробці' : 'Скасовано' }}
-            </div>
-            <div class="order-card__toggle" :class="{ 'order-card__toggle_expanded': isOrderExpanded(order.id) }">
-              <BaseSvg class="order-card__toggle-icon" id="arrow-logo" />
-            </div>
-          </div>
-        </div>
-
-        <Transition name="fade">
-          <div v-if="isOrderExpanded(order.id)" class="order-card__content">
-            <div class="order-card__content-inner">
-              <div class="order-card__products">
-                <div v-for="product in order.products" :key="product.id" class="order-product">
-                  <div class="order-product__image">
-                    <img :src="product.image" alt="product image" />
-                  </div>
-                  <div class="order-product__info">
-                    <h3 class="order-product__title">{{ product.title }}</h3>
-                    <div class="order-product__price">{{ product.price }} ₴</div>
-                    <div class="order-product__count">Кількість: {{ product.count }}</div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="order-card__details">
-                <div class="order-card__address">
-                  <span class="order-card__label">Адреса доставки:</span>
-                  <span>{{ order.address }}</span>
-                </div>
-                <div class="order-card__payment">
-                  <span class="order-card__label">Спосіб оплати:</span>
-                  <span>{{ order.paymentMethod === 'card' ? 'Картка' : 'Готівка' }}</span>
-                </div>
-                <div class="order-card__total">
-                  <span class="order-card__label">Загальна сума:</span>
-                  <span class="order-card__total-price">{{ order.totalPrice }} ₴</span>
-                </div>
-              </div>
-
-              <div class="order-card__actions">
-                <button v-if="order.status === 'processing'" class="order-card__cancel-btn">Скасувати</button>
-                <button class="order-card__repeat-btn">Повторити замовлення</button>
-              </div>
-            </div>
-          </div>
-        </Transition>
-      </div>
+      <OrderCard
+        v-for="order in ordersList"
+        :key="order.id"
+        :order="order"
+        :is-expanded="isOrderExpanded(order.id)"
+        @toggle="toggleOrder"
+      />
     </div>
 
     <div v-else class="order-page__empty">
@@ -288,14 +231,15 @@ function formatDate(dateString: string) {
 }
 
 .order-product {
+  min-height: 80px;
   display: flex;
   background-color: $background;
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
 
   &__image {
-    width: 70px;
-    height: 70px;
+    width: 80px;
+    height: 80px;
 
     img {
       width: 100%;
@@ -309,6 +253,11 @@ function formatDate(dateString: string) {
     padding: 10px;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+  }
+
+  &__data {
+    display: flex;
     justify-content: space-between;
   }
 

@@ -1,8 +1,15 @@
 <template>
-  <div class="ui-counter" :class="{ 'ui-counter_active': isActive, 'ui-counter_big': modifier === 'big' }">
+  <div
+    class="ui-counter"
+    :class="{ 'ui-counter_active': isActive, 'ui-counter_big': modifier === 'big', 'ui-counter_basket': modifier === 'basket' }"
+  >
     <button v-if="!isActive" class="ui-counter__button" @click="activate">В корзину</button>
     <template v-else>
-      <button class="ui-counter__control ui-counter__minus" @click="decrease" :disabled="modelValue <= 0">
+      <button
+        class="ui-counter__control ui-counter__minus"
+        @click="decrease"
+        :disabled="modelValue <= 0 || (modifier === 'basket' && modelValue <= 1)"
+      >
         <span class="ui-counter__icon">-</span>
       </button>
       <span class="ui-counter__value">{{ modelValue }}</span>
@@ -52,6 +59,11 @@ function increase() {
 
 function decrease() {
   if (props.modelValue > 0) {
+    // Для модифікатора 'basket' не дозволяємо зменшувати менше 1
+    if (props.modifier === 'basket' && props.modelValue <= 1) {
+      return
+    }
+
     emit('update:modelValue', props.modelValue - 1)
 
     if (props.modelValue === 1) {
@@ -122,6 +134,23 @@ function decrease() {
 
   &_big {
     width: 100%;
+  }
+
+  &_basket {
+    height: 32px;
+    width: 90px;
+    border-radius: 16px;
+    font-size: 14px;
+
+    .ui-counter {
+      &__control {
+        width: 32px;
+      }
+
+      &__icon {
+        font-size: 16px;
+      }
+    }
   }
 }
 </style>

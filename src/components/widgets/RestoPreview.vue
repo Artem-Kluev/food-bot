@@ -1,5 +1,5 @@
 <template>
-  <div class="resto-preview">
+  <div class="resto-preview" :class="{ 'resto-preview_order': modifier === 'order' }">
     <div class="resto-preview__image">
       <img class="resto-preview__img" :src="image" alt="Restaurant" />
     </div>
@@ -22,6 +22,7 @@ interface Props {
   description: string
   image: string
   rating: number
+  modifier?: 'order'
 }
 
 defineProps<Props>()
@@ -56,7 +57,7 @@ defineProps<Props>()
 
   &__content {
     padding: 12px;
-    flex-basis: 70%;
+    flex-grow: 1;
   }
 
   &__title {
@@ -82,6 +83,24 @@ defineProps<Props>()
     overflow: hidden;
     text-overflow: ellipsis;
     max-height: 40px;
+  }
+
+  &_order {
+    .resto-preview {
+      &__image {
+        flex: 0 0 20%;
+        display: flex;
+        align-items: center;
+      }
+
+      &__title {
+        font-size: 14px;
+      }
+
+      &__description {
+        margin: 2px 0;
+      }
+    }
   }
 }
 </style>
