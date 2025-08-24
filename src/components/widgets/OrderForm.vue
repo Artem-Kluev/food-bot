@@ -173,6 +173,15 @@ defineExpose({
         transform: none;
       }
     }
+    
+    &--disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+      
+      &:active {
+        transform: none;
+      }
+    }
 
     &-icon {
       transform: rotate(180deg);

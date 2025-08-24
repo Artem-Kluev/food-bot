@@ -1,47 +1,20 @@
-import type { Order, OrderProduct } from './interfaces'
+import type { Food } from './interfaces'
 
-// Функція для створення нового замовлення
-export function createOrder(products: OrderProduct[], address: string, phone: string, paymentMethod: 'card' | 'cash', totalPrice: number): Order {
-  const newOrder: Order = {
-    id: orders.length > 0 ? Math.max(...orders.map(order => order.id)) + 1 : 1,
-    date: new Date().toISOString(),
-    status: 'processing',
-    products,
-    address,
-    phone,
-    paymentMethod,
-    totalPrice
-  }
-  
-  // Додаємо нове замовлення в масив
-  orders.unshift(newOrder)
-  
-  // Зберігаємо замовлення в localStorage
-  saveOrdersToStorage()
-  
-  return newOrder
+export interface Order {
+  id: number
+  date: string
+  status: 'completed' | 'processing' | 'canceled'
+  totalPrice: number
+  products: Array<{
+    id: number
+    title: string
+    price: number
+    count: number
+    image: string
+  }>
+  address: string
+  paymentMethod: 'cash' | 'card'
 }
-
-// Функція для збереження замовлень в localStorage
-function saveOrdersToStorage() {
-  localStorage.setItem('telegram-food-orders', JSON.stringify(orders))
-}
-
-// Функція для завантаження замовлень з localStorage
-function loadOrdersFromStorage() {
-  const storedOrders = localStorage.getItem('telegram-food-orders')
-  if (storedOrders) {
-    try {
-      const parsedOrders = JSON.parse(storedOrders)
-      orders.splice(0, orders.length, ...parsedOrders)
-    } catch (error) {
-      console.error('Помилка при завантаженні замовлень:', error)
-    }
-  }
-}
-
-// Ініціалізація - завантаження замовлень при імпорті модуля
-loadOrdersFromStorage()
 
 export const orders: Order[] = [
   {

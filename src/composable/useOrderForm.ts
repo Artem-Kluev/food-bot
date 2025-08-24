@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { useBasket } from './useBasket'
-import { createOrder } from '@/mixins/orders'
+import { createOrder } from '@/mixins/create-order'
 import { useRouter } from 'vue-router'
 import type { OrderProduct } from '@/mixins/interfaces'
 
@@ -35,7 +35,7 @@ function resetOrderForm() {
 function submitOrder() {
   const router = useRouter()
   const { getAllProduct, getTotalPrice, clear } = useBasket()
-  
+
   if (!orderAddress.value || !orderPhone.value) {
     alert('Будь ласка, заповніть всі поля')
     return
@@ -45,22 +45,16 @@ function submitOrder() {
 
   // Перетворюємо продукти з кошика у формат для замовлення
   const products = getAllProduct()
-  const orderProducts: OrderProduct[] = products.map(product => ({
+  const orderProducts: OrderProduct[] = products.map((product) => ({
     id: product.id,
     title: product.title,
     image: product.image,
     price: product.price,
-    count: product.count
+    count: product.count,
   }))
 
   // Створюємо нове замовлення
-  createOrder(
-    orderProducts,
-    orderAddress.value,
-    orderPhone.value,
-    orderPaymentMethod.value as 'card' | 'cash',
-    getTotalPrice()
-  )
+  createOrder(orderProducts, orderAddress.value, orderPhone.value, orderPaymentMethod.value as 'card' | 'cash', getTotalPrice())
 
   // Очищаємо кошик
   clear()
@@ -82,5 +76,5 @@ export {
   openOrderForm,
   closeOrderForm,
   resetOrderForm,
-  submitOrder
+  submitOrder,
 }
