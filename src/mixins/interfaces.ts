@@ -45,3 +45,22 @@ export interface Category {
   image: string
   id: number
 }
+
+export interface OrderProduct {
+  id: number
+  title: string
+  image: string
+  price: number
+  count: number
+}
+
+export interface Order {
+  id: number
+  date: string
+  status: 'completed' | 'processing' | 'canceled'
+  products: OrderProduct[]
+  address: string
+  phone: string
+  paymentMethod: 'card' | 'cash'
+  totalPrice: number
+}

@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { useBasket } from '@/composable/useBasket'
 import { ref, onMounted, computed } from 'vue'
+import OrderForm from '@/components/widgets/OrderForm.vue'
 
 const { getAllProduct, getTotalPrice, remove, clear } = useBasket()
 const products = ref(getAllProduct())
 const totalPrice = computed(() => getTotalPrice())
+const orderForm = ref()
 
 function removeProduct(id: number) {
   remove(id)
@@ -14,6 +16,10 @@ function removeProduct(id: number) {
 function clearBasket() {
   clear()
   products.value = getAllProduct()
+}
+
+function openOrderForm() {
+  orderForm.value.openOrderForm()
 }
 </script>
 
@@ -41,7 +47,7 @@ function clearBasket() {
           <span>Загальна сума:</span>
           <span class="basket-page__total-price">{{ totalPrice }} ₴</span>
         </div>
-        <button class="basket-page__checkout">Оформити замовлення</button>
+        <button class="basket-page__checkout" @click="openOrderForm">Оформити замовлення</button>
         <button class="basket-page__clear" @click="clearBasket">Очистити кошик</button>
       </div>
     </div>
@@ -50,6 +56,8 @@ function clearBasket() {
       <p>Ваш кошик порожній</p>
     </div>
   </div>
+
+  <OrderForm ref="orderForm" />
 </template>
 
 <style scoped lang="scss">

@@ -113,7 +113,7 @@ function formatDate(dateString: string) {
   &__content {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 10px;
   }
 
   &__empty {
