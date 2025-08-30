@@ -13,9 +13,7 @@
     <span>Зараз працюють</span>
   </div> -->
 
-  <UiTabs v-model="activeTab" :tabs="['Ресторани', 'Їжа']" class="ui-tabs" />
-
-  <div v-if="activeTab === 0" class="resto-container">
+  <div  class="resto-container">
     <ProductCard
       v-for="restaurant in sliders"
       :key="restaurant.title"
@@ -24,14 +22,6 @@
     />
   </div>
 
-  <div v-else-if="activeTab === 1" class="menu-container">
-    <ProductCard
-      v-for="item in foodSliders"
-      :key="item.title"
-      :slide-data="item"
-      modifier="resto"
-    />
-  </div>
 </template>
 
 <script setup lang="ts">
