@@ -116,7 +116,7 @@ onBeforeUnmount(() => {
       justify-content: center;
       align-items: center;
       flex: 1 0 50%;
-      text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
+      text-shadow: $main-text-shadow;
     }
   }
 

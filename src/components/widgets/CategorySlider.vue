@@ -91,6 +91,7 @@ function emitSelectedCategories() {
 
     &_selected {
       background-color: $main-color;
+    text-shadow: $main-text-shadow;
     }
 
     &-image {

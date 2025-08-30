@@ -268,7 +268,7 @@ defineExpose({
     line-height: 50px;
     margin: 0 40px;
     padding: 0 25px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.16);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;

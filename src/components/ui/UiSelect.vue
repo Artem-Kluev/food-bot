@@ -151,6 +151,7 @@ onUnmounted(() => {
 
     &_selected {
       background-color: $main-color;
+      text-shadow: $main-text-shadow;
       color: $background;
 
       &:hover {

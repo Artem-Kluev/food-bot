@@ -84,6 +84,7 @@ function decrease() {
   border-radius: 20px;
   background-color: $main-color;
   color: $white;
+  text-shadow: $main-text-shadow;
   transition: all 0.2s ease;
   overflow: hidden;
   width: 100px;

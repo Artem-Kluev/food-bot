@@ -345,6 +345,7 @@ function submitOrder(values: any) {
     height: 50px;
     border-radius: 30px;
     background-color: $main-color;
+    text-shadow: $main-text-shadow;
     color: $white;
     cursor: pointer;
     user-select: none;
@@ -352,7 +353,7 @@ function submitOrder(values: any) {
     line-height: 50px;
     margin: 0 40px;
     padding: 0 25px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.16);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: space-between;

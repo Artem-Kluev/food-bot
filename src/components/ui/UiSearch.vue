@@ -353,6 +353,7 @@ function handleEscKey(event: KeyboardEvent) {
     border: none;
     outline: none;
     background-color: $main-color;
+    text-shadow: $main-text-shadow;
     color: $white;
     font-size: 20px;
     gap: 5px;

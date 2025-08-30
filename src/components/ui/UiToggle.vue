@@ -50,6 +50,7 @@ function updateValue() {
     &:checked + .toggle__slider:before {
       transform: translateX(20px);
       background-color: $main-color;
+    text-shadow: $main-text-shadow;
     }
   }
 

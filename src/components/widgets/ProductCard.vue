@@ -174,7 +174,7 @@ function handleConfirm(value: boolean) {
   width: 100%;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
   margin-bottom: 30px;
   position: relative;
 

@@ -69,6 +69,7 @@ defineEmits(['update:modelValue'])
     left: 0;
     height: 100%;
     background-color: $main-color;
+    text-shadow: $main-text-shadow;
     border-radius: 8px;
     transition: transform 0.3s ease;
     z-index: 0;

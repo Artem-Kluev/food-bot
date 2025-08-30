@@ -127,6 +127,7 @@ function clearBasket() {
     padding: 12px;
     background-color: $main-color;
     color: $white;
+    text-shadow: $main-text-shadow;
     border: none;
     border-radius: 8px;
     font-weight: 500;
