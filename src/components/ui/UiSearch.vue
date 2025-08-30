@@ -21,34 +21,19 @@
     <div v-if="searchQuery" class="ui-search__overlay" @click.self="closeSearch">
       <div class="ui-search__results">
         <div v-if="loading" class="ui-search__loading">
-          <BaseLottie
-            class="ui-search__animation"
-            :src="'/animations/5/animate.json'"
-            :loop="true"
-            :autoplay="true"
-          />
+          <BaseLottie class="ui-search__animation" :src="'/animations/5/animate.json'" :loop="true" :autoplay="true" />
         </div>
 
         <!-- <div v-else-if="results.length === 0" class="ui-search__empty">Нічого не знайдено</div> -->
 
         <div v-else-if="true" class="ui-search__empty">
-          <BaseLottie
-            class="ui-search__animation"
-            :src="'/animations/6/animate.json'"
-            :loop="true"
-            :autoplay="true"
-          />
+          <BaseLottie class="ui-search__animation" :src="'/animations/6/animate.json'" :loop="true" :autoplay="true" />
 
           <div class="ui-search__empty-text">Нічого не знайдено</div>
         </div>
 
         <div v-else class="ui-search__items">
-          <div
-            v-for="(item, index) in results"
-            :key="index"
-            class="ui-search__item"
-            @click="selectItem(item)"
-          >
+          <div v-for="(item, index) in results" :key="index" class="ui-search__item" @click="selectItem(item)">
             <div class="ui-search__item-image">
               <img :src="item.image" alt="" />
             </div>
@@ -113,7 +98,7 @@ function onInput() {
     // Зараз просто імітуємо результати
     mockSearch(searchQuery.value)
     loading.value = false
-  }, 500) as unknown as number
+  }, 1000) as unknown as number
 }
 
 function mockSearch(query: string) {
@@ -159,7 +144,6 @@ function closeSearch() {
 }
 
 function selectItem(item: SearchItem) {
-
   closeSearch()
 }
 

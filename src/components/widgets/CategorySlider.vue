@@ -108,7 +108,7 @@ function emitSelectedCategories() {
 
     &-text {
       color: $background;
-      font-size: 2.8vw;
+      font-size: min(2.8vw, 16px);
       text-align: center;
     }
   }

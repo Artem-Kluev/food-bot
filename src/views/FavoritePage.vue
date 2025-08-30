@@ -1,6 +1,6 @@
 <template>
   <div class="favorite-page">
-    <h1 class="favorite-page__title">Обране</h1>
+    <!-- <h1 class="favorite-page__title">Обране</h1> -->
 
     <UiTabs v-model="activeTab" :tabs="['Ресторани', 'Їжа']" class="ui-tabs" />
 

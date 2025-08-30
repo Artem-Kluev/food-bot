@@ -2,19 +2,11 @@
   <div class="button-slider">
     <div v-if="title" class="button-slider__title">{{ title }}</div>
 
-    <swiper
-      :spaceBetween="5"
-      :slidesPerView="'auto'"
-      :modules="modules"
-      class="button-slider__swiper"
-    >
+    <swiper :spaceBetween="5" :slidesPerView="'auto'" :modules="modules" class="button-slider__swiper">
       <swiper-slide
         v-for="(slide, index) in buttons"
         :key="slide.title"
-        :class="[
-          'button-slider__slide',
-          { 'button-slider__slide_selected': selectedCategories[index] },
-        ]"
+        :class="['button-slider__slide', { 'button-slider__slide_selected': selectedCategories[index] }]"
         @click="toggleCategory(index)"
       >
         {{ slide.title }}
@@ -57,9 +49,7 @@ function toggleCategory(index: number) {
 }
 
 function emitSelectedCategories() {
-  const selected = props.buttons
-    .filter((_, index) => selectedCategories.value[index])
-    .map((category) => category.id)
+  const selected = props.buttons.filter((_, index) => selectedCategories.value[index]).map((category) => category.id)
   emit('selected', selected)
 }
 </script>
@@ -71,7 +61,7 @@ function emitSelectedCategories() {
   width: 100%;
 
   &__title {
-    padding: 5px 10px;
+    padding: 0 10px 5px;
     font-size: 16px;
   }
 
@@ -82,7 +72,6 @@ function emitSelectedCategories() {
 
   &__slide {
     height: 100%;
-    padding: 0 10px;
     width: auto;
     background-color: $text;
     width: 20%;
@@ -90,6 +79,7 @@ function emitSelectedCategories() {
     display: grid;
     grid-template: 1fr auto / 1fr;
     padding: 5px 10px;
+    margin-bottom: 5px;
     transition: background-color 0.3s ease;
     cursor: pointer;
     width: fit-content;
@@ -97,7 +87,8 @@ function emitSelectedCategories() {
 
     &_selected {
       background-color: $main-color;
-    text-shadow: $main-text-shadow;
+      text-shadow: $main-text-shadow;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     }
   }
 }

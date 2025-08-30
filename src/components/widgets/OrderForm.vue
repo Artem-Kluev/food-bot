@@ -156,6 +156,7 @@ function submitOrder(values: any) {
 .order-form {
   position: fixed;
   z-index: 11;
+  left: 0;
   bottom: 0;
   height: 100%;
   width: 100%;
@@ -177,6 +178,9 @@ function submitOrder(values: any) {
     min-height: calc(100% - 80px);
     display: flex;
     flex-direction: column;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   &__header {
@@ -340,8 +344,7 @@ function submitOrder(values: any) {
     position: fixed;
     z-index: 2;
     bottom: 20px;
-    left: 0;
-    right: 0;
+
     height: 50px;
     border-radius: 30px;
     background-color: $main-color;
@@ -351,19 +354,23 @@ function submitOrder(values: any) {
     user-select: none;
     text-align: center;
     line-height: 50px;
-    margin: 0 40px;
     padding: 0 25px;
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: space-between;
     transition: transform 0.2s;
+    width: calc(100% - 50px);
+    max-width: 440px;
+    left: 50%;
+    transform: translateX(-50%);
 
     &:active {
       transform: scale(0.95);
     }
 
     &-line {
+      flex-grow: 0;
       height: 30px;
       width: 1px;
       border-radius: 2px;
@@ -373,7 +380,9 @@ function submitOrder(values: any) {
     &-price {
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 5px;
+      flex-grow: 1;
     }
   }
 }
@@ -397,6 +406,7 @@ function submitOrder(values: any) {
 .fade-scale-enter-active,
 .fade-scale-leave-active {
   transition: all 0.3s ease;
+  transform-origin: 0 0;
 }
 
 .fade-scale-enter-from,

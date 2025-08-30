@@ -11,7 +11,7 @@
     <BottomBar class="bottom" />
 
     <RestoBlock />
-    <FoodBlock/>
+    <FoodBlock />
   </div>
 
   <SvgManager />
@@ -52,6 +52,8 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  max-width: 600px;
+  margin: 0 auto;
   position: relative;
 }
 

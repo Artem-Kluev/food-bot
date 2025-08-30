@@ -361,7 +361,8 @@ function handleCourierInfoClose() {
 
   &__pay-btn {
     padding: 10px;
-    background-color: $green;
+    background-color: $main-color;
+    text-shadow: $main-text-shadow;
     color: $white;
     border: none;
     border-radius: 6px;
@@ -372,7 +373,8 @@ function handleCourierInfoClose() {
 
   &__courier-btn {
     padding: 10px;
-    background-color: $purple;
+    background-color: $main-color;
+    text-shadow: $main-text-shadow;
     color: $white;
     border: none;
     border-radius: 6px;

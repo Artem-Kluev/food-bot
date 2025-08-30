@@ -142,10 +142,13 @@ function decrease() {
     width: 90px;
     border-radius: 16px;
     font-size: 14px;
+    background-color: transparent;
+    color: $text;
 
     .ui-counter {
       &__control {
         width: 32px;
+        color: $text;
       }
 
       &__icon {

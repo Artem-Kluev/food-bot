@@ -136,6 +136,9 @@ defineExpose({
     min-height: calc(100% - 80px);
     display: flex;
     flex-direction: column;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   &__header {
@@ -247,26 +250,23 @@ defineExpose({
     text-align: center;
     margin: 20px 0;
     padding: 15px;
-    background-color: rgba($purple, 0.1);
+    background-color: rgba($main-color, 0.1);
     border-radius: 8px;
-    border-left: 4px solid $purple;
+    border-left: 4px solid $main-color;
   }
 
   &__button {
     position: fixed;
     z-index: 2;
     bottom: 20px;
-    left: 0;
-    right: 0;
     height: 50px;
     border-radius: 30px;
-    background-color: $purple;
+    background-color: $main-color;
     color: $white;
     cursor: pointer;
     user-select: none;
     text-align: center;
     line-height: 50px;
-    margin: 0 40px;
     padding: 0 25px;
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
     display: flex;
@@ -276,6 +276,10 @@ defineExpose({
     border: none;
     font-size: 16px;
     font-weight: 500;
+    width: calc(100% - 50px);
+    max-width: 440px;
+    left: 50%;
+    transform: translateX(-50%);
 
     &:active {
       transform: scale(0.95);

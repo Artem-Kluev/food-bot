@@ -23,6 +23,22 @@
             {{ currentResto.description }}
           </div>
 
+          <TagSlider :tags="allTags" class="resto-block__tags" />
+
+          <div class="resto-block__buttons">
+            <div class="resto-block__buttons-item resto-block__buttons-call">
+              <BaseSvg class="resto-block__buttons-call-icon" id="call-logo" />
+
+              <span>Позвонить</span>
+            </div>
+
+            <div class="resto-block__buttons-item resto-block__buttons-send">
+              <BaseSvg class="resto-block__buttons-send-icon" id="send-logo" />
+
+              <span>Напискати</span>
+            </div>
+          </div>
+
           <ButtonSlider :buttons="payment" class="resto-block__filters" radio />
 
           <div class="resto-block__cards">
@@ -60,6 +76,7 @@ import { isRestoBlockVisable, toggleRestoBlock, closeRestoBlock, currentResto, i
 import { useScrollLock } from '@/composable/useScrollLock'
 import { watch, ref, computed, onUnmounted } from 'vue'
 import ButtonSlider from '@/components/widgets/ButtonSlider.vue'
+import TagSlider from '@/components/widgets/TagSlider.vue'
 import { useBasket } from '@/composable/useBasket'
 import { useRouter } from 'vue-router'
 
@@ -120,6 +137,13 @@ onUnmounted(() => {
   unsubscribe()
 })
 
+const allTags = [
+  { title: 'Акція', id: 1 },
+  { title: 'Безкоштовна доставка', id: 2 },
+  { title: 'Новинка', id: 3 },
+  { title: 'Популярне', id: 4 },
+]
+
 const payment = ref<Array<any>>([
   {
     title: 'Піца',
@@ -158,6 +182,7 @@ watch(isRestoBlockVisable, (newValue) => {
 .resto-block {
   position: fixed;
   z-index: 11;
+  left: 0;
   bottom: 0;
   height: 100%;
   width: 100%;
@@ -177,6 +202,9 @@ watch(isRestoBlockVisable, (newValue) => {
     transition: transform 0.3s ease;
     overflow: hidden;
     min-height: calc(100% - 80px);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   &__image {
@@ -236,11 +264,60 @@ watch(isRestoBlockVisable, (newValue) => {
 
   &__description {
     padding: 0 10px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
+  }
+
+  &__tags {
+    margin-top: 10px;
+    margin-bottom: 5px;
+  }
+
+  &__buttons {
+    height: 40px;
+    display: flex;
+    margin: 25px 10px;
+    gap: 10px;
+
+    &-item {
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      flex: 1 0 calc(50% - 5px);
+      background-color: $main-color;
+      border-radius: 30px;
+      gap: 5px;
+      color: $background;
+      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+      text-shadow: $main-text-shadow;
+      transition: transform 0.3s;
+
+      &:active {
+        transform: scale(0.95);
+      }
+
+      span {
+        flex-grow: 1;
+        text-align: center;
+      }
+    }
+
+    &-call {
+      &-icon {
+        width: 30px;
+        height: 30px;
+      }
+    }
+
+    &-send {
+      &-icon {
+        width: 30px;
+        height: 30px;
+      }
+    }
   }
 
   &__filters {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
   }
 
   &__cards {
@@ -256,8 +333,6 @@ watch(isRestoBlockVisable, (newValue) => {
     position: fixed;
     z-index: 2;
     bottom: 20px;
-    left: 0;
-    right: 0;
     height: 50px;
     border-radius: 30px;
     background-color: $main-color;
@@ -267,19 +342,28 @@ watch(isRestoBlockVisable, (newValue) => {
     user-select: none;
     text-align: center;
     line-height: 50px;
-    margin: 0 40px;
     padding: 0 25px;
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: space-between;
     transition: transform 0.2s;
+    width: calc(100% - 50px);
+    max-width: 440px;
+    left: 50%;
+    transform: translateX(-50%);
 
     &:active {
       transform: scale(0.95);
     }
 
+    &-text {
+      flex-grow: 1;
+      text-align: center;
+    }
+
     &-line {
+      flex-grow: 0;
       height: 30px;
       width: 1px;
       border-radius: 2px;
@@ -289,7 +373,9 @@ watch(isRestoBlockVisable, (newValue) => {
     &-price {
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 5px;
+      flex-grow: 1;
     }
   }
 }
@@ -313,11 +399,12 @@ watch(isRestoBlockVisable, (newValue) => {
 .fade-scale-enter-active,
 .fade-scale-leave-active {
   transition: all 0.3s ease;
+  transform-origin: 0 0;
 }
 
 .fade-scale-enter-from,
 .fade-scale-leave-to {
   opacity: 0;
-  transform: scale(0.9);
+  transform: scale(0.9) translateX(-50%);
 }
 </style>

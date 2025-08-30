@@ -101,7 +101,7 @@ onBeforeUnmount(() => {
     justify-content: center;
     height: 100%;
     color: $background;
-    font-size: 3.5vw;
+    font-size: min(3.5vw, 20px);
     text-align: center;
     line-height: 150%;
   }

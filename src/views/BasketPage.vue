@@ -1,6 +1,6 @@
 <template>
   <div class="basket-page">
-    <h1 class="basket-page__title">Кошик</h1>
+    <!-- <h1 class="basket-page__title">Кошик</h1> -->
 
     <div v-if="products.length" class="basket-page__content">
       <div class="basket-page__products">
@@ -35,7 +35,9 @@
     </div>
 
     <div v-else class="basket-page__empty">
-      <p>Ваш кошик порожній</p>
+      <BaseLottie class="basket-page__animation" :src="'/animations/6/animate.json'" :loop="true" :autoplay="true" />
+
+      <div class="basket-page__empty-text">Ваш кошик порожній</div>
     </div>
   </div>
 
@@ -48,6 +50,7 @@ import { ref, onMounted, computed } from 'vue'
 import OrderForm from '@/components/widgets/OrderForm.vue'
 import { isOrderFormVisible, openOrderForm, closeOrderForm } from '@/composable/useOrderForm'
 import BaseSvg from '@/components/base/BaseSvg.vue'
+import BaseLottie from '@/components/base/BaseLottie.vue'
 import UiCounter from '@/components/ui/UiCounter.vue'
 
 const { getAllProduct, getTotalPrice, remove, clear, add } = useBasket()
@@ -147,10 +150,23 @@ function clearBasket() {
   }
 
   &__empty {
-    text-align: center;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
     padding: 40px 0;
     color: $text;
-    font-size: 18px;
+    min-height: 60vh;
+
+    &-text {
+      margin-top: -25px;
+      font-size: 16px;
+    }
+  }
+
+  &__animation {
+    width: 150px;
   }
 }
 
