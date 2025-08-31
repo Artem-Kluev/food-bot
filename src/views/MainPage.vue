@@ -1,26 +1,45 @@
 <template>
   <div class="main-page">
-    <BannerSlider :sliders="banners" />
+    <BannerCard :bannerData="banners[0]" class="main-page__banner" />
 
-    <CardsSlider :sliders="sliders" title="Безкоштовна доставка" />
+    <h3 class="main-page__title">Популярні категорії</h3>
 
-    <CardsSlider :sliders="sliders" title="Оплата при отриманні" />
+    <CategorySlider :categories="categories" :navigateMode="true" class="main-page__category-slider" />
 
-    <CardsSlider :sliders="sliders" title="Суші" />
-
-    <CardsSlider :sliders="sliders" title="Піцца" />
-
-    <CardsSlider :sliders="sliders" title="Швидка доставка" />
+    <Features />
   </div>
 </template>
 
 <script setup lang="ts">
-import CardsSlider from '@/components/widgets/CardsSlider.vue'
-import BannerSlider from '@/components/widgets/BannerSlider.vue'
-import { sliders } from '@/mixins/resto'
+import BannerCard from '@/components/widgets/BannerCard.vue'
+import CategorySlider from '@/components/widgets/CategorySlider.vue'
+import Features from '@/components/widgets/FeaturesComponent.vue'
 import { banners } from '@/mixins/banners'
+import { categories } from '@/mixins/categories'
 </script>
 
 <style scoped lang="scss">
 @use '@/assets/styles/vars.scss' as *;
+
+.main-page {
+  &__banner {
+    margin-bottom: 20px;
+  }
+
+  &__title {
+    font-weight: 500;
+    padding: 0 10px;
+    margin-bottom: 10px;
+  }
+
+  &__category-slider {
+    margin-bottom: 30px;
+  }
+
+  &__description {
+    font-size: 16px;
+    padding: 0 10px;
+    margin-bottom: 30px;
+  }
+}
 </style>

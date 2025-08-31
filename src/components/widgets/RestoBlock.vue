@@ -1,10 +1,10 @@
 <template>
   <Transition name="fade-slide">
     <div v-if="isRestoBlockVisable" class="resto-block">
-      <div class="resto-block__main" @click.self="closeRestoBlock">
+      <div class="resto-block__main" @click.self="closeRestoBlock(false)">
         <div class="resto-block__wrapper">
           <div class="resto-block__image">
-            <div class="resto-block__back" @click="closeRestoBlock">
+            <div class="resto-block__back" @click="closeRestoBlock(false)">
               <BaseSvg class="resto-block__back-icon" id="arrow-logo" />
             </div>
 
@@ -72,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import { isRestoBlockVisable, toggleRestoBlock, closeRestoBlock, currentResto, isLiked, rating } from '@/composable/useRestoBlock'
+import { isRestoBlockVisable, closeRestoBlock, currentResto, isLiked, rating } from '@/composable/useRestoBlock'
 import { useScrollLock } from '@/composable/useScrollLock'
 import { watch, ref, computed, onUnmounted } from 'vue'
 import ButtonSlider from '@/components/widgets/ButtonSlider.vue'
@@ -352,9 +352,10 @@ watch(isRestoBlockVisable, (newValue) => {
     max-width: 440px;
     left: 50%;
     transform: translateX(-50%);
+    transform-origin: 0 0;
 
     &:active {
-      transform: scale(0.95);
+      transform: scale(0.95) translateX(-50%);
     }
 
     &-text {
@@ -399,7 +400,6 @@ watch(isRestoBlockVisable, (newValue) => {
 .fade-scale-enter-active,
 .fade-scale-leave-active {
   transition: all 0.3s ease;
-  transform-origin: 0 0;
 }
 
 .fade-scale-enter-from,

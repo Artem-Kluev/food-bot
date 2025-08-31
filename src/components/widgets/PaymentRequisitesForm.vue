@@ -439,9 +439,10 @@ defineExpose({
     max-width: 440px;
     left: 50%;
     transform: translateX(-50%);
+    transform-origin: 0 0;
 
     &:active {
-      transform: scale(0.95);
+      transform: scale(0.95) translateX(-50%);
     }
   }
 }

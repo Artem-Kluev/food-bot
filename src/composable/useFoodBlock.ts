@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import type { Food, Resto } from '@/mixins/interfaces'
+import { closeRestoBlock } from './useRestoBlock'
 
 export const isFoodBlockVisable = ref(false)
 export const currentFood = ref<Food | null>(null)
@@ -7,7 +8,9 @@ export const isLiked = ref(false)
 export const rating = ref(0)
 export const currentResto = ref<Resto | null>(null)
 
-export function closeFoodBlock() {
+export function closeFoodBlock(closeResto = false) {
+  if (closeResto) closeRestoBlock()
+
   isFoodBlockVisable.value = false
 }
 

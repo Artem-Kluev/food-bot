@@ -1,12 +1,6 @@
 <template>
   <div class="banner-slider">
-    <swiper
-      :spaceBetween="5"
-      :modules="modules"
-      :slidesPerView="1"
-      class="banner-slider__swiper"
-      loop
-    >
+    <swiper :spaceBetween="5" :modules="modules" :slidesPerView="1" class="banner-slider__swiper" loop>
       <swiper-slide v-for="slide in sliders" :key="slide.title" class="banner-slider__slide">
         <BannerCard :bannerData="slide" />
       </swiper-slide>

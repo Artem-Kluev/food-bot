@@ -353,6 +353,7 @@ function submitOrder(values: any) {
     cursor: pointer;
     user-select: none;
     text-align: center;
+    border: none;
     line-height: 50px;
     padding: 0 25px;
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
@@ -364,9 +365,14 @@ function submitOrder(values: any) {
     max-width: 440px;
     left: 50%;
     transform: translateX(-50%);
+    transform-origin: 0 0;
 
     &:active {
-      transform: scale(0.95);
+      transform: scale(0.95) translateX(-50%);
+    }
+
+    &-text {
+      flex-grow: 1;
     }
 
     &-line {
@@ -406,7 +412,6 @@ function submitOrder(values: any) {
 .fade-scale-enter-active,
 .fade-scale-leave-active {
   transition: all 0.3s ease;
-  transform-origin: 0 0;
 }
 
 .fade-scale-enter-from,

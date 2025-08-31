@@ -1,7 +1,7 @@
 <template>
   <Transition name="fade-in" mode="out-in">
     <KeepAlive>
-      <div v-if="isBottomBarVisible" class="bottom-nav">
+      <div v-if="isBottomBarVisible" class="bottom-nav" data-scroll-gap>
         <nav class="bottom-nav__nav" ref="nav">
           <div class="bottom-nav__highlight" :style="{ transform: progress }"></div>
 

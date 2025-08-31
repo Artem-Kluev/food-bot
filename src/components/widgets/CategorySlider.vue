@@ -1,21 +1,13 @@
 <template>
   <div class="category-slider">
-    <div class="category-slider__title">Категорії</div>
+    <div v-if="title" class="category-slider__title">{{ title }}</div>
 
-    <swiper
-      :spaceBetween="10"
-      :slidesPerView="'auto'"
-      :modules="modules"
-      class="category-slider__swiper"
-    >
+    <swiper :spaceBetween="10" :slidesPerView="'auto'" :modules="modules" class="category-slider__swiper">
       <swiper-slide
         v-for="(slide, index) in categories"
         :key="slide.title"
-        :class="[
-          'category-slider__slide',
-          { 'category-slider__slide_selected': selectedCategories[index] },
-        ]"
-        @click="toggleCategory(index)"
+        :class="['category-slider__slide', { 'category-slider__slide_selected': selectedCategories[index] }]"
+        @click="navigateMode ? navigateToCategory(slide) : toggleCategory(index)"
       >
         <div class="category-slider__slide-image">
           <img :src="slide.image" alt="product image" class="category-slider__slide-img" />
@@ -34,16 +26,31 @@ import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Navigation } from 'swiper/modules'
 import type { Category } from '@/mixins/interfaces'
 import { ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
 interface Props {
   categories: Array<Category>
+  title?: string
+  navigateMode?: boolean
+  initialSelected?: number[]
 }
 
 const props = defineProps<Props>()
 const emit = defineEmits(['selected'])
+const router = useRouter()
 
 const modules = [Navigation]
 const selectedCategories = ref<Record<number, boolean>>({})
+
+// Ініціалізуємо вибрані категорії, якщо вони передані через пропси
+if (props.initialSelected && props.initialSelected.length > 0) {
+  props.initialSelected.forEach((id) => {
+    const index = props.categories.findIndex((cat) => cat.id === id)
+    if (index !== -1) {
+      selectedCategories.value[index] = true
+    }
+  })
+}
 
 function toggleCategory(index: number) {
   selectedCategories.value[index] = !selectedCategories.value[index]
@@ -51,10 +58,15 @@ function toggleCategory(index: number) {
 }
 
 function emitSelectedCategories() {
-  const selected = props.categories
-    .filter((_, index) => selectedCategories.value[index])
-    .map((category) => category.id)
+  const selected = props.categories.filter((_, index) => selectedCategories.value[index]).map((category) => category.id)
   emit('selected', selected)
+}
+
+function navigateToCategory(category: Category) {
+  router.push({
+    path: '/resto',
+    query: { category: category.id.toString() },
+  })
 }
 </script>
 
@@ -68,6 +80,7 @@ function emitSelectedCategories() {
   &__title {
     padding: 10px 10px 5px;
     font-size: 16px;
+    font-weight: 500;
   }
 
   &__swiper {
@@ -82,6 +95,7 @@ function emitSelectedCategories() {
     background-color: $text;
     width: 20%;
     aspect-ratio: 1/1;
+    max-width: 90px;
     border-radius: 10px;
     display: grid;
     grid-template: 1fr auto / 1fr;
@@ -91,7 +105,7 @@ function emitSelectedCategories() {
 
     &_selected {
       background-color: $main-color;
-    text-shadow: $main-text-shadow;
+      text-shadow: $main-text-shadow;
     }
 
     &-image {
@@ -108,7 +122,7 @@ function emitSelectedCategories() {
 
     &-text {
       color: $background;
-      font-size: min(2.8vw, 16px);
+      font-size: min(2.8vw, 14px);
       text-align: center;
     }
   }

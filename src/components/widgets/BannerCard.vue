@@ -91,9 +91,10 @@ onBeforeUnmount(() => {
 @use '@/assets/styles/vars.scss' as *;
 
 .banner {
-  width: 100%;
   background-color: $main-color;
   border-radius: 8px;
+  margin: 0 10px;
+  width: calc(100% - 20px);
   aspect-ratio: 2 / 1;
 
   &__content {

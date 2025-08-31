@@ -1,10 +1,10 @@
 <template>
   <Transition name="fade-slide">
     <div v-if="isFoodBlockVisable && currentFood" class="food-block">
-      <div class="food-block__main" @click.self="closeFoodBlock">
+      <div class="food-block__main" @click.self="closeFoodBlock(false)">
         <div class="food-block__wrapper">
           <div class="food-block__image">
-            <div class="food-block__back" @click="closeFoodBlock">
+            <div class="food-block__back" @click="closeFoodBlock(false)">
               <BaseSvg class="food-block__back-icon" id="arrow-logo" />
             </div>
 
@@ -99,7 +99,7 @@ const router = useRouter()
 
 function navigateToBasket() {
   router.push('/basket')
-  closeFoodBlock()
+  closeFoodBlock(true)
 }
 
 // Використовуємо isLiked та rating з useFoodBlock.ts
@@ -347,9 +347,14 @@ function handleConfirm(value: boolean) {
     max-width: 440px;
     left: 50%;
     transform: translateX(-50%);
+    transform-origin: 0 0;
 
     &:active {
-      transform: scale(0.95);
+      transform: scale(0.95) translateX(-50%);
+    }
+
+    &-text {
+      flex-grow: 1;
     }
 
     &-line {
@@ -395,7 +400,6 @@ function handleConfirm(value: boolean) {
 .fade-scale-enter-active,
 .fade-scale-leave-active {
   transition: all 0.3s ease;
-  transform-origin: 0 0;
 }
 
 .fade-scale-enter-from,
