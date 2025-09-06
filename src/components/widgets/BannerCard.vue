@@ -137,6 +137,8 @@ onBeforeUnmount(() => {
   text-align: center;
   white-space: normal;
   min-height: 3em;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .typing-cursor {

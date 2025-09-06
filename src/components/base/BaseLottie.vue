@@ -148,5 +148,7 @@ onBeforeUnmount(() => {
   display: inline-block;
   width: 100%;
   height: 100%;
+  will-change: transform;
+  transform: translateZ(0);
 }
 </style>
