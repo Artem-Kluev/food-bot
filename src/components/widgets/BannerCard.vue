@@ -5,8 +5,6 @@
         <div class="typing-container">
           <h2 class="title title--medium typing-text" v-html="formattedText"></h2>
         </div>
-
-        {{ isLowEndDevice() }}
       </div>
 
       <div class="banner__column">
@@ -21,9 +19,7 @@ import type { Banner } from '@/mixins/interfaces'
 import BaseLottie from '@/components/base/BaseLottie.vue'
 import { isLowEndDevice } from '@/composable/useDevicePerformance'
 
-const isLow = isLowEndDevice()
 
-console.log(isLow)
 
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 
@@ -55,7 +51,8 @@ const currentPhrase = computed(() => phrases[currentPhraseIndex.value])
 
 const formattedText = computed(() => {
   const text = currentPhrase.value.substring(0, displayedCharCount.value)
-  return text + (displayedCharCount.value < currentPhrase.value.length ? '<span class="typing-cursor">|</span>' : '')
+  // Показуємо курсор тільки якщо анімація активна (не слабкий пристрій)
+  return text + (!isLowEndDevice() && displayedCharCount.value < currentPhrase.value.length ? '<span class="typing-cursor">|</span>' : '')
 })
 
 function typeText() {
@@ -82,8 +79,19 @@ function eraseText() {
 }
 
 onMounted(() => {
-  // Почати анімацію друкування після монтування компонента
-  typingTimer = setTimeout(typeText, 500)
+  // Почати анімацію друкування тільки на потужних пристроях
+  if (!isLowEndDevice()) {
+    typingTimer = setTimeout(typeText, 500)
+  } else {
+    // На слабких пристроях відразу показуємо повний текст
+    displayedCharCount.value = currentPhrase.value.length
+    
+    // Змінюємо фразу кожні 10 секунд без анімації
+    typingTimer = setInterval(() => {
+      currentPhraseIndex.value = (currentPhraseIndex.value + 1) % phrases.length
+      displayedCharCount.value = currentPhrase.value.length
+    }, 10000)
+  }
 })
 
 onBeforeUnmount(() => {
