@@ -54,7 +54,7 @@ async function loadAnimation() {
         autoplay: (props.autoplay ?? true) && isVisible, // Автозапуск тільки якщо видимий
         animationData: data,
       })
-      
+
       setupAnimationEvents()
     } catch (error) {
       console.error('[BaseLottie] Error loading or parsing animation JSON:', error)
@@ -72,14 +72,14 @@ async function loadAnimation() {
       autoplay: (props.autoplay ?? true) && isVisible, // Автозапуск тільки якщо видимий
       path: props.src,
     })
-    
+
     setupAnimationEvents()
   }
 }
 
 function setupAnimationEvents() {
   if (!animation) return
-  
+
   animation.addEventListener('data_failed', () => {
     console.error('[BaseLottie] Не вдалося завантажити анімацію за шляхом:', props.src)
   })
@@ -87,15 +87,12 @@ function setupAnimationEvents() {
 
 function setupIntersectionObserver() {
   if (!container.value) return
-  
+
   observer = new IntersectionObserver(
     (entries) => {
       const entry = entries[0]
       isVisible = entry.isIntersecting
-    
 
-      console.log(props.src, isVisible)
-      
       if (animation) {
         if (isVisible) {
           animation.play()
@@ -107,10 +104,10 @@ function setupIntersectionObserver() {
     {
       root: null,
       rootMargin: '0px',
-      threshold: 0.1 // Анімація запускається, коли хоча б 10% елемента видно
-    }
+      threshold: 0.1, // Анімація запускається, коли хоча б 10% елемента видно
+    },
   )
-  
+
   observer.observe(container.value)
 }
 
@@ -135,7 +132,7 @@ onBeforeUnmount(() => {
     animation.destroy()
     animation = null
   }
-  
+
   if (observer) {
     observer.disconnect()
     observer = null

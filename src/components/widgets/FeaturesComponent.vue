@@ -45,6 +45,7 @@ import BaseLottie from '@/components/base/BaseLottie.vue'
   gap: 12px;
   padding: 0 10px;
   margin-bottom: 30px;
+  margin-top: 1000px;
 
   &__item {
     display: flex;
