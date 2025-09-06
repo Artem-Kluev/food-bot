@@ -1,5 +1,5 @@
 <template>
-  <div class="banner">
+  <div class="banner" ref="bannerRef">
     <div class="banner__content">
       <div class="banner__column banner__column-text">
         <div class="typing-container">
@@ -43,6 +43,8 @@ const phrases = [
 const currentPhraseIndex = ref(0)
 const displayedCharCount = ref(0)
 let typingTimer: number | null = null
+const isVisible = ref(true)
+const bannerRef = ref<HTMLElement | null>(null)
 
 const currentPhrase = computed(() => phrases[currentPhraseIndex.value])
 
@@ -52,6 +54,8 @@ const formattedText = computed(() => {
 })
 
 function typeText() {
+  if (!isVisible.value) return
+  
   if (displayedCharCount.value < currentPhrase.value.length) {
     // Друкування тексту
     displayedCharCount.value++
@@ -63,6 +67,8 @@ function typeText() {
 }
 
 function eraseText() {
+  if (!isVisible.value) return
+  
   if (displayedCharCount.value > 0) {
     // Видалення тексту
     displayedCharCount.value--
@@ -74,15 +80,56 @@ function eraseText() {
   }
 }
 
+let observer: IntersectionObserver | null = null
+
+function setupIntersectionObserver() {
+  if (!bannerRef.value) return
+  
+  observer = new IntersectionObserver(
+    (entries) => {
+      const [entry] = entries
+      const wasVisible = isVisible.value
+      isVisible.value = entry.isIntersecting
+      
+      if (isVisible.value && !wasVisible) {
+        // Відновлюємо анімацію, якщо елемент став видимим
+        if (!typingTimer) {
+          typingTimer = setTimeout(
+            displayedCharCount.value < currentPhrase.value.length ? typeText : eraseText, 
+            50
+          )
+        }
+      }
+    },
+    {
+      threshold: 0.1, // Спрацьовує, коли хоча б 10% елемента видно
+      rootMargin: '0px' // Без додаткових відступів
+    }
+  )
+  
+  observer.observe(bannerRef.value)
+}
+
 onMounted(() => {
   // Почати анімацію друкування після монтування компонента
   typingTimer = setTimeout(typeText, 500)
+  
+  // Налаштувати Intersection Observer
+  setupIntersectionObserver()
 })
 
 onBeforeUnmount(() => {
   // Очистити таймер при знищенні компонента
   if (typingTimer) {
     clearTimeout(typingTimer)
+    typingTimer = null
+  }
+  
+  // Відключити observer
+  if (observer && bannerRef.value) {
+    observer.unobserve(bannerRef.value)
+    observer.disconnect()
+    observer = null
   }
 })
 </script>
