@@ -19,6 +19,8 @@ const props = defineProps<Props>()
 
 const container = ref<HTMLElement | null>(null)
 let animation: AnimationItem | null = null
+let observer: IntersectionObserver | null = null
+let isVisible = true
 
 async function loadAnimation() {
   if (!container.value) return
@@ -47,11 +49,13 @@ async function loadAnimation() {
 
       animation = lottie.loadAnimation({
         container: container.value,
-        renderer: props.renderer || 'svg',
+        renderer: 'canvas', // Завжди використовуємо canvas для кращої продуктивності
         loop: props.loop ?? true,
-        autoplay: props.autoplay ?? true,
+        autoplay: (props.autoplay ?? true) && isVisible, // Автозапуск тільки якщо видимий
         animationData: data,
       })
+      
+      setupAnimationEvents()
     } catch (error) {
       console.error('[BaseLottie] Error loading or parsing animation JSON:', error)
     }
@@ -63,19 +67,56 @@ async function loadAnimation() {
     }
     animation = lottie.loadAnimation({
       container: container.value,
-      renderer: props.renderer || 'svg',
+      renderer: 'canvas', // Завжди використовуємо canvas для кращої продуктивності
       loop: props.loop ?? true,
-      autoplay: props.autoplay ?? true,
+      autoplay: (props.autoplay ?? true) && isVisible, // Автозапуск тільки якщо видимий
       path: props.src,
     })
-    animation.addEventListener('data_failed', () => {
-      console.error('[BaseLottie] Не вдалося завантажити анімацію за шляхом:', props.src)
-    })
+    
+    setupAnimationEvents()
   }
+}
+
+function setupAnimationEvents() {
+  if (!animation) return
+  
+  animation.addEventListener('data_failed', () => {
+    console.error('[BaseLottie] Не вдалося завантажити анімацію за шляхом:', props.src)
+  })
+}
+
+function setupIntersectionObserver() {
+  if (!container.value) return
+  
+  observer = new IntersectionObserver(
+    (entries) => {
+      const entry = entries[0]
+      isVisible = entry.isIntersecting
+    
+
+      console.log(props.src, isVisible)
+      
+      if (animation) {
+        if (isVisible) {
+          animation.play()
+        } else {
+          animation.pause()
+        }
+      }
+    },
+    {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1 // Анімація запускається, коли хоча б 10% елемента видно
+    }
+  )
+  
+  observer.observe(container.value)
 }
 
 onMounted(() => {
   loadAnimation()
+  setupIntersectionObserver()
 })
 
 watch(
@@ -93,6 +134,11 @@ onBeforeUnmount(() => {
   if (animation) {
     animation.destroy()
     animation = null
+  }
+  
+  if (observer) {
+    observer.disconnect()
+    observer = null
   }
 })
 </script>
