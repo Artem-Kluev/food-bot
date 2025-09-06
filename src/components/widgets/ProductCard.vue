@@ -1,5 +1,9 @@
 <template>
-  <div class="product" :class="{ ['product_' + modifier]: modifier === 'resto' }" @click="handleProductClick">
+  <div
+    class="product"
+    :class="{ [`product_${modifier}`]: modifier, [`product_${size}`]: size, observer: observer }"
+    @click="handleProductClick"
+  >
     <div class="product__like">
       <UiLike v-model="isLiked" @click.stop />
     </div>
@@ -51,6 +55,8 @@ interface Props {
   slideData: Resto | Food
   modifier?: 'resto'
   counter?: boolean
+  size?: 'min'
+  observer?: boolean
 }
 
 const props = defineProps<Props>()
@@ -260,6 +266,39 @@ function handleConfirm(value: boolean) {
     .product {
       &__image {
         aspect-ratio: 4/2.2;
+      }
+    }
+  }
+
+  &_min {
+    margin-bottom: 0;
+
+    .product {
+      &__image {
+        aspect-ratio: 1.5/1;
+      }
+
+      &__like {
+        top: 4px;
+        right: 6px;
+      }
+
+      &__rating {
+        bottom: 4px;
+        right: 6px;
+      }
+
+      &__time {
+        bottom: 4px;
+        left: 6px;
+      }
+
+      &__info {
+        padding: 5px;
+      }
+
+      &__name {
+        font-size: 14px;
       }
     }
   }

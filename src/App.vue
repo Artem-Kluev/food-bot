@@ -5,7 +5,11 @@
     </div>
 
     <main class="main">
-      <RouterView />
+      <router-view v-slot="{ Component }">
+        <keep-alive>
+          <component :is="Component" />
+        </keep-alive>
+      </router-view>
     </main>
 
     <BottomBar class="bottom" />
@@ -27,10 +31,14 @@ import UiSearch from '@/components/ui/UiSearch.vue'
 
 import { onMounted, ref } from 'vue'
 import FoodBlock from './components/widgets/FoodBlock.vue'
+import useElementObserver from '@/composable/useElementObserver'
 
 const tg = ref<any>(null)
 const tgAvailable = ref(false)
 const tgUserName = ref<string | null>(null)
+
+// Використовуємо composable для спостереження за елементами з класом .observer
+useElementObserver()
 
 onMounted(() => {
   tg.value = window.Telegram?.WebApp ?? null
@@ -55,6 +63,7 @@ onMounted(() => {
   max-width: 600px;
   margin: 0 auto;
   position: relative;
+  overflow: hidden;
 }
 
 .search-container {

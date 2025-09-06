@@ -2,42 +2,27 @@
   <div class="features">
     <div class="features__item">
       <div class="features__icon features__icon_delivery">
-        <template v-if="isLowEndDevice()">
-          <BaseLottie src="/animations/4/animate.json" :loop="true" :autoplay="true" />
-        </template>
-        <template v-else>
-          <BaseSvg id="delivery-icon" />
-        </template>
+        <BaseLottie src="/animations/4/animate.json" :loop="true" :autoplay="true" />
       </div>
       <div class="features__content">
-        <h3 class="features__title">Блискавична доставка</h3>
-        <p class="features__text">Від 15 до 30 хвилин до вашого столу</p>
+        <h3 class="features__title">Завжди найкраще</h3>
+        <p class="features__text">Обирай серед безлічі різних ресторанів</p>
       </div>
     </div>
 
     <div class="features__item">
       <div class="features__icon features__icon_quality">
-        <template v-if="isLowEndDevice()">
-          <BaseLottie src="/animations/2/animate.json" :loop="true" :autoplay="true" />
-        </template>
-        <template v-else>
-          <BaseSvg id="quality-icon" />
-        </template>
+        <BaseLottie src="/animations/moped/animate.json" :loop="true" :autoplay="true" />
       </div>
       <div class="features__content">
-        <h3 class="features__title">Завжди найкраще</h3>
-        <p class="features__text">Обирай серед різних ресторанів</p>
+        <h3 class="features__title">Вдома смачніше</h3>
+        <p class="features__text">Цінуй свій час з доставкою додому</p>
       </div>
     </div>
 
     <div class="features__item">
       <div class="features__icon features__icon_telegram">
-        <template v-if="isLowEndDevice()">
-          <BaseLottie src="/animations/telegram/animate.json" :loop="true" :autoplay="true" />
-        </template>
-        <template v-else>
-          <BaseSvg id="telegram-icon" />
-        </template>
+        <BaseLottie src="/animations/telegram/animate.json" :loop="true" :autoplay="true" />
       </div>
       <div class="features__content">
         <h3 class="features__title">Замовлення в Телеграмі</h3>
@@ -49,8 +34,6 @@
 
 <script setup lang="ts">
 import BaseLottie from '@/components/base/BaseLottie.vue'
-import BaseSvg from '@/components/base/BaseSvg.vue'
-import { isLowEndDevice } from '@/composable/useDevicePerformance'
 </script>
 
 <style scoped lang="scss">
@@ -61,7 +44,7 @@ import { isLowEndDevice } from '@/composable/useDevicePerformance'
   grid-template: repeat(3, 1fr) / 1fr;
   gap: 12px;
   padding: 0 10px;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
 
   &__item {
     display: flex;
@@ -101,26 +84,16 @@ import { isLowEndDevice } from '@/composable/useDevicePerformance'
     width: 70px;
     height: 70px;
     border-radius: 12px;
-    // background-color: $background;
     flex-shrink: 0;
     overflow: hidden;
     color: $main-color;
 
-    svg {
-      width: 50px;
-      height: 50px;
-    }
-
     &_delivery {
-      color: $yellow;
+      padding: 5px;
     }
 
     &_quality {
-      color: $main-color;
-    }
-
-    &_telegram {
-      color: $telegram;
+      padding: 3px;
     }
   }
 
