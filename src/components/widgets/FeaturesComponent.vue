@@ -2,7 +2,12 @@
   <div class="features">
     <div class="features__item">
       <div class="features__icon features__icon_delivery">
-        <BaseLottie src="/animations/4/animate.json" :loop="true" :autoplay="true" />
+        <template v-if="!isLowEndDevice()">
+          <BaseLottie src="/animations/4/animate.json" :loop="true" :autoplay="true" />
+        </template>
+        <template v-else>
+          <BaseSvg id="delivery-icon" />
+        </template>
       </div>
       <div class="features__content">
         <h3 class="features__title">Блискавична доставка</h3>
@@ -12,7 +17,12 @@
 
     <div class="features__item">
       <div class="features__icon features__icon_quality">
-        <BaseLottie src="/animations/2/animate.json" :loop="true" :autoplay="true" />
+        <template v-if="!isLowEndDevice()">
+          <BaseLottie src="/animations/2/animate.json" :loop="true" :autoplay="true" />
+        </template>
+        <template v-else>
+          <BaseSvg id="quality-icon" />
+        </template>
       </div>
       <div class="features__content">
         <h3 class="features__title">Завжди найкраще</h3>
@@ -22,7 +32,12 @@
 
     <div class="features__item">
       <div class="features__icon features__icon_telegram">
-        <BaseLottie src="/animations/telegram/animate.json" :loop="true" :autoplay="true" />
+        <template v-if="!isLowEndDevice()">
+          <BaseLottie src="/animations/telegram/animate.json" :loop="true" :autoplay="true" />
+        </template>
+        <template v-else>
+          <BaseSvg id="telegram-icon" />
+        </template>
       </div>
       <div class="features__content">
         <h3 class="features__title">Замовлення в Телеграмі</h3>
@@ -34,6 +49,8 @@
 
 <script setup lang="ts">
 import BaseLottie from '@/components/base/BaseLottie.vue'
+import BaseSvg from '@/components/base/BaseSvg.vue'
+import { isLowEndDevice } from '@/composable/useDevicePerformance'
 </script>
 
 <style scoped lang="scss">
@@ -45,7 +62,6 @@ import BaseLottie from '@/components/base/BaseLottie.vue'
   gap: 12px;
   padding: 0 10px;
   margin-bottom: 30px;
-  margin-top: 1000px;
 
   &__item {
     display: flex;
@@ -89,6 +105,23 @@ import BaseLottie from '@/components/base/BaseLottie.vue'
     flex-shrink: 0;
     overflow: hidden;
     color: $main-color;
+
+    svg {
+      width: 50px;
+      height: 50px;
+    }
+
+    &_delivery {
+      color: $yellow;
+    }
+
+    &_quality {
+      color: $main-color;
+    }
+
+    &_telegram {
+      color: $telegram;
+    }
   }
 
   &__content {

@@ -19,8 +19,6 @@ import type { Banner } from '@/mixins/interfaces'
 import BaseLottie from '@/components/base/BaseLottie.vue'
 import { isLowEndDevice } from '@/composable/useDevicePerformance'
 
-
-
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 
 interface Props {
@@ -85,7 +83,7 @@ onMounted(() => {
   } else {
     // На слабких пристроях відразу показуємо повний текст
     displayedCharCount.value = currentPhrase.value.length
-    
+
     // Змінюємо фразу кожні 10 секунд без анімації
     typingTimer = setInterval(() => {
       currentPhraseIndex.value = (currentPhraseIndex.value + 1) % phrases.length
