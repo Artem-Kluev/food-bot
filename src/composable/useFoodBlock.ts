@@ -42,6 +42,7 @@ export function setFoodBlockData({
       description: 'Опис ресторану',
       rating: 4.3,
       id: food.restoId,
+      minOrder: food.minOrder || 0,
     }
   }
 

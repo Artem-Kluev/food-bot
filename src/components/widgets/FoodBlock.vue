@@ -91,7 +91,7 @@ import type { Food, Resto } from '@/mixins/interfaces'
 
 const productCount = ref(0)
 const confirmModal = ref()
-const pendingProduct = ref<{ id: number; title: string; image: string; price: number; restoId: number } | null>(null)
+const pendingProduct = ref<{ id: number; title: string; image: string; price: number; restoId: number; minOrder: number } | null>(null)
 const pendingCount = ref(0)
 
 const { lockScroll, unlockScroll } = useScrollLock()
@@ -136,6 +136,7 @@ function updateBasket(newCount: number) {
         image: currentFood.value.image,
         price: currentFood.value.price.base,
         restoId: currentFood.value.restoId,
+        minOrder: currentFood.value.minOrder,
       }
       pendingCount.value = newCount
 
@@ -152,6 +153,7 @@ function updateBasket(newCount: number) {
         image: currentFood.value.image,
         price: currentFood.value.price.base,
         restoId: currentFood.value.restoId,
+        minOrder: currentFood.value.minOrder,
       },
       newCount,
     )
