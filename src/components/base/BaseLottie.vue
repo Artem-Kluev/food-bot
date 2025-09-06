@@ -6,12 +6,12 @@
 import { ref, onMounted, watch, onBeforeUnmount } from 'vue'
 import lottie from 'lottie-web'
 import type { AnimationItem } from 'lottie-web'
+import { isLowEndDevice } from '@/composable/useDevicePerformance'
 
 interface Props {
   src: string
   loop?: boolean
   autoplay?: boolean
-  renderer?: 'svg' | 'canvas' | 'html'
   assetsPath?: string
 }
 
@@ -49,7 +49,7 @@ async function loadAnimation() {
 
       animation = lottie.loadAnimation({
         container: container.value,
-        renderer: 'canvas', // Завжди використовуємо canvas для кращої продуктивності
+        renderer: isLowEndDevice() ? 'canvas' : 'svg', // Canvas для слабких пристроїв, SVG для потужних
         loop: props.loop ?? true,
         autoplay: (props.autoplay ?? true) && isVisible, // Автозапуск тільки якщо видимий
         animationData: data,
@@ -67,7 +67,7 @@ async function loadAnimation() {
     }
     animation = lottie.loadAnimation({
       container: container.value,
-      renderer: 'canvas', // Завжди використовуємо canvas для кращої продуктивності
+      renderer: isLowEndDevice() ? 'canvas' : 'svg', // Canvas для слабких пристроїв, SVG для потужних
       loop: props.loop ?? true,
       autoplay: (props.autoplay ?? true) && isVisible, // Автозапуск тільки якщо видимий
       path: props.src,

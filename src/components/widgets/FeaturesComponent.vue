@@ -2,7 +2,7 @@
   <div class="features">
     <div class="features__item">
       <div class="features__icon features__icon_delivery">
-        <template v-if="!isLowEndDevice()">
+        <template v-if="isLowEndDevice()">
           <BaseLottie src="/animations/4/animate.json" :loop="true" :autoplay="true" />
         </template>
         <template v-else>
@@ -17,7 +17,7 @@
 
     <div class="features__item">
       <div class="features__icon features__icon_quality">
-        <template v-if="!isLowEndDevice()">
+        <template v-if="isLowEndDevice()">
           <BaseLottie src="/animations/2/animate.json" :loop="true" :autoplay="true" />
         </template>
         <template v-else>
@@ -32,7 +32,7 @@
 
     <div class="features__item">
       <div class="features__icon features__icon_telegram">
-        <template v-if="!isLowEndDevice()">
+        <template v-if="isLowEndDevice()">
           <BaseLottie src="/animations/telegram/animate.json" :loop="true" :autoplay="true" />
         </template>
         <template v-else>
@@ -101,7 +101,7 @@ import { isLowEndDevice } from '@/composable/useDevicePerformance'
     width: 70px;
     height: 70px;
     border-radius: 12px;
-    background-color: $background;
+    // background-color: $background;
     flex-shrink: 0;
     overflow: hidden;
     color: $main-color;
