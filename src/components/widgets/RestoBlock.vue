@@ -19,11 +19,16 @@
 
           <div v-if="currentResto" class="resto-block__title">{{ currentResto.title }}</div>
 
+          <TagSlider :tags="allTags" class="resto-block__tags" />
+
           <div v-if="currentResto" class="resto-block__description">
             {{ currentResto.description }}
           </div>
 
-          <TagSlider :tags="allTags" class="resto-block__tags" />
+          <div v-if="currentResto" class="resto-block__min-order">
+            <span>Мінімальне замовлення:</span>
+            <span class="resto-block__min-order-value">{{ currentResto.minOrder }} ₴</span>
+          </div>
 
           <div class="resto-block__buttons">
             <div class="resto-block__buttons-item resto-block__buttons-call">
@@ -96,11 +101,7 @@ function navigateToBasket() {
   closeRestoBlock()
 }
 
-function openConfirmModal() {
-  confirmModal.value.openModal()
-}
-
-const pendingProduct = ref<{ id: number; title: string; image: string; price: number; restoId: number } | null>(null)
+const pendingProduct = ref<{ id: number; title: string; image: string; price: number; restoId: number; minOrder: number } | null>(null)
 const pendingCount = ref(0)
 
 function handleConfirm(value: boolean) {
@@ -257,19 +258,33 @@ watch(isRestoBlockVisable, (newValue) => {
   &__title {
     font-size: 24px;
     font-weight: 500;
-    padding: 10px;
+    padding: 10px 10px 0;
     cursor: pointer;
     transition: color 0.2s;
   }
 
   &__description {
     padding: 0 10px;
+    margin-bottom: 10px;
+  }
+
+  &__min-order {
+    padding: 0 10px;
     margin-bottom: 20px;
+    font-size: 14px;
+    color: $text;
+    display: flex;
+    font-size: 18px;
+    gap: 10px;
+
+    &-value {
+      font-weight: 500;
+      color: $main-color;
+    }
   }
 
   &__tags {
-    margin-top: 10px;
-    margin-bottom: 5px;
+    margin: 15px 0;
   }
 
   &__buttons {
@@ -287,7 +302,7 @@ watch(isRestoBlockVisable, (newValue) => {
       border-radius: 30px;
       gap: 5px;
       color: $background;
-      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
       text-shadow: $main-text-shadow;
       transition: transform 0.3s;
 
@@ -302,6 +317,7 @@ watch(isRestoBlockVisable, (newValue) => {
     }
 
     &-call {
+      background-color: $main-color;
       &-icon {
         width: 30px;
         height: 30px;
@@ -309,6 +325,7 @@ watch(isRestoBlockVisable, (newValue) => {
     }
 
     &-send {
+      background-color: $telegram;
       &-icon {
         width: 30px;
         height: 30px;

@@ -75,7 +75,7 @@ function navigateToCategory(category: Category) {
 
 .category-slider {
   width: 100%;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 
   &__title {
     padding: 10px 10px 5px;

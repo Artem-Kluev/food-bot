@@ -46,7 +46,7 @@
 
 <script setup lang="ts">
 import { useBasket } from '@/composable/useBasket'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, onActivated } from 'vue'
 import OrderForm from '@/components/widgets/OrderForm.vue'
 import { isOrderFormVisible, openOrderForm, closeOrderForm } from '@/composable/useOrderForm'
 import BaseSvg from '@/components/base/BaseSvg.vue'
@@ -67,6 +67,10 @@ function updateProductCount(productId: number, count: number) {
 }
 const products = ref(getAllProduct())
 const totalPrice = computed(() => getTotalPrice())
+
+onActivated(() => {
+  products.value = getAllProduct()
+})
 
 function removeProduct(id: number) {
   remove(id)

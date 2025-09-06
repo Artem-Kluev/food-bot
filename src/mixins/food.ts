@@ -18,6 +18,7 @@ export const foodSliders: Array<Food> = [
     },
     id: 1,
     restoId: 101,
+    minOrder: 350,
   },
   {
     title: 'Піца Маргарита',
@@ -37,6 +38,7 @@ export const foodSliders: Array<Food> = [
     },
     id: 2,
     restoId: 101,
+    minOrder: 350,
   },
   {
     title: 'Бургер класичний',
@@ -55,6 +57,7 @@ export const foodSliders: Array<Food> = [
     },
     id: 3,
     restoId: 101,
+    minOrder: 350,
   },
   {
     title: 'Салат Цезар',
@@ -67,6 +70,7 @@ export const foodSliders: Array<Food> = [
     },
     id: 4,
     restoId: 104,
+    minOrder: 200,
   },
   {
     title: 'Паста Карбонара',
@@ -85,6 +89,7 @@ export const foodSliders: Array<Food> = [
     },
     id: 5,
     restoId: 105,
+    minOrder: 300,
   },
   {
     title: 'Стейк Рібай',
@@ -103,6 +108,7 @@ export const foodSliders: Array<Food> = [
     },
     id: 6,
     restoId: 106,
+    minOrder: 700,
   },
   {
     title: 'Суп грибний',
@@ -115,6 +121,7 @@ export const foodSliders: Array<Food> = [
     },
     id: 7,
     restoId: 107,
+    minOrder: 250,
   },
   {
     title: 'Десерт Тірамісу',
@@ -133,6 +140,7 @@ export const foodSliders: Array<Food> = [
     },
     id: 9,
     restoId: 109,
+    minOrder: 400,
   },
   {
     title: 'Морепродукти гриль',
@@ -152,6 +160,7 @@ export const foodSliders: Array<Food> = [
     },
     id: 10,
     restoId: 110,
+    minOrder: 600,
   },
   {
     title: 'Вегетаріанська піца',
@@ -170,5 +179,6 @@ export const foodSliders: Array<Food> = [
     },
     id: 11,
     restoId: 111,
+    minOrder: 350,
   },
 ]

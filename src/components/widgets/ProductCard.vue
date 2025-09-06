@@ -65,7 +65,7 @@ const isLiked = ref(false)
 const productCount = ref(0)
 const router = useRouter()
 const confirmModal = ref()
-const pendingProduct = ref<{ id: number; title: string; image: string; price: number; restoId: number } | null>(null)
+const pendingProduct = ref<{ id: number; title: string; image: string; price: number; restoId: number; minOrder: number } | null>(null)
 const pendingCount = ref(0)
 
 const { getProduct, add, remove, on } = useBasket()
@@ -123,6 +123,7 @@ function updateBasket(newCount: number) {
         image: props.slideData.image,
         price: props.slideData.price.base,
         restoId: props.slideData.restoId,
+        minOrder: props.slideData.minOrder,
       }
       pendingCount.value = newCount
 
@@ -139,6 +140,7 @@ function updateBasket(newCount: number) {
         image: props.slideData.image,
         price: props.slideData.price.base,
         restoId: props.slideData.restoId,
+        minOrder: props.slideData.minOrder,
       },
       newCount,
     )

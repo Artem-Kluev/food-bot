@@ -14,6 +14,7 @@ export interface Resto {
   rating?: number
   time?: number
   id: number
+  minOrder: number
 }
 
 export interface Food {
@@ -33,6 +34,7 @@ export interface Food {
   time?: number
   id: number
   restoId: number
+  minOrder: number
 }
 
 export interface Banner {

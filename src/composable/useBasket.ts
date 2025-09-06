@@ -7,6 +7,7 @@ interface BasketProduct {
   title: string
   image: string
   restoId: number
+  minOrder: number
 }
 
 type BasketChangeCallback = (products: BasketProduct[]) => void
@@ -83,7 +84,7 @@ function basket(): BasketReturn {
   // Додавання продукту в кошик
   function add(product: Omit<BasketProduct, 'count'>, count = 1) {
     // Перевіряємо наявність необхідних полів
-    if (!product.id || !product.title || !product.image || !product.price || !product.restoId) {
+    if (!product.id || !product.title || !product.image || !product.price || !product.restoId || !product.minOrder) {
       console.error("Неможливо додати продукт: відсутні обов'язкові поля", product)
       return
     }

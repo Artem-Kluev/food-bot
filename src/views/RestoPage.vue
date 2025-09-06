@@ -11,12 +11,8 @@
   <ButtonSlider :buttons="payment" title="Спосіб оплати" />
 
   <ButtonSlider :buttons="offers" title="Пропозиції" />
-  <!-- 
-  <div class="toggle-container">
-    <UiToggle v-model="darkMode" />
 
-    <span>Зараз працюють</span>
-  </div> -->
+  <UiSlider v-model="sliderValue" :max-value="2000" label="Мін. замовлення" />
 
   <div class="resto-container">
     <ProductCard v-for="restaurant in filteredRestaurants" :key="restaurant.title" :slide-data="restaurant" modifier="resto" />
@@ -26,6 +22,7 @@
 <script setup lang="ts">
 import CategorySlider from '@/components/widgets/CategorySlider.vue'
 import ButtonSlider from '@/components/widgets/ButtonSlider.vue'
+import UiSlider from '@/components/ui/UiSlider.vue'
 import { ref, onMounted } from 'vue'
 import { categories } from '@/mixins/categories'
 import ProductCard from '@/components/widgets/ProductCard.vue'
@@ -46,6 +43,8 @@ onMounted(() => {
     }
   }
 })
+
+const sliderValue = ref(500)
 
 function filterRestaurantsByCategory(categoryIds: number[]) {
   if (categoryIds.length === 0) {

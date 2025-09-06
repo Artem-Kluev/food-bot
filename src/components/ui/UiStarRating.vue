@@ -40,8 +40,7 @@ const isHovering = ref(false)
 const stars = [1, 2, 3, 4, 5]
 
 const getStarFill = (starIndex: number) => {
-  const targetRating =
-    isHovering.value && hoverRating.value !== null ? hoverRating.value : props.rating
+  const targetRating = isHovering.value && hoverRating.value !== null ? hoverRating.value : props.rating
 
   const fullStars = Math.floor(targetRating)
   const partialFill = targetRating - fullStars
