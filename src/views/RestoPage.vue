@@ -28,6 +28,7 @@ import { categories } from '@/mixins/categories'
 import ProductCard from '@/components/widgets/ProductCard.vue'
 import { sliders } from '@/mixins/resto'
 import { useRoute } from 'vue-router'
+import { setRestoBlockData } from '@/composable/useRestoBlock'
 
 const route = useRoute()
 const selectedCategories = ref<Record<number, boolean>>({})
@@ -40,6 +41,22 @@ onMounted(() => {
     if (index !== -1) {
       selectedCategories.value[index] = true
       filterRestaurantsByCategory([parseInt(categoryId.toString())])
+    }
+  }
+
+  // Перевіряємо, чи користувач повернувся з корзини через кнопку "Перейти в корзину"
+  const fromRestoBlock = sessionStorage.getItem('fromRestoBlock')
+  const restoId = sessionStorage.getItem('restoId')
+
+  if (fromRestoBlock === 'true' && restoId) {
+    // Знаходимо ресторан за ID
+    const resto = sliders.find((r) => r.id.toString() === restoId)
+    if (resto) {
+      // Відкриваємо RestoBlock з цим рестораном
+      setRestoBlockData({ resto })
+      // Очищаємо sessionStorage після використання
+      sessionStorage.removeItem('fromRestoBlock')
+      sessionStorage.removeItem('restoId')
     }
   }
 })

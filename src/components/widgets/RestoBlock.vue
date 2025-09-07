@@ -19,15 +19,41 @@
 
           <div v-if="currentResto" class="resto-block__title">{{ currentResto.title }}</div>
 
-          <TagSlider :tags="allTags" class="resto-block__tags" />
+          <TagSlider v-if="allTags" :tags="allTags" class="resto-block__tags" />
 
           <div v-if="currentResto" class="resto-block__description">
             {{ currentResto.description }}
           </div>
 
-          <div v-if="currentResto" class="resto-block__min-order">
-            <span>Мінімальне замовлення:</span>
-            <span class="resto-block__min-order-value">{{ currentResto.minOrder }} ₴</span>
+          <div class="resto-block__info-table">
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="resto-block__info-label">Мінімальне замовлення</div>
+                  </td>
+                  <td class="resto-block__info-value">{{ currentResto?.minOrder }} ₴</td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="resto-block__info-label">Ціна доставки</div>
+                  </td>
+                  <td class="resto-block__info-value">80 ₴</td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="resto-block__info-label">Безкоштовна доставка</div>
+                  </td>
+                  <td class="resto-block__info-value">від 500 ₴</td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="resto-block__info-label">Час доставки</div>
+                  </td>
+                  <td class="resto-block__info-value">30-45 хвилин</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
           <div class="resto-block__buttons">
@@ -97,6 +123,9 @@ const router = useRouter()
 const confirmModal = ref()
 
 function navigateToBasket() {
+  // Зберігаємо інформацію про перехід у корзину через RestoBlock у sessionStorage
+  sessionStorage.setItem('fromRestoBlock', 'true')
+  sessionStorage.setItem('restoId', currentResto.value?.id.toString() || '')
   router.push('/basket')
   closeRestoBlock()
 }
@@ -140,9 +169,9 @@ onUnmounted(() => {
 
 const allTags = [
   { title: 'Акція', id: 1 },
-  { title: 'Безкоштовна доставка', id: 2 },
-  { title: 'Новинка', id: 3 },
-  { title: 'Популярне', id: 4 },
+  // { title: 'Безкоштовна доставка', id: 2 },
+  // { title: 'Новинка', id: 3 },
+  // { title: 'Популярне', id: 4 },
 ]
 
 const payment = ref<Array<any>>([
@@ -265,22 +294,63 @@ watch(isRestoBlockVisable, (newValue) => {
 
   &__description {
     padding: 0 10px;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
   }
 
-  &__min-order {
+  &__info-table {
     padding: 0 10px;
-    margin-bottom: 20px;
-    font-size: 14px;
-    color: $text;
-    display: flex;
-    font-size: 18px;
-    gap: 10px;
+    margin: 20px 0 25px;
 
-    &-value {
-      font-weight: 500;
-      color: $main-color;
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      position: relative;
+      background-color: rgba($main-color, 0.05);
+      border-radius: 7px;
+      overflow: hidden;
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: -1px;
+        top: 0;
+        height: 100%;
+        width: 4px;
+        background-color: $main-color;
+        opacity: 0.7;
+      }
     }
+
+    tr {
+      transition: all 0.3s ease;
+    }
+
+    td {
+      padding: 12px 10px;
+      vertical-align: middle;
+
+      &:first-child {
+        width: 70%;
+      }
+
+      &:last-child {
+        text-align: right;
+      }
+    }
+  }
+
+  &__info-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: $text;
+    font-size: 14px;
+  }
+
+  &__info-value {
+    font-weight: 600;
+    font-size: 14px;
   }
 
   &__tags {
@@ -305,6 +375,8 @@ watch(isRestoBlockVisable, (newValue) => {
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
       text-shadow: $main-text-shadow;
       transition: transform 0.3s;
+      user-select: none;
+      cursor: pointer;
 
       &:active {
         transform: scale(0.95);

@@ -8,26 +8,12 @@
 
     <Features />
 
-    <h3 class="main-page__title observer">Популярні ресторани</h3>
-
-    <div class="main-page__resto-grid observer">
-      <ProductCard
-        v-for="resto in popularRestaurants"
-        :key="resto.id"
-        :slideData="resto"
-        modifier="resto"
-        size="min"
-        class="main-page__resto-card"
-      />
-    </div>
-
     <h3 class="main-page__title observer">Про сервіс</h3>
     <p class="main-page__description observer">
       Наш сервіс - це єдина платформа, де зібрані різноманітні ресторани вашого міста. Тут ви можете переглянути меню, ціни та умови
       доставки від різних закладів, порівняти їх пропозиції та акції.
     </p>
 
-    <!-- Блок 5: Як це працює (кроки) -->
     <h3 class="main-page__title observer">Як це працює</h3>
 
     <div class="steps-block observer">
@@ -36,6 +22,7 @@
           <div class="step__number">1</div>
           <div class="step__content">
             <h4 class="step__title">Виберіть ресторан</h4>
+
             <p class="step__text">Оберіть улюблений ресторан з нашого каталогу</p>
           </div>
         </div>
@@ -43,6 +30,7 @@
           <div class="step__number">2</div>
           <div class="step__content">
             <h4 class="step__title">Оберіть страви</h4>
+
             <p class="step__text">Додайте бажані страви до кошика</p>
           </div>
         </div>
@@ -50,6 +38,7 @@
           <div class="step__number">3</div>
           <div class="step__content">
             <h4 class="step__title">Оформіть замовлення</h4>
+
             <p class="step__text">Вкажіть адресу та спосіб оплати</p>
           </div>
         </div>
@@ -57,26 +46,28 @@
           <div class="step__number">4</div>
           <div class="step__content">
             <h4 class="step__title">Отримайте замовлення</h4>
+
             <p class="step__text">Насолоджуйтесь смачною їжею вдома</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Блок з кнопками для партнерів та політики конфіденційності -->
     <div class="footer-links observer">
       <div class="footer-links__row">
-        <span class="footer-links__text">Хочете приєднатися як ресторан?</span>
+        Хочете приєднатися?
+
         <button @click="openPartnershipModal" class="footer-links__button">Стати партнером</button>
       </div>
       <div class="footer-links__row">
-        <span class="footer-links__text">Ознайомтеся з нашою</span>
+        Ознайомтеся з
+
         <button @click="openPrivacyPolicyModal" class="footer-links__button">політикою конфіденційності</button>
       </div>
     </div>
 
-    <!-- Модальні вікна -->
     <PrivacyPolicyModal ref="privacyPolicyModalRef" />
+
     <PartnershipModal ref="partnershipModalRef" />
   </div>
 </template>
@@ -199,7 +190,6 @@ function openPartnershipModal() {
 .footer-links {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 15px;
   padding: 10px;
   margin-top: 20px;
@@ -208,11 +198,12 @@ function openPartnershipModal() {
   &__row {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
+    font-size: 14px;
   }
 
   &__text {
-    font-size: 14px;
     color: rgba($text, 0.7);
   }
 

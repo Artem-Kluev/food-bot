@@ -138,6 +138,7 @@ function decrease() {
   }
 
   &_basket {
+    text-shadow: unset;
     height: 32px;
     width: 90px;
     border-radius: 16px;

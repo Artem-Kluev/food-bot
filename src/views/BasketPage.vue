@@ -29,7 +29,13 @@
           <span>Загальна сума:</span>
           <span class="basket-page__total-price">{{ totalPrice }} ₴</span>
         </div>
-        <button class="basket-page__checkout" @click="openOrderForm">Оформити замовлення</button>
+
+        <div class="basket-page__min-order">
+          <div v-if="showMinOrderError" class="basket-page__error">Мінімальна сума замовлення: {{ minOrderValue }} ₴</div>
+        </div>
+
+        <button class="basket-page__checkout" @click="validateAndOpenOrderForm">Оформити замовлення</button>
+
         <button class="basket-page__clear" @click="clearBasket">Очистити кошик</button>
       </div>
     </div>
@@ -42,18 +48,29 @@
   </div>
 
   <OrderForm />
+  
+  <UiConfirmModal
+    ref="confirmModal"
+    title="Очищення кошика"
+    text="Ви впевнені, що хочете очистити кошик?"
+    confirm-text="Підтвердити"
+    cancel-text="Скасувати"
+    @confirm="handleClearConfirm"
+  />
 </template>
 
 <script setup lang="ts">
 import { useBasket } from '@/composable/useBasket'
-import { ref, onMounted, computed, onActivated } from 'vue'
+import { ref, onMounted, computed, onActivated, watch } from 'vue'
 import OrderForm from '@/components/widgets/OrderForm.vue'
 import { isOrderFormVisible, openOrderForm, closeOrderForm } from '@/composable/useOrderForm'
 import BaseSvg from '@/components/base/BaseSvg.vue'
 import BaseLottie from '@/components/base/BaseLottie.vue'
 import UiCounter from '@/components/ui/UiCounter.vue'
+import UiConfirmModal from '@/components/ui/UiConfirmModal.vue'
 
 const { getAllProduct, getTotalPrice, remove, clear, add } = useBasket()
+const confirmModal = ref(null)
 
 function updateProductCount(productId: number, count: number) {
   const product = products.value.find((p) => p.id === productId)
@@ -67,19 +84,97 @@ function updateProductCount(productId: number, count: number) {
 }
 const products = ref(getAllProduct())
 const totalPrice = computed(() => getTotalPrice())
+const showMinOrderError = ref(false)
+const minOrderValue = ref(0)
+const wasCheckoutAttempted = ref(false) // Прапорець, що вказує, чи була спроба оформити замовлення
+
+// Отримуємо мінімальну суму замовлення з першого продукту в кошику
+function getMinOrderValue() {
+  if (products.value.length > 0) {
+    return products.value[0].minOrder
+  }
+  return 0
+}
+
+// Перевіряємо, чи загальна сума замовлення не менша за мінімальну
+function validateMinOrder() {
+  if (products.value.length === 0) return true
+
+  minOrderValue.value = getMinOrderValue()
+  const isValid = totalPrice.value >= minOrderValue.value
+  showMinOrderError.value = !isValid
+  return isValid
+}
+
+// Валідуємо замовлення перед відкриттям форми
+function validateAndOpenOrderForm() {
+  // Позначаємо, що була спроба оформити замовлення
+  wasCheckoutAttempted.value = true
+
+  // Завжди перевіряємо мінімальну суму при натисканні на кнопку
+  const isValid = validateMinOrder()
+
+  // Якщо сума валідна, відкриваємо форму замовлення
+  if (isValid) {
+    openOrderForm()
+  } else {
+    // Явно показуємо помилку, якщо сума менша за мінімальну
+    showMinOrderError.value = true
+  }
+}
+
+// Слідкуємо за зміною загальної суми і оновлюємо статус помилки
+watch(totalPrice, () => {
+  // Перевіряємо мінімальну суму при кожній зміні загальної суми, але тільки якщо вже була спроба оформити замовлення
+  if (wasCheckoutAttempted.value) {
+    validateMinOrder()
+  }
+})
 
 onActivated(() => {
   products.value = getAllProduct()
+  // Ініціалізуємо значення мінімального замовлення, але не показуємо помилку
+  if (products.value.length > 0) {
+    minOrderValue.value = getMinOrderValue()
+  }
+  // Скидаємо статус помилки та прапорець спроби оформлення при активації компонента
+  showMinOrderError.value = false
+  wasCheckoutAttempted.value = false
 })
 
 function removeProduct(id: number) {
   remove(id)
   products.value = getAllProduct()
+
+  // Перевіряємо мінімальну суму після видалення товару, але тільки якщо була спроба оформити замовлення
+  if (wasCheckoutAttempted.value) {
+    validateMinOrder()
+  }
+
+  // Якщо кошик порожній, приховуємо помилку
+  if (products.value.length === 0) {
+    showMinOrderError.value = false
+    wasCheckoutAttempted.value = false
+  }
 }
 
 function clearBasket() {
-  clear()
-  products.value = getAllProduct()
+  // Відкриваємо модальне вікно для підтвердження
+if (confirmModal.value) {
+(confirmModal.value as any).openModal()
+}
+}
+
+// Обробник підтвердження очищення кошика
+function handleClearConfirm(confirmed: boolean) {
+  if (confirmed) {
+    // Очищаємо кошик тільки якщо користувач підтвердив дію
+    clear()
+    products.value = getAllProduct()
+    // Скидаємо статус помилки та прапорець спроби оформлення при очищенні кошика
+    showMinOrderError.value = false
+    wasCheckoutAttempted.value = false
+  }
 }
 </script>
 
@@ -120,13 +215,24 @@ function clearBasket() {
     justify-content: space-between;
     font-size: 18px;
     font-weight: 500;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
     color: $text;
   }
 
   &__total-price {
     color: $main-color;
     font-weight: 600;
+  }
+
+  &__min-order {
+    height: 21px;
+    margin-bottom: 5px;
+  }
+
+  &__error {
+    color: #ff5757;
+    font-size: 14px;
+    font-weight: 500;
   }
 
   &__checkout {
@@ -140,6 +246,11 @@ function clearBasket() {
     font-weight: 500;
     cursor: pointer;
     margin-bottom: 10px;
+    transition: transform 0.2s ease;
+
+    &:active {
+      transform: scale(0.98);
+    }
   }
 
   &__clear {
@@ -151,6 +262,11 @@ function clearBasket() {
     border-radius: 8px;
     font-weight: 500;
     cursor: pointer;
+    transition: transform 0.2s ease;
+
+    &:active {
+      transform: scale(0.98);
+    }
   }
 
   &__empty {
