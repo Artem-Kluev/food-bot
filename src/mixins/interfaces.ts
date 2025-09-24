@@ -1,3 +1,5 @@
+import { FoodCategory } from '@/mixins/categories'
+
 export interface Resto {
   title: string
   image: string
@@ -46,6 +48,7 @@ export interface Category {
   title: string
   image: string
   id: number
+  type?: string
 }
 
 export interface OrderProduct {

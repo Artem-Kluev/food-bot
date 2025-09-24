@@ -43,7 +43,7 @@ const phrases = [
 
 const currentPhraseIndex = ref(0)
 const displayedCharCount = ref(0)
-let typingTimer: number | null = null
+let typingTimer: ReturnType<typeof setTimeout> | ReturnType<typeof setInterval> | null = null
 
 const currentPhrase = computed(() => phrases[currentPhraseIndex.value])
 
