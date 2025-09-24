@@ -90,11 +90,11 @@ function navigateToCategory(category: Category) {
 
   &__slide {
     height: 100%;
-    padding: 0 10px;
     width: auto;
     background-color: $text;
     width: 20%;
     aspect-ratio: 1/1;
+    margin-bottom: 40px;
     max-width: 90px;
     border-radius: 10px;
     display: grid;
@@ -105,10 +105,10 @@ function navigateToCategory(category: Category) {
 
     &_selected {
       background-color: $main-color;
-      text-shadow: $main-text-shadow;
     }
 
     &-image {
+      padding: 5px;
       width: 100%;
       height: 100%;
       overflow: hidden;
@@ -121,9 +121,13 @@ function navigateToCategory(category: Category) {
     }
 
     &-text {
-      color: $background;
-      font-size: min(2.8vw, 14px);
+      position: absolute;
+      color: $text;
+      font-size: min(3.5vw, 15px);
       text-align: center;
+      line-height: 0.9;
+      width: 100%;
+      top: calc(105%);
     }
   }
 }

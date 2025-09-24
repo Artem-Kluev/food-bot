@@ -32,6 +32,7 @@ import UiSearch from '@/components/ui/UiSearch.vue'
 import { onMounted, ref } from 'vue'
 import FoodBlock from './components/widgets/FoodBlock.vue'
 import useElementObserver from '@/composable/useElementObserver'
+import { supabase } from '@/plugins/supabase'
 
 const tg = ref<any>(null)
 const tgAvailable = ref(false)
@@ -48,9 +49,24 @@ onMounted(() => {
     tgAvailable.value = true
 
     // Отримуємо ім'я користувача, якщо доступно
-    tgUserName.value = tg.value.initDataUnsafe?.user?.first_name ?? null
+
+    // tgUserName.value = tg.value.initDataUnsafe?.user?.id
+
+    tgUserName.value = '665557371'
   }
+
+  request()
 })
+
+async function request() {
+  const { data } = await supabase.from('menu').select('*')
+
+  console.log(data)
+
+  const { data: categories } = await supabase.rpc('get_menu_categories')
+
+  console.log(categories)
+}
 </script>
 
 <style scoped lang="scss">
