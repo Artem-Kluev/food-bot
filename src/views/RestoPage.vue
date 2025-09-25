@@ -1,121 +1,119 @@
-<template>
-  <CategorySlider
-    :categories="categories"
-    title="Категорії"
-    @selected="filterRestaurantsByCategory"
-    :initialSelected="route.query.category ? [parseInt(route.query.category.toString())] : []"
-  />
-
-  <ButtonSlider :buttons="delivery" title="Спосіб доставки" />
-
-  <ButtonSlider :buttons="payment" title="Спосіб оплати" />
-
-  <ButtonSlider :buttons="offers" title="Пропозиції" />
-
-  <UiSlider v-model="sliderValue" :max-value="2000" label="Мін. замовлення" />
-
-  <div class="resto-container">
-    <ProductCard v-for="restaurant in filteredRestaurants" :key="restaurant.title" :slide-data="restaurant" modifier="resto" />
-  </div>
-</template>
-
 <script setup lang="ts">
 import CategorySlider from '@/components/widgets/CategorySlider.vue'
-import ButtonSlider from '@/components/widgets/ButtonSlider.vue'
+import ButtonGrid from '@/components/widgets/ButtonGrid.vue'
 import UiSlider from '@/components/ui/UiSlider.vue'
-import { ref, onMounted } from 'vue'
-import { categories } from '@/mixins/categories'
+import { ref, onMounted, computed } from 'vue'
+import { getCategories } from '@/mixins/categories'
 import ProductCard from '@/components/widgets/ProductCard.vue'
 import { sliders } from '@/mixins/resto'
 import { useRoute } from 'vue-router'
 import { setRestoBlockData } from '@/composable/useRestoBlock'
+import { supabase } from '@/plugins/supabase'
+import { FoodCategory } from '@/mixins/categories'
+import { useIsWorkingNow } from '@/composable/useIsWorkingNow'
+import type { Category } from '@/mixins/interfaces'
 
 const route = useRoute()
-const selectedCategories = ref<Record<number, boolean>>({})
-const filteredRestaurants = ref(sliders)
+const selectedCategories = ref<FoodCategory[]>([])
+const selectedTags = ref<string[]>([])
+const categories = ref<Category[]>([])
+const allResto = ref<any>([])
+const sliderValue = ref(700)
 
-onMounted(() => {
-  const categoryId = route.query.category
-  if (categoryId) {
-    const index = categories.findIndex((cat) => cat.id.toString() === categoryId.toString())
-    if (index !== -1) {
-      selectedCategories.value[index] = true
-      filterRestaurantsByCategory([parseInt(categoryId.toString())])
-    }
-  }
-
-  // Перевіряємо, чи користувач повернувся з корзини через кнопку "Перейти в корзину"
-  const fromRestoBlock = sessionStorage.getItem('fromRestoBlock')
-  const restoId = sessionStorage.getItem('restoId')
-
-  if (fromRestoBlock === 'true' && restoId) {
-    // Знаходимо ресторан за ID
-    const resto = sliders.find((r) => r.id.toString() === restoId)
-    if (resto) {
-      // Відкриваємо RestoBlock з цим рестораном
-      setRestoBlockData({ resto })
-      // Очищаємо sessionStorage після використання
-      sessionStorage.removeItem('fromRestoBlock')
-      sessionStorage.removeItem('restoId')
-    }
-  }
-})
-
-const sliderValue = ref(500)
-
-function filterRestaurantsByCategory(categoryIds: number[]) {
-  if (categoryIds.length === 0) {
-    filteredRestaurants.value = sliders
-    return
-  }
-
-  // В реальному проекті тут була б логіка фільтрації ресторанів за категоріями
-  // Для прикладу просто імітуємо фільтрацію
-  filteredRestaurants.value = sliders.filter((_, index) => index % 2 === 0)
-}
-
-const payment = ref<Array<any>>([
+const tags = ref<Array<any>>([
   {
-    title: 'На карту',
-    id: 1,
+    title: 'Оплата при отриманні',
+    value: ['cash', 'card-postpayment'],
   },
-  {
-    title: 'Готівкою при отриманні',
-    id: 2,
-  },
-])
 
-const delivery = ref<Array<any>>([
   {
-    title: 'Таксі',
-    id: 2,
+    title: 'Оплата картою',
+    value: ['card'],
   },
-  {
-    title: 'Своя служба доставки',
-    id: 1,
-  },
-  {
-    title: 'Самовивіз',
-    id: 1,
-  },
-])
 
-const offers = ref<Array<any>>([
-  {
-    title: 'Безкоштовна доставка',
-    id: 1,
-  },
   {
     title: 'Акція',
-    id: 2,
+    value: ['action'],
   },
 
   {
-    title: 'Новинка',
-    id: 1,
+    title: 'Безкоштовна доставка',
+    value: ['free-delivery'],
+  },
+
+  {
+    title: 'Оплата готівкою',
+    value: ['cash'],
+  },
+
+  {
+    title: 'Зараз працюють',
+    value: ['open'],
   },
 ])
+
+const viewResto = computed(() => {
+  const data = allResto.value.filter((resto: any) => {
+    const tags = []
+    let hasCommon = true
+    let hasTags = true
+
+    if (selectedCategories.value.length) {
+      hasCommon = resto.availabilityCategories.some((item: FoodCategory) => selectedCategories.value.includes(item))
+    }
+
+    tags.push(...JSON.parse(resto.selectedPaymentMethod))
+
+    if (useIsWorkingNow(resto.workingDays, resto.workingHours)) {
+      tags.push('open')
+    }
+
+    if (resto.freeDeliveryFrom) {
+      tags.push('free-delivery')
+    }
+
+    if (selectedTags.value.length) {
+      hasTags = tags.some((item) => selectedTags.value.includes(item))
+    }
+
+    const isMinPrice = resto.minOrder <= sliderValue.value
+
+    return isMinPrice && hasCommon && hasTags
+  })
+
+  return data
+})
+
+async function getData() {
+  const { data } = await supabase.from('resto').select('*')
+
+  allResto.value = data
+}
+
+async function getFoodCategories() {
+  categories.value = await getCategories()
+}
+
+getFoodCategories()
+getData()
 </script>
+
+<template>
+  <CategorySlider
+    :categories="categories"
+    title="Категорії"
+    @selected="selectedCategories = $event"
+    :initialSelected="route.query.category ? [parseInt(route.query.category.toString())] : []"
+  />
+
+  <ButtonGrid :buttons="tags" title="Теги" @selected="selectedTags = $event" />
+
+  <UiSlider v-model="sliderValue" :max-value="1000" label="Мін. замовлення" />
+
+  <div class="resto-container">
+    <ProductCard v-for="restaurant in viewResto" :key="restaurant.title" :slide-data="restaurant" modifier="resto" />
+  </div>
+</template>
 
 <style scoped lang="scss">
 @use '@/assets/styles/vars.scss' as *;

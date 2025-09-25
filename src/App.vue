@@ -55,7 +55,7 @@ onMounted(() => {
     tgUserName.value = '665557371'
   }
 
-  request()
+  // request()
 })
 
 async function request() {

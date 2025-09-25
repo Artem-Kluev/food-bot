@@ -1,42 +1,3 @@
-<template>
-  <div
-    class="product"
-    :class="{ [`product_${modifier}`]: modifier, [`product_${size}`]: size, observer: observer }"
-    @click="handleProductClick"
-  >
-    <div class="product__like">
-      <UiLike v-model="isLiked" @click.stop />
-    </div>
-
-    <div class="product__image">
-      <img :src="slideData.image" alt="product image" />
-
-      <UiRating v-if="slideData.rating" :rating="slideData.rating" class="product__rating" />
-      <UiTime v-if="slideData.type === 'resto' && slideData.time" :time="slideData.time" class="product__time" />
-      <UiPrice v-if="slideData.type === 'food' && slideData.price" :price="slideData.price" class="product__price" />
-    </div>
-    <div class="product__info">
-      <h3 class="product__name">{{ slideData.title }} {{ slideData.type === 'food' ? slideData.restoId : '' }}</h3>
-
-      <UiCounter
-        v-if="counter && slideData.type === 'food'"
-        v-model="productCount"
-        class="product__counter"
-        @update:modelValue="updateBasket"
-        @click.stop
-      />
-    </div>
-  </div>
-
-  <UiConfirmModal
-    ref="confirmModal"
-    text="Товар з іншого ресторану. Додавання цього товару очистить вашу корзину. Продовжити?"
-    confirm-text="Так"
-    cancel-text="Ні"
-    @confirm="handleConfirm"
-  />
-</template>
-
 <script setup lang="ts">
 import type { Resto, Food } from '@/mixins/interfaces'
 import UiLike from '@/components/ui/UiLike.vue'
@@ -52,7 +13,7 @@ import { useRouter } from 'vue-router'
 import UiConfirmModal from '@/components/ui/UiConfirmModal.vue'
 
 interface Props {
-  slideData: Resto | Food
+  slideData: Resto | Food | any
   modifier?: 'resto'
   counter?: boolean
   size?: 'min'
@@ -174,6 +135,45 @@ function handleConfirm(value: boolean) {
   }
 }
 </script>
+
+<template>
+  <div
+    class="product"
+    :class="{ [`product_${modifier}`]: modifier, [`product_${size}`]: size, observer: observer }"
+    @click="handleProductClick"
+  >
+    <div class="product__like">
+      <UiLike v-model="isLiked" @click.stop />
+    </div>
+
+    <div class="product__image">
+      <img :src="slideData.imageUrl" alt="product image" />
+
+      <!-- <UiRating v-if="slideData.rating" :rating="slideData.rating" class="product__rating" /> -->
+      <!-- <UiTime v-if="slideData.type === 'resto' && slideData.time" :time="slideData.time" class="product__time" /> -->
+      <UiPrice v-if="slideData.type === 'food' && slideData.price" :price="slideData.price" class="product__price" />
+    </div>
+    <div class="product__info">
+      <h3 class="product__name">{{ slideData.restaurantName }}</h3>
+
+      <UiCounter
+        v-if="counter && slideData.type === 'food'"
+        v-model="productCount"
+        class="product__counter"
+        @update:modelValue="updateBasket"
+        @click.stop
+      />
+    </div>
+  </div>
+
+  <UiConfirmModal
+    ref="confirmModal"
+    text="Товар з іншого ресторану. Додавання цього товару очистить вашу корзину. Продовжити?"
+    confirm-text="Так"
+    cancel-text="Ні"
+    @confirm="handleConfirm"
+  />
+</template>
 
 <style lang="scss" scoped>
 @use '@/assets/styles/vars.scss' as *;

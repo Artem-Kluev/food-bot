@@ -5,6 +5,10 @@ export interface Resto {
   image: string
   type: 'resto'
   description: string
+  basePrice?: string
+  oldPrice?: string | null
+  category?: string
+  restoUid?: string
   price?: {
     base: number
     old?: number
@@ -47,7 +51,6 @@ export interface Banner {
 export interface Category {
   title: string
   image: string
-  id: number
   type?: string
 }
 

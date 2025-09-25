@@ -43,14 +43,14 @@ const modules = [Navigation]
 const selectedCategories = ref<Record<number, boolean>>({})
 
 // Ініціалізуємо вибрані категорії, якщо вони передані через пропси
-if (props.initialSelected && props.initialSelected.length > 0) {
-  props.initialSelected.forEach((id) => {
-    const index = props.categories.findIndex((cat) => cat.id === id)
-    if (index !== -1) {
-      selectedCategories.value[index] = true
-    }
-  })
-}
+// if (props.initialSelected && props.initialSelected.length > 0) {
+//   props.initialSelected.forEach((id) => {
+//     const index = props.categories.findIndex((cat) => cat.id === id)
+//     if (index !== -1) {
+//       selectedCategories.value[index] = true
+//     }
+//   })
+// }
 
 function toggleCategory(index: number) {
   selectedCategories.value[index] = !selectedCategories.value[index]
@@ -58,15 +58,15 @@ function toggleCategory(index: number) {
 }
 
 function emitSelectedCategories() {
-  const selected = props.categories.filter((_, index) => selectedCategories.value[index]).map((category) => category.id)
+  const selected = props.categories.filter((_, index) => selectedCategories.value[index]).map((category) => category.type)
   emit('selected', selected)
 }
 
 function navigateToCategory(category: Category) {
-  router.push({
-    path: '/resto',
-    query: { category: category.id.toString() },
-  })
+  // router.push({
+  //   path: '/resto',
+  //   query: { category: category.id.toString() },
+  // })
 }
 </script>
 
@@ -75,7 +75,6 @@ function navigateToCategory(category: Category) {
 
 .category-slider {
   width: 100%;
-  margin-bottom: 20px;
 
   &__title {
     padding: 10px 10px 5px;
@@ -94,7 +93,7 @@ function navigateToCategory(category: Category) {
     background-color: $text;
     width: 20%;
     aspect-ratio: 1/1;
-    margin-bottom: 40px;
+    margin-bottom: 35px;
     max-width: 90px;
     border-radius: 10px;
     display: grid;

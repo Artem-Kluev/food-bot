@@ -116,7 +116,7 @@ function openPartnershipModal() {
   }
 
   &__category-slider {
-    margin-bottom: 40px;
+    margin-bottom: 20px;
   }
 
   &__description {
