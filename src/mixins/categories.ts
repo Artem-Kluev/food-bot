@@ -110,10 +110,12 @@ export const categories: Category[] = [
   },
 ]
 
-export async function getCategories(): Promise<Category[]> {
-  const { data } = await supabase.rpc('get_menu_categories')
+export async function getCategories(city: string): Promise<Category[]> {
+  const { data } = await supabase.rpc('get_menu_categories', { city })
 
   const available = data.map((item: { category: string }) => item.category)
 
-  return categories.filter((item) => available.includes(item.type))
+  return categories
+
+  // return categories.filter((item) => available.includes(item.type))
 }

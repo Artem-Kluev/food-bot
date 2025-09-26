@@ -117,6 +117,7 @@ function navigateToCategory(category: Category) {
       width: 100%;
       height: 100%;
       object-fit: contain;
+      filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
     }
 
     &-text {

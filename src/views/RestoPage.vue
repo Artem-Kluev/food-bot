@@ -33,7 +33,7 @@ const tags = ref<Array<any>>([
 
   {
     title: 'Акція',
-    value: ['action'],
+    value: ['sale'],
   },
 
   {
@@ -72,6 +72,10 @@ const viewResto = computed(() => {
       tags.push('free-delivery')
     }
 
+    if (resto.sale) {
+      tags.push('sale')
+    }
+
     if (selectedTags.value.length) {
       hasTags = tags.some((item) => selectedTags.value.includes(item))
     }
@@ -91,7 +95,7 @@ async function getData() {
 }
 
 async function getFoodCategories() {
-  categories.value = await getCategories()
+  categories.value = await getCategories('lubny')
 }
 
 getFoodCategories()
