@@ -75,8 +75,6 @@ function emitSelectedCategories() {
 
   &__item {
     background-color: $text;
-    border-radius: 10px;
-    padding: 5px 10px;
     margin-bottom: 5px;
     margin-right: 5px;
     display: flex;
@@ -87,6 +85,9 @@ function emitSelectedCategories() {
     color: $background;
     text-align: center;
     width: auto;
+    border-radius: min(2.2vw, 10px);
+    font-size: min(4.2vw, 16px);
+    padding: min(1.2vw, 5px) min(2.5vw, 10px);
 
     &_selected {
       background-color: $main-color;

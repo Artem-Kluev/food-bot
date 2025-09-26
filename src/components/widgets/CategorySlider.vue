@@ -84,7 +84,7 @@ function navigateToCategory(category: Category) {
 
   &__swiper {
     height: 100%;
-    padding-left: 10px;
+    padding: 0 10px;
   }
 
   &__slide {
@@ -98,7 +98,6 @@ function navigateToCategory(category: Category) {
     border-radius: 10px;
     display: grid;
     grid-template: 1fr auto / 1fr;
-    padding: 5px 0;
     transition: background-color 0.3s ease;
     cursor: pointer;
 
@@ -107,7 +106,7 @@ function navigateToCategory(category: Category) {
     }
 
     &-image {
-      padding: 5px;
+      padding: 10px;
       width: 100%;
       height: 100%;
       overflow: hidden;
