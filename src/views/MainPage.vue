@@ -76,16 +76,17 @@
 import BannerCard from '@/components/widgets/BannerCard.vue'
 import CategorySlider from '@/components/widgets/CategorySlider.vue'
 import Features from '@/components/widgets/FeaturesComponent.vue'
-import ProductCard from '@/components/widgets/ProductCard.vue'
+import { getCategories } from '@/mixins/categories'
 import PrivacyPolicyModal from '@/components/widgets/PrivacyPolicyModal.vue'
 import PartnershipModal from '@/components/widgets/PartnershipModal.vue'
 import { banners } from '@/mixins/banners'
-import { categories } from '@/mixins/categories'
 import { sliders } from '@/mixins/resto'
 import { ref } from 'vue'
+import type { Category } from '@/mixins/interfaces'
 
 // Вибираємо перші 4 ресторани для відображення в грід-сітці
 const popularRestaurants = ref(sliders.slice(0, 4))
+const categories = ref<Category[]>([])
 
 // Референції на модальні вікна
 const privacyPolicyModalRef = ref()
@@ -99,6 +100,12 @@ function openPrivacyPolicyModal() {
 function openPartnershipModal() {
   partnershipModalRef.value.openModal()
 }
+
+async function getFoodCategories() {
+  categories.value = await getCategories('lubny')
+}
+
+getFoodCategories()
 </script>
 
 <style scoped lang="scss">

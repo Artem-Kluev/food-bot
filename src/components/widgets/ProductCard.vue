@@ -14,7 +14,7 @@ import UiConfirmModal from '@/components/ui/UiConfirmModal.vue'
 
 interface Props {
   slideData: Resto | Food | any
-  modifier?: 'resto'
+  modifier?: 'resto' | 'food'
   counter?: boolean
   size?: 'min'
   observer?: boolean
@@ -49,11 +49,11 @@ onUnmounted(() => {
 })
 
 function handleProductClick() {
-  if (props.slideData.type === 'resto') {
+  if (props.modifier === 'resto') {
     setRestoBlockData({
       resto: props.slideData as Resto,
     })
-  } else if (props.slideData.type === 'food') {
+  } else if (props.modifier === 'food') {
     setFoodBlockData({
       food: props.slideData as Food,
     })
@@ -73,8 +73,6 @@ function updateBasket(newCount: number) {
 
   if (newCount > 0) {
     const { restoId: basketRestoId, getAllProduct, clear } = useBasket()
-
-    console.log(basketRestoId.value, props.slideData.restoId)
 
     if (basketRestoId.value !== null && basketRestoId.value !== props.slideData.restoId && getAllProduct().length > 0) {
       // Зберігаємо дані про товар, який хочемо додати
@@ -137,11 +135,7 @@ function handleConfirm(value: boolean) {
 </script>
 
 <template>
-  <div
-    class="product"
-    :class="{ [`product_${modifier}`]: modifier, [`product_${size}`]: size, observer: observer }"
-    @click="handleProductClick"
-  >
+  <div class="product" :class="{ [`product_${size}`]: size, observer: observer }" @click="handleProductClick">
     <div class="product__like">
       <UiLike v-model="isLiked" @click.stop />
     </div>
@@ -151,18 +145,20 @@ function handleConfirm(value: boolean) {
 
       <!-- <UiRating v-if="slideData.rating" :rating="slideData.rating" class="product__rating" /> -->
       <!-- <UiTime v-if="slideData.type === 'resto' && slideData.time" :time="slideData.time" class="product__time" /> -->
-      <UiPrice v-if="slideData.type === 'food' && slideData.price" :price="slideData.price" class="product__price" />
+
+      <UiPrice
+        v-if="modifier === 'food' && slideData.basePrice"
+        :price="{
+          base: slideData.basePrice,
+          old: slideData.oldPrice,
+        }"
+        class="product__price"
+      />
     </div>
     <div class="product__info">
-      <h3 class="product__name">{{ slideData.restaurantName }}</h3>
+      <h3 class="product__name">{{ slideData.title }}</h3>
 
-      <UiCounter
-        v-if="counter && slideData.type === 'food'"
-        v-model="productCount"
-        class="product__counter"
-        @update:modelValue="updateBasket"
-        @click.stop
-      />
+      <UiCounter v-if="modifier === 'food'" v-model="productCount" class="product__counter" @update:modelValue="updateBasket" @click.stop />
     </div>
   </div>
 
@@ -180,6 +176,7 @@ function handleConfirm(value: boolean) {
 
 .product {
   width: 100%;
+  height: fit-content;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -204,7 +201,7 @@ function handleConfirm(value: boolean) {
 
   &__image {
     width: 100%;
-    aspect-ratio: 4/3;
+    aspect-ratio: 4/2.2;
     overflow: hidden;
     position: relative;
 
@@ -262,14 +259,6 @@ function handleConfirm(value: boolean) {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  &_resto {
-    .product {
-      &__image {
-        aspect-ratio: 4/2.2;
-      }
-    }
   }
 
   &_min {

@@ -21,7 +21,7 @@ interface Props {
   title: string
   description: string
   image: string
-  rating: number
+  rating?: number
   modifier?: 'order'
 }
 

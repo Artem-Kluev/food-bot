@@ -115,7 +115,5 @@ export async function getCategories(city: string): Promise<Category[]> {
 
   const available = data.map((item: { category: string }) => item.category)
 
-  return categories
-
-  // return categories.filter((item) => available.includes(item.type))
+  return categories.filter((item) => available.includes(item.type))
 }

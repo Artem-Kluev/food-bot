@@ -72,3 +72,8 @@ export interface Order {
   paymentMethod: 'card' | 'cash'
   totalPrice: number
 }
+
+export interface Tag {
+  title: string
+  value: Array<string>
+}

@@ -1,80 +1,7 @@
-<template>
-  <Transition name="fade-slide">
-    <div v-if="isFoodBlockVisable && currentFood" class="food-block">
-      <div class="food-block__main" @click.self="closeFoodBlock(false)">
-        <div class="food-block__wrapper">
-          <div class="food-block__image">
-            <div class="food-block__back" @click="closeFoodBlock(false)">
-              <BaseSvg class="food-block__back-icon" id="arrow-logo" />
-            </div>
-
-            <img class="food-block__img" :src="currentFood.image" />
-          </div>
-
-          <div class="food-block__top">
-            <UiStarRating :rating="rating" @change="rating = $event" />
-
-            <UiLike v-model="isLiked" modifier="resto" />
-          </div>
-
-          <div class="food-block__title">{{ currentFood.title }}</div>
-
-          <div class="food-block__description">
-            {{ currentFood.description }}
-          </div>
-
-          <div class="food-block__pay">
-            <div class="food-block__price">
-              <div class="food-block__price-title">Ціна:</div>
-
-              <div class="food-block__price-price">
-                <UiPrice :price="{ base: currentFood.price?.base || 0, old: currentFood.price?.old }" modifier="big" />
-              </div>
-            </div>
-
-            <UiCounter v-model="productCount" class="food-block__counter" modifier="big" @update:modelValue="updateBasket" />
-          </div>
-
-          <div class="food-block__resto">
-            <RestoPreview
-              v-if="currentResto"
-              :title="currentResto.title"
-              :description="currentResto.description"
-              :image="currentResto.image"
-              :rating="currentResto.rating || 0"
-            />
-          </div>
-
-          <Transition name="fade-scale">
-            <div v-if="totalPrice > 0" class="food-block__button" @click="navigateToBasket">
-              <div class="food-block__button-text">Перейти в корзину</div>
-
-              <hr class="food-block__button-line" />
-
-              <div class="food-block__button-price">
-                <div class="food-block__button-sum">{{ totalPrice }}</div>
-                грн
-              </div>
-            </div>
-          </Transition>
-        </div>
-      </div>
-    </div>
-  </Transition>
-
-  <UiConfirmModal
-    ref="confirmModal"
-    text="Товар з іншого ресторану. Додавання цього товару очистить вашу корзину. Продовжити?"
-    confirm-text="Так"
-    cancel-text="Ні"
-    @confirm="handleConfirm"
-  />
-</template>
-
 <script setup lang="ts">
-import { isFoodBlockVisable, closeFoodBlock, currentFood, isLiked, rating, currentResto } from '@/composable/useFoodBlock'
+import { isFoodBlockVisable, closeFoodBlock, currentFood, isLiked, rating } from '@/composable/useFoodBlock'
 import { useScrollLock } from '@/composable/useScrollLock'
-import { watch, ref, computed, onUnmounted } from 'vue'
+import { watch, ref, computed, onUnmounted, onMounted } from 'vue'
 import UiCounter from '@/components/ui/UiCounter.vue'
 import UiPrice from '@/components/ui/UiPrice.vue'
 import { useBasket } from '@/composable/useBasket'
@@ -85,6 +12,7 @@ import UiStarRating from '@/components/ui/UiStarRating.vue'
 import UiLike from '@/components/ui/UiLike.vue'
 import RestoPreview from '@/components/widgets/RestoPreview.vue'
 import UiConfirmModal from '@/components/ui/UiConfirmModal.vue'
+import { allRestoCard, request } from '@/composable/useResto'
 
 import { foodSliders } from '@/mixins/food'
 import type { Food, Resto } from '@/mixins/interfaces'
@@ -93,9 +21,38 @@ const productCount = ref(0)
 const confirmModal = ref()
 const pendingProduct = ref<{ id: number; title: string; image: string; price: number; restoId: number; minOrder: number } | null>(null)
 const pendingCount = ref(0)
+const currentResto = ref<any | null>(null)
 
 const { lockScroll, unlockScroll } = useScrollLock()
 const router = useRouter()
+
+function getRestoData() {
+  currentResto.value = allRestoCard.value.find((resto) => resto.restoId === currentFood.value.restoUid)
+}
+
+watch(isFoodBlockVisable, (newValue) => {
+  if (newValue) {
+    lockScroll()
+    updateProductCount()
+    getRestoData()
+  } else {
+    unlockScroll()
+  }
+})
+
+// Оновлюємо лічильник при зміні продукту
+watch(currentFood, () => {
+  updateProductCount()
+})
+
+onMounted(() => {
+  request()
+})
+
+// Відписуємося від слухача при розмонтуванні компонента
+onUnmounted(() => {
+  unsubscribe()
+})
 
 function navigateToBasket() {
   router.push('/basket')
@@ -112,11 +69,6 @@ const basketProducts = ref(0)
 // Зберігаємо функцію відписки, щоб викликати її при розмонтуванні
 const unsubscribe = on(() => {
   basketProducts.value = getTotalPrice()
-})
-
-// Відписуємося від слухача при розмонтуванні компонента
-onUnmounted(() => {
-  unsubscribe()
 })
 
 function updateBasket(newCount: number) {
@@ -162,20 +114,6 @@ function updateBasket(newCount: number) {
   }
 }
 
-watch(isFoodBlockVisable, (newValue) => {
-  if (newValue) {
-    lockScroll()
-    updateProductCount()
-  } else {
-    unlockScroll()
-  }
-})
-
-// Оновлюємо лічильник при зміні продукту
-watch(currentFood, () => {
-  updateProductCount()
-})
-
 // Функція для оновлення значення лічильника
 function updateProductCount() {
   if (currentFood.value) {
@@ -208,6 +146,76 @@ function handleConfirm(value: boolean) {
   }
 }
 </script>
+
+<template>
+  <Transition name="fade-slide">
+    <div v-if="isFoodBlockVisable && currentFood" class="food-block">
+      <div class="food-block__main" @click.self="closeFoodBlock(false)">
+        <div class="food-block__wrapper">
+          <div class="food-block__image">
+            <div class="food-block__back" @click="closeFoodBlock(false)">
+              <BaseSvg class="food-block__back-icon" id="arrow-logo" />
+            </div>
+
+            <img class="food-block__img" :src="currentFood.imageUrl" />
+          </div>
+
+          <div class="food-block__top">
+            <div class="food-block__title">{{ currentFood.title }}</div>
+
+            <UiLike v-model="isLiked" modifier="resto" />
+          </div>
+
+          <div class="food-block__description">
+            {{ currentFood.description }}
+          </div>
+
+          <div class="food-block__pay">
+            <div class="food-block__price">
+              <div class="food-block__price-title">Ціна:</div>
+
+              <div class="food-block__price-price">
+                <UiPrice :price="{ base: currentFood.basePrice || 0, old: currentFood.oldPrice || 0 }" modifier="big" />
+              </div>
+            </div>
+
+            <UiCounter v-model="productCount" class="food-block__counter" modifier="big" @update:modelValue="updateBasket" />
+          </div>
+
+          <div class="food-block__resto">
+            <RestoPreview
+              v-if="currentResto"
+              :title="currentResto.title"
+              :description="currentResto.description"
+              :image="currentResto.imageUrl"
+            />
+          </div>
+
+          <Transition name="fade-scale">
+            <div v-if="totalPrice > 0" class="food-block__button" @click="navigateToBasket">
+              <div class="food-block__button-text">Перейти в корзину</div>
+
+              <hr class="food-block__button-line" />
+
+              <div class="food-block__button-price">
+                <div class="food-block__button-sum">{{ totalPrice }}</div>
+                грн
+              </div>
+            </div>
+          </Transition>
+        </div>
+      </div>
+    </div>
+  </Transition>
+
+  <UiConfirmModal
+    ref="confirmModal"
+    text="Товар з іншого ресторану. Додавання цього товару очистить вашу корзину. Продовжити?"
+    confirm-text="Так"
+    cancel-text="Ні"
+    @confirm="handleConfirm"
+  />
+</template>
 
 <style scoped lang="scss">
 @use '@/assets/styles/vars.scss' as *;
@@ -258,7 +266,7 @@ function handleConfirm(value: boolean) {
   &__top {
     display: flex;
     justify-content: space-between;
-    padding: 10px 10px 0;
+    padding: 10px 10px;
   }
 
   &__back {
@@ -292,7 +300,6 @@ function handleConfirm(value: boolean) {
   &__title {
     font-size: 24px;
     font-weight: 500;
-    padding: 10px;
   }
 
   &__description {
@@ -377,7 +384,6 @@ function handleConfirm(value: boolean) {
   }
 
   &__resto {
-    flex-grow: 1;
     display: flex;
     align-items: flex-end;
   }

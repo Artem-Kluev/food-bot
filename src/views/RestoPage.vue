@@ -8,52 +8,25 @@ import ProductCard from '@/components/widgets/ProductCard.vue'
 import { sliders } from '@/mixins/resto'
 import { useRoute } from 'vue-router'
 import { setRestoBlockData } from '@/composable/useRestoBlock'
-import { supabase } from '@/plugins/supabase'
 import { FoodCategory } from '@/mixins/categories'
 import { useIsWorkingNow } from '@/composable/useIsWorkingNow'
 import type { Category } from '@/mixins/interfaces'
+import { tags } from '@/mixins/tags'
+import { allRestoCard, request } from '@/composable/useResto'
 
 const route = useRoute()
 const selectedCategories = ref<FoodCategory[]>([])
 const selectedTags = ref<string[]>([])
 const categories = ref<Category[]>([])
-const allResto = ref<any>([])
 const sliderValue = ref(700)
 
-const tags = ref<Array<any>>([
-  {
-    title: 'Оплата при отриманні',
-    value: ['cash', 'card-postpayment'],
-  },
-
-  {
-    title: 'Оплата картою',
-    value: ['card'],
-  },
-
-  {
-    title: 'Акція',
-    value: ['sale'],
-  },
-
-  {
-    title: 'Безкоштовна доставка',
-    value: ['free-delivery'],
-  },
-
-  {
-    title: 'Оплата готівкою',
-    value: ['cash'],
-  },
-
-  {
-    title: 'Зараз працюють',
-    value: ['open'],
-  },
-])
+// Викликаємо функцію запиту при монтуванні компонента
+onMounted(() => {
+  request()
+})
 
 const viewResto = computed(() => {
-  const data = allResto.value.filter((resto: any) => {
+  const data = allRestoCard.value.filter((resto: any) => {
     const tags = []
     let hasCommon = true
     let hasTags = true
@@ -80,6 +53,8 @@ const viewResto = computed(() => {
       hasTags = tags.some((item) => selectedTags.value.includes(item))
     }
 
+    resto.tags = tags
+
     const isMinPrice = resto.minOrder <= sliderValue.value
 
     return isMinPrice && hasCommon && hasTags
@@ -88,18 +63,12 @@ const viewResto = computed(() => {
   return data
 })
 
-async function getData() {
-  const { data } = await supabase.from('resto').select('*')
-
-  allResto.value = data
-}
-
 async function getFoodCategories() {
   categories.value = await getCategories('lubny')
 }
 
+// Завантажуємо категорії при монтуванні компонента
 getFoodCategories()
-getData()
 </script>
 
 <template>
@@ -142,8 +111,8 @@ getData()
   margin-top: 25px;
 }
 
-.resto-container,
-.menu-container {
+.resto-container {
+  min-height: 700px;
   padding: 10px;
   margin-top: 20px;
 }

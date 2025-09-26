@@ -1,3 +1,111 @@
+<script setup lang="ts">
+import { isRestoBlockVisable, closeRestoBlock, currentResto, isLiked, rating } from '@/composable/useRestoBlock'
+import { useScrollLock } from '@/composable/useScrollLock'
+import { watch, ref, computed, onUnmounted } from 'vue'
+import ButtonSlider from '@/components/widgets/ButtonSlider.vue'
+import TagGrid from '@/components/widgets/TagGrid.vue'
+import { useBasket } from '@/composable/useBasket'
+import { useRouter } from 'vue-router'
+import { tags } from '@/mixins/tags'
+import BaseSvg from '@/components/base/BaseSvg.vue'
+import { categories } from '@/mixins/categories'
+import { formatWorkingDays, formatWorkingHours } from '@/composable/useDataFormat'
+import { supabase } from '@/plugins/supabase'
+import UiLike from '@/components/ui/UiLike.vue'
+import ProductCard from '@/components/widgets/ProductCard.vue'
+import UiConfirmModal from '@/components/ui/UiConfirmModal.vue'
+
+const { lockScroll, unlockScroll } = useScrollLock()
+const router = useRouter()
+const confirmModal = ref()
+const { getTotalPrice, getAllProduct, on, add, clear } = useBasket()
+const viewCards = ref<any[]>([])
+const allCards = ref<any[]>([])
+const totalPrice = computed(() => getTotalPrice())
+const pendingProduct = ref<{ id: number; title: string; image: string; price: number; restoId: number; minOrder: number } | null>(null)
+const pendingCount = ref(0)
+const basketProducts = ref(0)
+
+onUnmounted(() => {
+  unsubscribe()
+})
+
+function navigateToBasket() {
+  // Зберігаємо інформацію про перехід у корзину через RestoBlock у sessionStorage
+  sessionStorage.setItem('fromRestoBlock', 'true')
+  sessionStorage.setItem('restoId', currentResto.value?.id.toString() || '')
+  router.push('/basket')
+  closeRestoBlock()
+}
+
+function getCategoryTitle() {
+  const available = currentResto.value?.availabilityCategories
+
+  return categories.filter((item) => available.includes(item.type))
+}
+
+function handleConfirm(value: boolean) {
+  if (value && pendingProduct.value) {
+    // Користувач підтвердив додавання товару з іншого ресторану
+    const { clear } = useBasket()
+
+    // Очищаємо корзину
+    clear()
+
+    // Додаємо новий товар
+    add(pendingProduct.value, pendingCount.value)
+
+    // Скидаємо тимчасові дані
+    pendingProduct.value = null
+    pendingCount.value = 0
+  }
+}
+
+// Зберігаємо функцію відписки, щоб викликати її при розмонтуванні
+const unsubscribe = on(() => {
+  basketProducts.value = getTotalPrice()
+})
+
+function getTags() {
+  const allTags = currentResto.value?.tags || []
+
+  const fileterTags = tags.filter((tag) => {
+    return tag.value.some((value) => allTags.includes(value))
+  })
+
+  return fileterTags.map((tag) => tag.title)
+}
+
+watch(isRestoBlockVisable, (newValue) => {
+  if (newValue) {
+    getData()
+    lockScroll()
+  } else {
+    unlockScroll()
+  }
+})
+
+async function getData() {
+  if (!currentResto.value?.restoId) return
+
+  const { data } = await supabase.from('menu').select('*').eq('restoUid', currentResto.value.restoId)
+
+  allCards.value = data || []
+
+  viewCards.value = data || []
+}
+
+function filterForCategory(categories: string[]) {
+  let cards = allCards.value
+
+  if (categories.length) {
+    cards = cards.filter((item) => item.category === categories[0])
+  }
+
+  viewCards.value = cards
+}
+</script>
+
 <template>
   <Transition name="fade-slide">
     <div v-if="isRestoBlockVisable" class="resto-block">
@@ -8,22 +116,16 @@
               <BaseSvg class="resto-block__back-icon" id="arrow-logo" />
             </div>
 
-            <img v-if="currentResto" class="resto-block__img" :src="currentResto.image" />
+            <img v-if="currentResto" class="resto-block__img" :src="currentResto.imageUrl" />
           </div>
 
           <div class="resto-block__top">
-            <UiStarRating :rating="rating" @change="rating = $event" />
+            <div v-if="currentResto" class="resto-block__title">{{ currentResto.restaurantName }}</div>
 
             <UiLike v-model="isLiked" modifier="resto" />
           </div>
 
-          <div v-if="currentResto" class="resto-block__title">{{ currentResto.title }}</div>
-
-          <TagSlider v-if="allTags" :tags="allTags" class="resto-block__tags" />
-
-          <div v-if="currentResto" class="resto-block__description">
-            {{ currentResto.description }}
-          </div>
+          <TagGrid v-if="getTags().length" :tags="getTags()" class="resto-block__tags" />
 
           <div class="resto-block__info-table">
             <table>
@@ -34,23 +136,33 @@
                   </td>
                   <td class="resto-block__info-value">{{ currentResto?.minOrder }} ₴</td>
                 </tr>
+
+                <tr v-if="currentResto?.freeDeliveryFrom">
+                  <td>
+                    <div class="resto-block__info-label">Безкоштовна доставка</div>
+                  </td>
+                  <td class="resto-block__info-value">{{ currentResto?.freeDeliveryFrom }} ₴</td>
+                </tr>
+
                 <tr>
                   <td>
                     <div class="resto-block__info-label">Ціна доставки</div>
                   </td>
-                  <td class="resto-block__info-value">80 ₴</td>
+                  <td class="resto-block__info-value">{{ currentResto?.deliveryPrice }} ₴</td>
                 </tr>
-                <tr>
-                  <td>
-                    <div class="resto-block__info-label">Безкоштовна доставка</div>
-                  </td>
-                  <td class="resto-block__info-value">від 500 ₴</td>
-                </tr>
+
                 <tr>
                   <td>
                     <div class="resto-block__info-label">Час доставки</div>
                   </td>
-                  <td class="resto-block__info-value">30-45 хвилин</td>
+                  <td class="resto-block__info-value">{{ currentResto?.deliveryTime }} хвилин</td>
+                </tr>
+
+                <tr>
+                  <td>
+                    <div class="resto-block__info-label">{{ formatWorkingDays(currentResto?.workingDays) }}</div>
+                  </td>
+                  <td class="resto-block__info-value">{{ formatWorkingHours(currentResto?.workingHours) }}</td>
                 </tr>
               </tbody>
             </table>
@@ -59,21 +171,21 @@
           <div class="resto-block__buttons">
             <div class="resto-block__buttons-item resto-block__buttons-call">
               <BaseSvg class="resto-block__buttons-call-icon" id="call-logo" />
-
-              <span>Позвонить</span>
             </div>
 
             <div class="resto-block__buttons-item resto-block__buttons-send">
               <BaseSvg class="resto-block__buttons-send-icon" id="send-logo" />
-
-              <span>Напискати</span>
             </div>
           </div>
 
-          <ButtonSlider :buttons="payment" class="resto-block__filters" radio />
+          <div v-if="currentResto" class="resto-block__description">
+            {{ currentResto.description }}
+          </div>
+
+          <ButtonSlider :buttons="getCategoryTitle()" class="resto-block__filters" radio @selected="filterForCategory($event)" />
 
           <div class="resto-block__cards">
-            <ProductCard v-for="item in foodSliders" :key="item.title" :slide-data="item" modifier="resto" counter />
+            <ProductCard v-for="item in viewCards" :key="item.title" :slide-data="item" modifier="food" counter />
           </div>
 
           <Transition name="fade-scale">
@@ -101,110 +213,6 @@
     @confirm="handleConfirm"
   />
 </template>
-
-<script setup lang="ts">
-import { isRestoBlockVisable, closeRestoBlock, currentResto, isLiked, rating } from '@/composable/useRestoBlock'
-import { useScrollLock } from '@/composable/useScrollLock'
-import { watch, ref, computed, onUnmounted } from 'vue'
-import ButtonSlider from '@/components/widgets/ButtonSlider.vue'
-import TagSlider from '@/components/widgets/TagSlider.vue'
-import { useBasket } from '@/composable/useBasket'
-import { useRouter } from 'vue-router'
-
-import BaseSvg from '@/components/base/BaseSvg.vue'
-import UiStarRating from '@/components/ui/UiStarRating.vue'
-import UiLike from '@/components/ui/UiLike.vue'
-import ProductCard from '@/components/widgets/ProductCard.vue'
-import UiConfirmModal from '@/components/ui/UiConfirmModal.vue'
-import { foodSliders } from '@/mixins/food'
-
-const { lockScroll, unlockScroll } = useScrollLock()
-const router = useRouter()
-const confirmModal = ref()
-
-function navigateToBasket() {
-  // Зберігаємо інформацію про перехід у корзину через RestoBlock у sessionStorage
-  sessionStorage.setItem('fromRestoBlock', 'true')
-  sessionStorage.setItem('restoId', currentResto.value?.id.toString() || '')
-  router.push('/basket')
-  closeRestoBlock()
-}
-
-const pendingProduct = ref<{ id: number; title: string; image: string; price: number; restoId: number; minOrder: number } | null>(null)
-const pendingCount = ref(0)
-
-function handleConfirm(value: boolean) {
-  if (value && pendingProduct.value) {
-    // Користувач підтвердив додавання товару з іншого ресторану
-    const { clear } = useBasket()
-
-    // Очищаємо корзину
-    clear()
-
-    // Додаємо новий товар
-    add(pendingProduct.value, pendingCount.value)
-
-    // Скидаємо тимчасові дані
-    pendingProduct.value = null
-    pendingCount.value = 0
-  }
-}
-
-// Використовуємо isLiked та rating з useRestoBlock
-
-const { getTotalPrice, getAllProduct, on, add, clear } = useBasket()
-const totalPrice = computed(() => getTotalPrice())
-
-const basketProducts = ref(0)
-
-// Зберігаємо функцію відписки, щоб викликати її при розмонтуванні
-const unsubscribe = on(() => {
-  basketProducts.value = getTotalPrice()
-})
-
-// Відписуємося від слухача при розмонтуванні компонента
-onUnmounted(() => {
-  unsubscribe()
-})
-
-const allTags = [
-  { title: 'Акція', id: 1 },
-  // { title: 'Безкоштовна доставка', id: 2 },
-  // { title: 'Новинка', id: 3 },
-  // { title: 'Популярне', id: 4 },
-]
-
-const payment = ref<Array<any>>([
-  {
-    title: 'Піца',
-    id: 1,
-  },
-  {
-    title: 'Супи',
-    id: 2,
-  },
-  {
-    title: 'Напої',
-    id: 2,
-  },
-  {
-    title: 'Алкоголь',
-    id: 2,
-  },
-  {
-    title: 'Суши',
-    id: 2,
-  },
-])
-
-watch(isRestoBlockVisable, (newValue) => {
-  if (newValue) {
-    lockScroll()
-  } else {
-    unlockScroll()
-  }
-})
-</script>
 
 <style scoped lang="scss">
 @use '@/assets/styles/vars.scss' as *;
@@ -287,19 +295,19 @@ watch(isRestoBlockVisable, (newValue) => {
   &__title {
     font-size: 24px;
     font-weight: 500;
-    padding: 10px 10px 0;
+    padding-right: 10px;
     cursor: pointer;
     transition: color 0.2s;
   }
 
   &__description {
-    padding: 0 10px;
-    margin-bottom: 5px;
+    margin: 0 10px 25px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid $beige;
   }
 
   &__info-table {
-    padding: 0 10px;
-    margin: 20px 0 25px;
+    margin: 20px 10px 25px;
 
     table {
       width: 100%;
@@ -360,16 +368,17 @@ watch(isRestoBlockVisable, (newValue) => {
   &__buttons {
     height: 40px;
     display: flex;
+    justify-content: flex-end;
     margin: 25px 10px;
+
     gap: 10px;
 
     &-item {
       display: flex;
       align-items: center;
       padding: 0 10px;
-      flex: 1 0 calc(50% - 5px);
       background-color: $main-color;
-      border-radius: 30px;
+      border-radius: 40px;
       gap: 5px;
       color: $background;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -380,11 +389,6 @@ watch(isRestoBlockVisable, (newValue) => {
 
       &:active {
         transform: scale(0.95);
-      }
-
-      span {
-        flex-grow: 1;
-        text-align: center;
       }
     }
 
@@ -416,6 +420,7 @@ watch(isRestoBlockVisable, (newValue) => {
     contain: content;
     will-change: transform;
     transform: translateZ(0);
+    min-height: 600px;
   }
 
   &__button {

@@ -1,3 +1,52 @@
+<script lang="ts" setup>
+import { Swiper, SwiperSlide } from 'swiper/vue'
+import { Navigation } from 'swiper/modules'
+import { ref } from 'vue'
+
+interface Props {
+  buttons: Array<any>
+  title?: string
+  radio?: boolean
+}
+
+const props = defineProps<Props>()
+const emit = defineEmits(['selected'])
+
+const modules = [Navigation]
+const selectedCategories = ref<Record<number, boolean>>({})
+
+function toggleCategory(index: number) {
+  if (props.radio) {
+    // Якщо кнопка вже активна, деактивуємо її
+    if (selectedCategories.value[index]) {
+      selectedCategories.value[index] = false
+    } else {
+      // В режимі radio скидаємо всі вибрані категорії
+      for (const key in selectedCategories.value) {
+        selectedCategories.value[key] = false
+      }
+      // Встановлюємо тільки поточну категорію
+      selectedCategories.value[index] = true
+    }
+  } else {
+    // Звичайний режим - перемикаємо стан
+    selectedCategories.value[index] = !selectedCategories.value[index]
+  }
+  emitSelectedCategories()
+}
+
+function emitSelectedCategories() {
+  // Отримуємо вибрані категорії
+  const selected = props.buttons
+    .filter((_, index) => selectedCategories.value[index])
+    .map((category) => category.type || category.value)
+    .filter(Boolean)
+
+  // Завжди повертаємо масив, навіть якщо він порожній
+  emit('selected', selected || [])
+}
+</script>
+
 <template>
   <div class="button-slider">
     <div v-if="title" class="button-slider__title">{{ title }}</div>
@@ -15,45 +64,6 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import { Swiper, SwiperSlide } from 'swiper/vue'
-import { Navigation } from 'swiper/modules'
-import type { Category } from '@/mixins/interfaces'
-import { ref, watch } from 'vue'
-
-interface Props {
-  buttons: Array<any>
-  title?: string
-  radio?: boolean
-}
-
-const props = defineProps<Props>()
-const emit = defineEmits(['selected'])
-
-const modules = [Navigation]
-const selectedCategories = ref<Record<number, boolean>>({})
-
-function toggleCategory(index: number) {
-  if (props.radio) {
-    // В режимі radio скидаємо всі вибрані категорії
-    for (const key in selectedCategories.value) {
-      selectedCategories.value[key] = false
-    }
-    // Встановлюємо тільки поточну категорію
-    selectedCategories.value[index] = true
-  } else {
-    // Звичайний режим - перемикаємо стан
-    selectedCategories.value[index] = !selectedCategories.value[index]
-  }
-  emitSelectedCategories()
-}
-
-function emitSelectedCategories() {
-  const selected = props.buttons.filter((_, index) => selectedCategories.value[index]).map((category) => category.id)
-  emit('selected', selected)
-}
-</script>
-
 <style lang="scss">
 @use '@/assets/styles/vars.scss' as *;
 
@@ -63,6 +73,7 @@ function emitSelectedCategories() {
   &__title {
     padding: 0 10px 5px;
     font-size: 16px;
+    font-weight: 500;
   }
 
   &__swiper {
