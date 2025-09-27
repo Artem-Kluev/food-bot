@@ -33,6 +33,10 @@ onMounted(() => {
     setTimeout(() => {
       tg.value.sendData(JSON.stringify({ field: 'name', value: 'Артем' }))
     }, 3000)
+
+    tg.value.onEvent('ready', () => {
+      tg.value.sendData(JSON.stringify({ field: 'name', value: 'Артем' }))
+    })
   }
 
   // request()
