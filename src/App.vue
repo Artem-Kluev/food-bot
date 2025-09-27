@@ -49,7 +49,7 @@ async function request() {
 </script>
 
 <template>
-  {{ tgUserName }}
+  {{ tgUserName }}12
   <div class="wrapper">
     <div class="search-container">
       <UiSearch />
