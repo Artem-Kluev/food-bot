@@ -27,9 +27,9 @@ onMounted(() => {
 
     // Отримуємо ім'я користувача, якщо доступно
 
-    // tgUserName.value = tg.value.initDataUnsafe?.user?.id
+    tgUserName.value = tg.value.initDataUnsafe?.user?.id
 
-    tgUserName.value = '665557371'
+    // tgUserName.value = '665557371'
 
     tg.value.sendData(JSON.stringify({ field: 'name', value: 'Артем' }))
   }
@@ -49,6 +49,7 @@ async function request() {
 </script>
 
 <template>
+  {{ tgUserName }}
   <div class="wrapper">
     <div class="search-container">
       <UiSearch />
