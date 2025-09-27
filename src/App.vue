@@ -1,26 +1,3 @@
-<template>
-  <div class="wrapper">
-    <div class="search-container">
-      <UiSearch />
-    </div>
-
-    <main class="main">
-      <router-view v-slot="{ Component }">
-        <keep-alive>
-          <component :is="Component" />
-        </keep-alive>
-      </router-view>
-    </main>
-
-    <BottomBar class="bottom" />
-
-    <RestoBlock />
-    <FoodBlock />
-  </div>
-
-  <SvgManager />
-</template>
-
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import SvgManager from '@/components/base/SvgManager.vue'
@@ -53,6 +30,8 @@ onMounted(() => {
     // tgUserName.value = tg.value.initDataUnsafe?.user?.id
 
     tgUserName.value = '665557371'
+
+    tg.value.sendData(JSON.stringify({ field: 'name', value: 'Артем' }))
   }
 
   // request()
@@ -68,6 +47,30 @@ async function request() {
   console.log(categories)
 }
 </script>
+
+<template>
+  {{ tg }}
+  <div class="wrapper">
+    <div class="search-container">
+      <UiSearch />
+    </div>
+
+    <main class="main">
+      <router-view v-slot="{ Component }">
+        <keep-alive>
+          <component :is="Component" />
+        </keep-alive>
+      </router-view>
+    </main>
+
+    <BottomBar class="bottom" />
+
+    <RestoBlock />
+    <FoodBlock />
+  </div>
+
+  <SvgManager />
+</template>
 
 <style scoped lang="scss">
 @use '@/assets/styles/vars.scss' as *;

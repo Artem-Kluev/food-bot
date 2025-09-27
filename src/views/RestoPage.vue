@@ -2,7 +2,7 @@
 import CategorySlider from '@/components/widgets/CategorySlider.vue'
 import ButtonGrid from '@/components/widgets/ButtonGrid.vue'
 import UiSlider from '@/components/ui/UiSlider.vue'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, onActivated } from 'vue'
 import { getCategories } from '@/mixins/categories'
 import ProductCard from '@/components/widgets/ProductCard.vue'
 import { sliders } from '@/mixins/resto'
@@ -15,14 +15,24 @@ import { tags } from '@/mixins/tags'
 import { allRestoCard, request } from '@/composable/useResto'
 
 const route = useRoute()
-const selectedCategories = ref<FoodCategory[]>([])
+const selectedCategories = ref<string[]>([])
 const selectedTags = ref<string[]>([])
 const categories = ref<Category[]>([])
 const sliderValue = ref(700)
 
-// Викликаємо функцію запиту при монтуванні компонента
 onMounted(() => {
   request()
+})
+
+function checkQueryCategory() {
+  if (route.query.category) {
+    const categoryType = route.query.category.toString()
+    selectedCategories.value = [categoryType]
+  }
+}
+
+onActivated(() => {
+  checkQueryCategory()
 })
 
 const viewResto = computed(() => {
@@ -32,7 +42,7 @@ const viewResto = computed(() => {
     let hasTags = true
 
     if (selectedCategories.value.length) {
-      hasCommon = resto.availabilityCategories.some((item: FoodCategory) => selectedCategories.value.includes(item))
+      hasCommon = resto.availabilityCategories.some((item: string) => selectedCategories.value.includes(item))
     }
 
     tags.push(...JSON.parse(resto.selectedPaymentMethod))
@@ -67,17 +77,11 @@ async function getFoodCategories() {
   categories.value = await getCategories('lubny')
 }
 
-// Завантажуємо категорії при монтуванні компонента
 getFoodCategories()
 </script>
 
 <template>
-  <CategorySlider
-    :categories="categories"
-    title="Категорії"
-    @selected="selectedCategories = $event"
-    :initialSelected="route.query.category ? [parseInt(route.query.category.toString())] : []"
-  />
+  <CategorySlider :categories="categories" title="Категорії" v-model="selectedCategories" />
 
   <ButtonGrid :buttons="tags" title="Теги" @selected="selectedTags = $event" />
 

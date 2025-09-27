@@ -48,7 +48,7 @@
   </div>
 
   <OrderForm />
-  
+
   <UiConfirmModal
     ref="confirmModal"
     title="Очищення кошика"
@@ -144,7 +144,6 @@ onActivated(() => {
 
 function removeProduct(id: number) {
   remove(id)
-  products.value = getAllProduct()
 
   // Перевіряємо мінімальну суму після видалення товару, але тільки якщо була спроба оформити замовлення
   if (wasCheckoutAttempted.value) {
@@ -160,9 +159,9 @@ function removeProduct(id: number) {
 
 function clearBasket() {
   // Відкриваємо модальне вікно для підтвердження
-if (confirmModal.value) {
-(confirmModal.value as any).openModal()
-}
+  if (confirmModal.value) {
+    ;(confirmModal.value as any).openModal()
+  }
 }
 
 // Обробник підтвердження очищення кошика

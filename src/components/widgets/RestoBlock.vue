@@ -14,10 +14,13 @@ import { supabase } from '@/plugins/supabase'
 import UiLike from '@/components/ui/UiLike.vue'
 import ProductCard from '@/components/widgets/ProductCard.vue'
 import UiConfirmModal from '@/components/ui/UiConfirmModal.vue'
+import UiContactModal from '@/components/ui/UiContactModal.vue'
 
 const { lockScroll, unlockScroll } = useScrollLock()
 const router = useRouter()
 const confirmModal = ref()
+const phoneModal = ref()
+const telegramModal = ref()
 const { getTotalPrice, getAllProduct, on, add, clear } = useBasket()
 const viewCards = ref<any[]>([])
 const allCards = ref<any[]>([])
@@ -104,6 +107,14 @@ function filterForCategory(categories: string[]) {
 
   viewCards.value = cards
 }
+
+function openPhoneModal() {
+  phoneModal.value?.openModal()
+}
+
+function openTelegramModal() {
+  telegramModal.value?.openModal()
+}
 </script>
 
 <template>
@@ -169,11 +180,11 @@ function filterForCategory(categories: string[]) {
           </div>
 
           <div class="resto-block__buttons">
-            <div class="resto-block__buttons-item resto-block__buttons-call">
+            <div v-if="currentResto?.phoneNumber" class="resto-block__buttons-item resto-block__buttons-call" @click="openPhoneModal">
               <BaseSvg class="resto-block__buttons-call-icon" id="call-logo" />
             </div>
 
-            <div class="resto-block__buttons-item resto-block__buttons-send">
+            <div v-if="currentResto?.telegramNick" class="resto-block__buttons-item resto-block__buttons-send" @click="openTelegramModal">
               <BaseSvg class="resto-block__buttons-send-icon" id="send-logo" />
             </div>
           </div>
@@ -185,7 +196,14 @@ function filterForCategory(categories: string[]) {
           <ButtonSlider :buttons="getCategoryTitle()" class="resto-block__filters" radio @selected="filterForCategory($event)" />
 
           <div class="resto-block__cards">
-            <ProductCard v-for="item in viewCards" :key="item.title" :slide-data="item" modifier="food" counter />
+            <ProductCard
+              v-for="item in viewCards"
+              :key="item.title"
+              :slide-data="item"
+              :current-resto="currentResto"
+              modifier="food"
+              counter
+            />
           </div>
 
           <Transition name="fade-scale">
@@ -211,6 +229,22 @@ function filterForCategory(categories: string[]) {
     confirm-text="Так"
     cancel-text="Ні"
     @confirm="handleConfirm"
+  />
+
+  <UiContactModal
+    ref="phoneModal"
+    title="Номер телефону"
+    :contact="currentResto?.phoneNumber || ''"
+    action-text="Зателефонувати"
+    :action-link="`tel:${currentResto?.phoneNumber}`"
+  />
+
+  <UiContactModal
+    ref="telegramModal"
+    title="Telegram"
+    :contact="currentResto?.telegramNick || ''"
+    action-text="Відкрити чат"
+    :action-link="`https://t.me/${currentResto?.telegramNick?.replace('@', '')}`"
   />
 </template>
 
@@ -366,17 +400,15 @@ function filterForCategory(categories: string[]) {
   }
 
   &__buttons {
-    height: 40px;
     display: flex;
-    justify-content: flex-end;
     margin: 25px 10px;
-
     gap: 10px;
 
     &-item {
       display: flex;
       align-items: center;
       padding: 0 10px;
+      height: 40px;
       background-color: $main-color;
       border-radius: 40px;
       gap: 5px;

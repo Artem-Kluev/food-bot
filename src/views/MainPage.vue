@@ -1,3 +1,39 @@
+<script setup lang="ts">
+import BannerCard from '@/components/widgets/BannerCard.vue'
+import CategorySlider from '@/components/widgets/CategorySlider.vue'
+import Features from '@/components/widgets/FeaturesComponent.vue'
+import { getCategories } from '@/mixins/categories'
+import PrivacyPolicyModal from '@/components/widgets/PrivacyPolicyModal.vue'
+import PartnershipModal from '@/components/widgets/PartnershipModal.vue'
+import { banners } from '@/mixins/banners'
+import { sliders } from '@/mixins/resto'
+import { ref } from 'vue'
+import type { Category } from '@/mixins/interfaces'
+
+// Вибираємо перші 4 ресторани для відображення в грід-сітці
+const popularRestaurants = ref(sliders.slice(0, 4))
+const categories = ref<Category[]>([])
+
+// Референції на модальні вікна
+const privacyPolicyModalRef = ref()
+const partnershipModalRef = ref()
+
+// Функції для відкриття модальних вікон
+function openPrivacyPolicyModal() {
+  privacyPolicyModalRef.value.openModal()
+}
+
+function openPartnershipModal() {
+  partnershipModalRef.value.openModal()
+}
+
+async function getFoodCategories() {
+  categories.value = await getCategories('lubny')
+}
+
+getFoodCategories()
+</script>
+
 <template>
   <div class="main-page">
     <BannerCard :bannerData="banners[0]" class="main-page__banner" />
@@ -71,42 +107,6 @@
     <PartnershipModal ref="partnershipModalRef" />
   </div>
 </template>
-
-<script setup lang="ts">
-import BannerCard from '@/components/widgets/BannerCard.vue'
-import CategorySlider from '@/components/widgets/CategorySlider.vue'
-import Features from '@/components/widgets/FeaturesComponent.vue'
-import { getCategories } from '@/mixins/categories'
-import PrivacyPolicyModal from '@/components/widgets/PrivacyPolicyModal.vue'
-import PartnershipModal from '@/components/widgets/PartnershipModal.vue'
-import { banners } from '@/mixins/banners'
-import { sliders } from '@/mixins/resto'
-import { ref } from 'vue'
-import type { Category } from '@/mixins/interfaces'
-
-// Вибираємо перші 4 ресторани для відображення в грід-сітці
-const popularRestaurants = ref(sliders.slice(0, 4))
-const categories = ref<Category[]>([])
-
-// Референції на модальні вікна
-const privacyPolicyModalRef = ref()
-const partnershipModalRef = ref()
-
-// Функції для відкриття модальних вікон
-function openPrivacyPolicyModal() {
-  privacyPolicyModalRef.value.openModal()
-}
-
-function openPartnershipModal() {
-  partnershipModalRef.value.openModal()
-}
-
-async function getFoodCategories() {
-  categories.value = await getCategories('lubny')
-}
-
-getFoodCategories()
-</script>
 
 <style scoped lang="scss">
 @use '@/assets/styles/vars.scss' as *;

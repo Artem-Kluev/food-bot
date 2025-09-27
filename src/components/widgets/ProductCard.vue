@@ -18,6 +18,7 @@ interface Props {
   counter?: boolean
   size?: 'min'
   observer?: boolean
+  currentResto?: Resto | null
 }
 
 const props = defineProps<Props>()
@@ -61,29 +62,30 @@ function handleProductClick() {
 }
 
 onMounted(() => {
-  if (props.counter && props.slideData.type === 'food') {
+  if (props.counter && props.modifier === 'food') {
     const basketProduct = getProduct(props.slideData.id)
+    console.log(basketProduct)
 
     if (basketProduct) productCount.value = basketProduct.count
   }
 })
 
 function updateBasket(newCount: number) {
-  if (props.slideData.type !== 'food' || !props.counter || !props.slideData.price?.base || !props.slideData.restoId) return
+  if (props.modifier !== 'food' || !props.counter || !props.slideData.basePrice || !props.slideData.restoUid) return
 
   if (newCount > 0) {
     const { restoId: basketRestoId, getAllProduct, clear } = useBasket()
 
-    if (basketRestoId.value !== null && basketRestoId.value !== props.slideData.restoId && getAllProduct().length > 0) {
-      // Зберігаємо дані про товар, який хочемо додати
+    if (basketRestoId.value !== null && basketRestoId.value !== props.slideData.restoUid && getAllProduct().length > 0) {
       pendingProduct.value = {
         id: props.slideData.id,
         title: props.slideData.title,
-        image: props.slideData.image,
-        price: props.slideData.price.base,
-        restoId: props.slideData.restoId,
-        minOrder: props.slideData.minOrder,
+        image: props.slideData.imageUrl,
+        price: props.slideData.basePrice,
+        restoId: props.slideData.restoUid,
+        minOrder: props.currentResto?.minOrder || 0,
       }
+
       pendingCount.value = newCount
 
       // Показуємо модальне вікно підтвердження
@@ -91,15 +93,15 @@ function updateBasket(newCount: number) {
       return
     }
 
-    // Якщо корзина порожня або товари з того ж ресторану, додаємо товар
+    console.log(props.currentResto?.minOrder)
     add(
       {
         id: props.slideData.id,
         title: props.slideData.title,
-        image: props.slideData.image,
-        price: props.slideData.price.base,
-        restoId: props.slideData.restoId,
-        minOrder: props.slideData.minOrder,
+        image: props.slideData.imageUrl,
+        price: props.slideData.basePrice,
+        restoId: props.slideData.restoUid,
+        minOrder: props.currentResto?.minOrder || 0,
       },
       newCount,
     )

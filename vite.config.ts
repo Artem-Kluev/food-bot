@@ -17,7 +17,7 @@ export default defineConfig({
   },
   server: {
     allowedHosts: [
-      'e1a7d7bbf5fc.ngrok-free.app', // <--- твій ngrok URL
+      '31850fb51f87.ngrok-free.app', // <--- твій ngrok URL
       'localhost',
     ],
   },
