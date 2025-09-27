@@ -27,7 +27,7 @@ onMounted(() => {
 
     // Отримуємо ім'я користувача, якщо доступно
 
-    tgUserName.value = tg.value.initDataUnsafe?.user?.id
+    tgUserName.value = tg.value.initDataUnsafe
 
     // tgUserName.value = '665557371'
     setTimeout(() => {
