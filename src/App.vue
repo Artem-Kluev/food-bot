@@ -49,7 +49,6 @@ async function request() {
 </script>
 
 <template>
-  {{ tg }}
   <div class="wrapper">
     <div class="search-container">
       <UiSearch />
