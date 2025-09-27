@@ -31,11 +31,11 @@ onMounted(() => {
 
     // tgUserName.value = '665557371'
     setTimeout(() => {
-      tg.value.sendData(JSON.stringify({ field: 'name', value: 'Артем' }))
+      tg.value.sendData(12312)
     }, 3000)
 
     tg.value.onEvent('ready', () => {
-      tg.value.sendData(JSON.stringify({ field: 'name', value: 'Артем' }))
+      tg.value.sendData(12312)
     })
   }
 
