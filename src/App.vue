@@ -19,22 +19,31 @@ const tgUserName = ref<string | null>(null)
 useElementObserver()
 
 onMounted(() => {
-  tg.value = window.Telegram?.WebApp ?? null
-  if (tg.value) {
-    tg.value.expand()
-    tg.value.disableVerticalSwipes()
-    tgAvailable.value = true
-
-    // Отримуємо ім'я користувача, якщо доступно
-
-    tgUserName.value = tg.value.initDataUnsafe?.user?.id
-
-    // tgUserName.value = '665557371'
-
-    tg.value.sendData(JSON.stringify({ field: 'name', value: 'Артем' }))
+  const tgInstance = window.Telegram?.WebApp ?? null
+  if (!tgInstance) {
+    console.warn('❌ Telegram WebApp недоступний. Відкрий через Telegram!')
+    return
   }
 
-  // request()
+  tg.value = tgInstance
+  tg.value.expand()
+  tg.value.disableVerticalSwipes()
+  tgAvailable.value = true
+
+  // Отримуємо Telegram ID користувача
+  tgUserName.value = tg.value.initDataUnsafe?.user?.id
+
+  // Налаштовуємо обробник натискання основної кнопки
+  tg.value.onEvent('mainButtonClicked', () => {
+    console.log('⚡ Main button clicked. Відправляємо дані в бот...')
+    tg.value.sendData(JSON.stringify({ field: 'name', value: 'Артем' }))
+  })
+
+  // Можна відобразити кнопку WebApp
+  tg.value.MainButton.text = 'Відправити дані'
+  tg.value.MainButton.show()
+
+  // request() - залишаємо закоментованим, якщо потрібно
 })
 
 async function request() {
@@ -49,7 +58,7 @@ async function request() {
 </script>
 
 <template>
-  {{ tgUserName }}12
+  {{ tgUserName }}
   <div class="wrapper">
     <div class="search-container">
       <UiSearch />
