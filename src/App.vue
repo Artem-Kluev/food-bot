@@ -20,26 +20,20 @@ useElementObserver()
 
 onMounted(() => {
   tg.value = window.Telegram?.WebApp ?? null
-  if (tg.value) {
-    tg.value.expand()
-    tg.value.disableVerticalSwipes()
-    tgAvailable.value = true
+  if (!tg.value) return
 
-    // Отримуємо ім'я користувача, якщо доступно
+  tg.value.expand()
+  tg.value.disableVerticalSwipes()
+  tgAvailable.value = true
 
-    tgUserName.value = tg.value.initDataUnsafe
+  tgUserName.value = tg.value.initDataUnsafe?.user?.id || null
 
-    // tgUserName.value = '665557371'
-    setTimeout(() => {
-      tg.value.sendData(12312)
-    }, 3000)
+  tg.value.MainButton.text = 'Відправити дані'
+  tg.value.MainButton.show()
 
-    tg.value.onEvent('ready', () => {
-      tg.value.sendData(12312)
-    })
-  }
-
-  // request()
+  tg.value.onEvent('mainButtonClicked', () => {
+    tg.value.sendData(JSON.stringify({ field: 'name', value: 'Артем' }))
+  })
 })
 
 async function request() {
