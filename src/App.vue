@@ -28,7 +28,7 @@ onMounted(() => {
 
   tgUserName.value = tg.value.initDataUnsafe?.user?.id || null
   tg.value.ready()
-  tg.value.sendData(JSON.stringify({ field: 'name', value: 'Артем' }))
+  tg.value.sendData('12312')
 })
 
 async function request() {
