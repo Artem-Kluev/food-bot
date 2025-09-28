@@ -33,7 +33,7 @@ onMounted(() => {
   })
 })
 
-export const validateUser = async (initData: any, userData = {}) => {
+const validateUser = async (initData: any, userData = {}) => {
   try {
     const response = await fetch(`https://tvepxpvfbxxulgfwkexe.supabase.co/functions/v1/dynamic-handler`, {
       method: 'POST',
