@@ -27,16 +27,19 @@ onMounted(() => {
   tgAvailable.value = true
 
   tgUserName.value = tg.value.initData
+
+  request(tgUserName.value, {
+    name: tgUserName.value,
+  })
 })
 
-async function request() {
-  const { data } = await supabase.from('menu').select('*')
-
-  console.log(data)
-
-  const { data: categories } = await supabase.rpc('get_menu_categories')
-
-  console.log(categories)
+async function request(initData: any, userData: any) {
+  const { data, error } = await supabase.functions.invoke('update-user', {
+    body: {
+      initData, // Підписані дані від Telegram
+      userData, // Дані для оновлення
+    },
+  })
 }
 </script>
 
