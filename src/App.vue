@@ -28,18 +28,35 @@ onMounted(() => {
 
   tgUserName.value = tg.value.initData
 
-  request(tgUserName.value, {
+  validateUser(tgUserName.value, {
     name: tgUserName.value,
   })
 })
 
-async function request(initData: any, userData: any) {
-  const { data, error } = await supabase.functions.invoke('update-user', {
-    body: {
-      initData, // Підписані дані від Telegram
-      userData, // Дані для оновлення
-    },
-  })
+export const validateUser = async (initData: any, userData = {}) => {
+  try {
+    const response = await fetch(`https://tvepxpvfbxxulgfwkexe.supabase.co/functions/v1/dynamic-handler`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        initData,
+        userData,
+      }),
+    })
+
+    const result = await response.json()
+
+    if (!response.ok) {
+      throw new Error(result.error || 'Validation failed')
+    }
+
+    return result
+  } catch (error) {
+    console.error('API Error:', error)
+    throw error
+  }
 }
 </script>
 
