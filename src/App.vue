@@ -26,9 +26,7 @@ onMounted(() => {
   tg.value.disableVerticalSwipes()
   tgAvailable.value = true
 
-  tgUserName.value = tg.value.initDataUnsafe?.user?.id || null
-  tg.value.ready()
-  tg.value.sendData('12312')
+  tgUserName.value = tg.value.initData
 })
 
 async function request() {
@@ -43,6 +41,7 @@ async function request() {
 </script>
 
 <template>
+  {{ tgUserName }}
   <div class="wrapper">
     <div class="search-container">
       <UiSearch />
