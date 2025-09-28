@@ -27,10 +27,8 @@ onMounted(() => {
   tgAvailable.value = true
 
   tgUserName.value = tg.value.initDataUnsafe?.user?.id || null
-
-  setTimeout(() => {
-    tg.value.sendData(JSON.stringify({ field: 'name', value: 'Артем' }))
-  }, 5000)
+  tg.value.ready()
+  tg.value.sendData(JSON.stringify({ field: 'name', value: 'Артем' }))
 })
 
 async function request() {
