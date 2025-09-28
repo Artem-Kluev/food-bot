@@ -31,9 +31,9 @@ onMounted(() => {
   tg.value.MainButton.text = 'Відправити дані'
   tg.value.MainButton.show()
 
-  tg.value.onEvent('mainButtonClicked', () => {
+  setTimeout(() => {
     tg.value.sendData(JSON.stringify({ field: 'name', value: 'Артем' }))
-  })
+  }, 5000)
 })
 
 async function request() {
@@ -48,7 +48,6 @@ async function request() {
 </script>
 
 <template>
-  {{ tgUserName }}
   <div class="wrapper">
     <div class="search-container">
       <UiSearch />
