@@ -28,9 +28,6 @@ onMounted(() => {
 
   tgUserName.value = tg.value.initDataUnsafe?.user?.id || null
 
-  tg.value.MainButton.text = 'Відправити дані'
-  tg.value.MainButton.show()
-
   setTimeout(() => {
     tg.value.sendData(JSON.stringify({ field: 'name', value: 'Артем' }))
   }, 5000)
