@@ -28,31 +28,21 @@ onMounted(() => {
 
   tgUserName.value = tg.value.initData
 
-  validateUser(tgUserName.value, {
-    name: tgUserName.value,
-  })
+  // validateUser(tgUserName.value, {
+  //   name: tgUserName.value,
+  // })
 })
 
 const validateUser = async (initData: any, userData = {}) => {
   try {
-    const response = await fetch(`https://tvepxpvfbxxulgfwkexe.supabase.co/functions/v1/dynamic-handler`, {
+    const response = await fetch('https://tvepxpvfbxxulgfwkexe.supabase.co/functions/v1/dynamic-handler', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        initData,
-        userData,
-      }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: 'Анонім' }),
     })
-
-    const result = await response.json()
-
-    if (!response.ok) {
-      throw new Error(result.error || 'Validation failed')
-    }
-
-    return result
+      .then((res) => res.json())
+      .then(console.log)
+      .catch(console.error)
   } catch (error) {
     console.error('API Error:', error)
     throw error
@@ -61,7 +51,6 @@ const validateUser = async (initData: any, userData = {}) => {
 </script>
 
 <template>
-  {{ tgUserName }}
   <div class="wrapper">
     <div class="search-container">
       <UiSearch />
