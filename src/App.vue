@@ -22,22 +22,28 @@ onMounted(() => {
   // Перевіряємо наявність Telegram WebApp API
   if (window.Telegram?.WebApp) {
     const webApp = window.Telegram.WebApp
-    
+
     // Ініціалізація MiniApp
     webApp.ready()
-    
+
     // Відправка даних боту одразу після відкриття
     const payload = { message: 'Привіт від MiniApp!' }
     webApp.sendData(JSON.stringify(payload))
-    
+
     // Зберігаємо посилання на WebApp
     tg.value = webApp
     tgAvailable.value = true
     tgUserName.value = webApp.initDataUnsafe?.user?.username || null
   }
-  
+
   // Надсилаємо на сервер тільки initData і userData
 })
+
+function sendData(data: string) {
+  if (tgAvailable.value && tg.value) {
+    tg.value.sendData(JSON.stringify(data))
+  }
+}
 
 onMounted(() => {})
 
@@ -52,6 +58,8 @@ const dataCheckStringV =
   .................................
 
   {{ tgAvailable }}
+
+  <button @click="sendData('Hello from MiniApp!')">Send Data</button>
   <div class="wrapper">
     <div class="search-container">
       <UiSearch />
