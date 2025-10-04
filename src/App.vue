@@ -34,7 +34,7 @@ onMounted(() => {
   tgUserName.value = user.first_name ?? 'Unknown'
 
   tgAvailable.value = initData
-  validateUser(dataCheckStringV)
+  validateUser(initData)
 })
 
 const validateUser = async (id: string) => {
