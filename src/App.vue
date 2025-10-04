@@ -33,16 +33,31 @@ onMounted(() => {
   tgAvailable.value = initData
 
   // Надсилаємо на сервер тільки initData і userData
-  validateUser(initData, { name: tgUserName.value })
+  testAccess()
+  validateUser('665557371')
 })
+// const { data, error } = await supabase.rpc('get_tg_user_by_id', { user_id: 665557371 })
+async function testAccess() {
+  const { data, error } = await supabase.from('tg_users').select('*') // намагаємося отримати всю таблицю
 
-const validateUser = async (initData: any, userData = {}) => {
+  if (error) {
+    console.error('Помилка доступу:', error)
+  } else {
+    console.log('Дані з таблиці звич метод:', data)
+  }
+}
+
+const validateUser = async (id: string) => {
+  const data = {
+    id: id,
+    update: { username: tgUserName.value },
+  }
+
   try {
-    console.log('initData', initData)
     const response = await fetch('https://tvepxpvfbxxulgfwkexe.supabase.co/functions/v1/dynamic-handler', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ initData, userData }),
+      body: JSON.stringify(data),
     })
       .then((res) => res.json())
       .then((data) => {
