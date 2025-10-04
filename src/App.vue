@@ -29,42 +29,45 @@ onMounted(() => {
   const user = tgWebApp.initDataUnsafe?.user ?? {}
   const botTokenV = '8252025308:AAGba79SM0VTa3vFT6NocQNL8qyUUEO-gyo'
   const dataCheckStringV =
-    'query_id=AAF7masnAAAAAHuZqyfYIkfX&user=%7B%22id%22%3A665557371%2C%22first_name%22%3A%22%D0%90%D1%80%D1%82%D0%B5%D0%BC%22%2C%22last_name%22%3A%22%D0%9A%D0%BB%D1%8E%D0%B5%D0%B2%22%2C%22username%22%3A%22kluev_artem%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%2C%22photo_url%22%3A%22https%3A%5C%2F%5C%2Ft.me%5C%2Fi%5C%2Fuserpic%5C%2F320%5C%2Fz13dEZ_cHV9BtxC4uuc54qB_jjt4BJuFm97mqQ1gz4Q.svg%22%7D&auth_date=1759586142&signature=WJTKw8GN5KsAom6zLpYJzO4RZsogoAWHXUkuJrM1D0uwsyNIipTxUxBs6LeLJMxxM1IdHFur6e0CS0sJATFqCQ&hash=d09e2fd857b981c63a6418f4e2deaa0a43ada8a333dd967fd594aa1bd53774f4'
+    'user=%7B%22id%22%3A665557371%2C%22first_name%22%3A%22%D0%90%D1%80%D1%82%D0%B5%D0%BC%22%2C%22last_name%22%3A%22%D0%9A%D0%BB%D1%8E%D0%B5%D0%B2%22%2C%22username%22%3A%22kluev_artem%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%2C%22photo_url%22%3A%22https%3A%5C%2F%5C%2Ft.me%5C%2Fi%5C%2Fuserpic%5C%2F320%5C%2Fz13dEZ_cHV9BtxC4uuc54qB_jjt4BJuFm97mqQ1gz4Q.svg%22%7D&chat_instance=-5190874424870972511&chat_type=sender&auth_date=1759578037&signature=JKzlYXJw1z_ojAv7QwNS_06zf1JhM5FASKUQqpXQomMz3byNHR8okUSKNxt-r5Me6SCHGPexkkOA7xG1q43eBQ&hash=09a07345e6eebcebd00425a493878cf7a22b54f379d0f1cbecda52b57bccefcb'
 
   tgUserName.value = user.first_name ?? 'Unknown'
 
-  tgAvailable.value = initData
+  // tgAvailable.value = initData
+
+  validateUser(initData)
 })
 
-// const validateUser = async (id: string) => {
-//   const data = {
-//     id: id,
-//     update: { username: tgUserName.value },
-//   }
+const validateUser = async (id: string) => {
+  const data = {
+    id: id,
+    update: { username: tgUserName.value },
+  }
 
-//   try {
-//     const response = await fetch('https://tvepxpvfbxxulgfwkexe.supabase.co/functions/v1/dynamic-handler', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         // !!! ОБОВ'ЯЗКОВИЙ ЗАГОЛОВОК ДЛЯ ВАЛІДАЦІЇ !!!
-//         'X-Init-Data': id,
-//       },
-//       // Надсилаємо ваші дані у тілі
-//       body: JSON.stringify(data),
-//     })
-
-//     tg.value = await response.json()
-//     console.log('API Response:', tg.value)
-//     // ... подальша обробка відповіді (res.json(), .then(), .catch())
-//   } catch (error) {
-//     console.error('Помилка запиту:', error)
-//   }
-// }
+  try {
+    const response = await fetch('https://tvepxpvfbxxulgfwkexe.supabase.co/functions/v1/dynamic-handler', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        tg.value = data
+        console.log('API Response:', data)
+      })
+      .catch(console.error)
+  } catch (error) {
+    console.error('API Error:', error)
+    throw error
+  }
+}
 </script>
 
 <template>
-  {{ tgAvailable }}
+  {{ tg }}
+
+  .................................
+
   <div class="wrapper">
     <div class="search-container">
       <UiSearch />
