@@ -19,18 +19,21 @@ const tgUserName = ref<string | null>(null)
 useElementObserver()
 
 onMounted(() => {
-  tg.value = window.Telegram?.WebApp ?? null
-  if (!tg.value) return
+  const tgWebApp = window.Telegram?.WebApp
+  if (!tgWebApp) return
 
-  tg.value.expand()
-  tg.value.disableVerticalSwipes()
-  tgAvailable.value = true
+  tgWebApp.expand()
+  tgWebApp.disableVerticalSwipes()
 
-  tgUserName.value = tg.value.initData
+  const initData = tgWebApp.initData
+  const user = tgWebApp.initDataUnsafe?.user ?? {}
 
-  validateUser(tg.value.initData, {
-    name: tgUserName.value,
-  })
+  tgUserName.value = user.first_name ?? 'Unknown'
+
+  tgAvailable.value = initData !== undefined
+
+  // Надсилаємо на сервер тільки initData і userData
+  validateUser(initData, { name: tgUserName.value })
 })
 
 const validateUser = async (initData: any, userData = {}) => {
@@ -56,6 +59,10 @@ const validateUser = async (initData: any, userData = {}) => {
 
 <template>
   {{ tgUserName }}
+
+  .................................
+
+  {{ tgAvailable }}
   <div class="wrapper">
     <div class="search-container">
       <UiSearch />
