@@ -49,10 +49,10 @@ const validateUser = async (id: string) => {
       headers: {
         'Content-Type': 'application/json',
         // !!! ОБОВ'ЯЗКОВИЙ ЗАГОЛОВОК ДЛЯ ВАЛІДАЦІЇ !!!
-        'X-Init-Data': initDataRaw,
+        'X-Init-Data': id,
       },
       // Надсилаємо ваші дані у тілі
-      body: JSON.stringify(dataToSend),
+      body: JSON.stringify(data),
     })
 
     // ... подальша обробка відповіді (res.json(), .then(), .catch())
