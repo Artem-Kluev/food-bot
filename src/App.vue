@@ -35,11 +35,7 @@ onMounted(() => {
 
   // tgAvailable.value = initData
 
-  validateUser(dataCheckStringV)
-
-  tgWebApp.onEvent('safe_area_changed', (data) => {
-    data.value = data
-  })
+  data.value = tgWebApp.viewport.safeAreaInsets
 })
 
 const validateUser = async (id: string) => {
@@ -72,7 +68,7 @@ const validateUser = async (id: string) => {
 
   .................................
 
-  {{ data }}
+  {{ data }} - 2
   <div class="wrapper">
     <div class="search-container">
       <UiSearch />
