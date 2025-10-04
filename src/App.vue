@@ -36,6 +36,8 @@ onMounted(() => {
   // tgAvailable.value = initData
 
   data.value = tgWebApp.viewport.safeAreaInsets
+
+  validateUser(initData)
 })
 
 const validateUser = async (id: string) => {
