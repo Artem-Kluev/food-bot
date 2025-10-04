@@ -46,18 +46,18 @@ const validateUser = async (id: string) => {
   try {
     const response = await fetch('https://tvepxpvfbxxulgfwkexe.supabase.co/functions/v1/dynamic-handler', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+        // !!! ОБОВ'ЯЗКОВИЙ ЗАГОЛОВОК ДЛЯ ВАЛІДАЦІЇ !!!
+        'X-Init-Data': initDataRaw,
+      },
+      // Надсилаємо ваші дані у тілі
+      body: JSON.stringify(dataToSend),
     })
-      .then((res) => res.json())
-      .then((data) => {
-        tg.value = data
-        console.log('API Response:', data)
-      })
-      .catch(console.error)
+
+    // ... подальша обробка відповіді (res.json(), .then(), .catch())
   } catch (error) {
-    console.error('API Error:', error)
-    throw error
+    console.error('Помилка запиту:', error)
   }
 }
 </script>
