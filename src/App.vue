@@ -55,6 +55,8 @@ const validateUser = async (id: string) => {
       body: JSON.stringify(data),
     })
 
+    tg.value = await response.json()
+    console.log('API Response:', tg.value)
     // ... подальша обробка відповіді (res.json(), .then(), .catch())
   } catch (error) {
     console.error('Помилка запиту:', error)
