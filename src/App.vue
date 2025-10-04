@@ -14,7 +14,6 @@ import { supabase } from '@/plugins/supabase'
 const tg = ref<any>(null)
 const data = ref(false)
 const tgUserName = ref<string | null>(null)
-const info = ref<any>(null)
 
 // Використовуємо composable для спостереження за елементами з класом .observer
 useElementObserver()
@@ -36,11 +35,19 @@ onMounted(() => {
 
   // tgAvailable.value = initData
 
-  info.value = tgWebApp
+  validateUser(dataCheckStringV)
+  ;(window as any).TelegramWebviewProxy.postEvent('web_app_request_safe_area', '{}')
 
-  data.value = tgWebApp.safeAreaInsets
+  // Обробляємо подію safe_area_changed
+  window.addEventListener('safe_area_changed', (event) => {
+    data.value = event as any
+    console.log('Безпечна область:', data.value)
+    // Використовуємо safeArea для коригування інтерфейсу
+  })
 
-  validateUser(initData)
+  tgWebApp.onEvent('safe_area_changed', (data) => {
+    data.value = data
+  })
 })
 
 const validateUser = async (id: string) => {
@@ -72,10 +79,6 @@ const validateUser = async (id: string) => {
   {{ tg }}
 
   .................................
-
-  {{ data }}
-
-  .......................
 
   <div class="wrapper">
     <div class="search-container">
