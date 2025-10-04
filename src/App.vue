@@ -19,19 +19,23 @@ const tgUserName = ref<string | null>(null)
 useElementObserver()
 
 onMounted(() => {
-  const webApp = window.Telegram.WebApp
-
-  // Ініціалізація MiniApp
-  webApp.ready()
-
-  // Відправка даних боту одразу після відкриття
-  const payload = { message: 'Привіт від MiniApp!' }
-  webApp.sendData(JSON.stringify(payload))
-
-  tgUserName.value = webApp
-
-  // tgAvailable.value = initData
-
+  // Перевіряємо наявність Telegram WebApp API
+  if (window.Telegram?.WebApp) {
+    const webApp = window.Telegram.WebApp
+    
+    // Ініціалізація MiniApp
+    webApp.ready()
+    
+    // Відправка даних боту одразу після відкриття
+    const payload = { message: 'Привіт від MiniApp!' }
+    webApp.sendData(JSON.stringify(payload))
+    
+    // Зберігаємо посилання на WebApp
+    tg.value = webApp
+    tgAvailable.value = true
+    tgUserName.value = webApp.initDataUnsafe?.user?.username || null
+  }
+  
   // Надсилаємо на сервер тільки initData і userData
 })
 
