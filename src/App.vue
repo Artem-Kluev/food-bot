@@ -77,7 +77,6 @@ const validateUser = async (id: string) => {
 
   .......................
 
-  {{ info }}
   <div class="wrapper">
     <div class="search-container">
       <UiSearch />
