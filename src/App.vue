@@ -30,7 +30,7 @@ onMounted(() => {
 
   tgUserName.value = user.first_name ?? 'Unknown'
 
-  tgAvailable.value = initData !== undefined
+  tgAvailable.value = initData
 
   // Надсилаємо на сервер тільки initData і userData
   validateUser(initData, { name: tgUserName.value })
