@@ -14,6 +14,7 @@ import { supabase } from '@/plugins/supabase'
 const tg = ref<any>(null)
 const data = ref(false)
 const tgUserName = ref<string | null>(null)
+const info = ref<any>(null)
 
 // Використовуємо composable для спостереження за елементами з класом .observer
 useElementObserver()
@@ -35,7 +36,9 @@ onMounted(() => {
 
   // tgAvailable.value = initData
 
-  data.value = tgWebApp.viewport.safeAreaInsets
+  info.value = tgWebApp
+
+  data.value = tgWebApp.safeAreaInsets
 
   validateUser(initData)
 })
@@ -70,7 +73,11 @@ const validateUser = async (id: string) => {
 
   .................................
 
-  {{ data }} - 2
+  {{ data }}
+
+  .......................
+
+  {{ info }}
   <div class="wrapper">
     <div class="search-container">
       <UiSearch />
