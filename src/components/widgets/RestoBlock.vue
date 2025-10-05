@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { isRestoBlockVisable, closeRestoBlock, currentResto, isLiked, rating } from '@/composable/useRestoBlock'
+import { isRestoBlockVisable, closeRestoBlock, currentResto, rating } from '@/composable/useRestoBlock'
+import { useLike } from '@/composable/useLike'
 import { useScrollLock } from '@/composable/useScrollLock'
-import { watch, ref, computed, onUnmounted } from 'vue'
+import { watch, ref, computed, onUnmounted, onMounted } from 'vue'
 import ButtonSlider from '@/components/widgets/ButtonSlider.vue'
 import TagGrid from '@/components/widgets/TagGrid.vue'
 import { useBasket } from '@/composable/useBasket'
@@ -15,6 +16,7 @@ import UiLike from '@/components/ui/UiLike.vue'
 import ProductCard from '@/components/widgets/ProductCard.vue'
 import UiConfirmModal from '@/components/ui/UiConfirmModal.vue'
 import UiContactModal from '@/components/ui/UiContactModal.vue'
+import type { LikeType } from '@/mixins/interfaces'
 
 const { lockScroll, unlockScroll } = useScrollLock()
 const router = useRouter()
@@ -28,6 +30,13 @@ const totalPrice = computed(() => getTotalPrice())
 const pendingProduct = ref<{ id: number; title: string; image: string; price: number; restoId: number; minOrder: number } | null>(null)
 const pendingCount = ref(0)
 const basketProducts = ref(0)
+const { isLiked, toggleLike, restoLikes, foodLikes } = useLike()
+
+// Використовуємо computed для автоматичного оновлення стану лайка
+const isRestoLiked = computed(() => {
+  if (!currentResto.value?.id) return false
+  return isLiked(currentResto.value.id, 'resto')
+})
 
 onUnmounted(() => {
   unsubscribe()
@@ -83,6 +92,8 @@ watch(isRestoBlockVisable, (newValue) => {
   if (newValue) {
     getData()
     lockScroll()
+    // Більше не потрібно перевіряти лайки при відкритті блоку,
+    // оскільки тепер використовуємо реактивне обчислюване значення
   } else {
     unlockScroll()
   }
@@ -115,6 +126,14 @@ function openPhoneModal() {
 function openTelegramModal() {
   telegramModal.value?.openModal()
 }
+
+// Функція для обробки зміни стану лайка
+function handleLikeToggle() {
+  if (currentResto.value?.id) {
+    // Зберігаємо зміну в localStorage через useLike
+    toggleLike(currentResto.value.id, 'resto')
+  }
+}
 </script>
 
 <template>
@@ -131,9 +150,9 @@ function openTelegramModal() {
           </div>
 
           <div class="resto-block__top">
-            <div v-if="currentResto" class="resto-block__title">{{ currentResto.restaurantName }}</div>
+            <div v-if="currentResto" class="resto-block__title">{{ currentResto.title }}</div>
 
-            <UiLike v-model="isLiked" modifier="resto" />
+            <UiLike v-model="isRestoLiked" modifier="resto" @update:modelValue="handleLikeToggle" />
           </div>
 
           <TagGrid v-if="getTags().length" :tags="getTags()" class="resto-block__tags" />

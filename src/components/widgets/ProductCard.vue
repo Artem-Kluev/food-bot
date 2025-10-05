@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import type { Resto, Food } from '@/mixins/interfaces'
 import UiLike from '@/components/ui/UiLike.vue'
-import UiRating from '@/components/ui/UiRating.vue'
-import UiTime from '@/components/ui/UiTime.vue'
 import UiPrice from '@/components/ui/UiPrice.vue'
 import UiCounter from '@/components/ui/UiCounter.vue'
 import { setRestoBlockData } from '@/composable/useRestoBlock'
 import { setFoodBlockData } from '@/composable/useFoodBlock'
 import { useBasket } from '@/composable/useBasket'
-import { ref, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useLike } from '@/composable/useLike'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import UiConfirmModal from '@/components/ui/UiConfirmModal.vue'
+import type { LikeType } from '@/mixins/interfaces'
 
 interface Props {
   slideData: Resto | Food | any
@@ -23,16 +22,23 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const isLiked = ref(false)
+const { isLiked, toggleLike, restoLikes, foodLikes } = useLike()
 const productCount = ref(0)
-const router = useRouter()
+
+// Використовуємо computed для автоматичного оновлення стану лайка
+const isItemLiked = computed(() => {
+  if (!props.slideData || !props.slideData.id) return false
+
+  const type = props.modifier || ('food' as LikeType)
+  return isLiked(props.slideData.id, type)
+})
+
 const confirmModal = ref()
 const pendingProduct = ref<{ id: number; title: string; image: string; price: number; restoId: number; minOrder: number } | null>(null)
 const pendingCount = ref(0)
 
 const { getProduct, add, remove, on } = useBasket()
 
-// Зберігаємо функцію відписки, щоб викликати її при розмонтуванні
 const unsubscribe = on(() => {
   if (props.counter && props.slideData.type === 'food') {
     const basketProduct = getProduct(props.slideData.id)
@@ -68,6 +74,9 @@ onMounted(() => {
 
     if (basketProduct) productCount.value = basketProduct.count
   }
+
+  // Більше не потрібно перевіряти лайки при монтуванні,
+  // оскільки тепер використовуємо реактивне обчислюване значення
 })
 
 function updateBasket(newCount: number) {
@@ -134,12 +143,21 @@ function handleConfirm(value: boolean) {
     }
   }
 }
+
+// Функція для обробки зміни стану лайка
+function handleLikeToggle() {
+  if (!props.slideData || !props.slideData.id) return
+
+  const type = props.modifier || ('food' as LikeType)
+  // Викликаємо toggleLike для оновлення стану в localStorage
+  toggleLike(props.slideData.id, type)
+}
 </script>
 
 <template>
   <div class="product" :class="{ [`product_${size}`]: size, observer: observer }" @click="handleProductClick">
     <div class="product__like">
-      <UiLike v-model="isLiked" @click.stop />
+      <UiLike v-model="isItemLiked" @click.stop @update:modelValue="handleLikeToggle" />
     </div>
 
     <div class="product__image">

@@ -1,27 +1,32 @@
 <script setup lang="ts">
-import { isFoodBlockVisable, closeFoodBlock, currentFood, isLiked, rating } from '@/composable/useFoodBlock'
+import { isFoodBlockVisable, closeFoodBlock, currentFood } from '@/composable/useFoodBlock'
+import { useLike } from '@/composable/useLike'
 import { useScrollLock } from '@/composable/useScrollLock'
 import { watch, ref, computed, onUnmounted, onMounted } from 'vue'
 import UiCounter from '@/components/ui/UiCounter.vue'
 import UiPrice from '@/components/ui/UiPrice.vue'
 import { useBasket } from '@/composable/useBasket'
 import { useRouter } from 'vue-router'
-
 import BaseSvg from '@/components/base/BaseSvg.vue'
-import UiStarRating from '@/components/ui/UiStarRating.vue'
 import UiLike from '@/components/ui/UiLike.vue'
 import RestoPreview from '@/components/widgets/RestoPreview.vue'
 import UiConfirmModal from '@/components/ui/UiConfirmModal.vue'
 import { allRestoCard, request } from '@/composable/useResto'
-
-import { foodSliders } from '@/mixins/food'
-import type { Food, Resto } from '@/mixins/interfaces'
+import { setRestoBlockData } from '@/composable/useRestoBlock'
+import type { LikeType } from '@/mixins/interfaces'
 
 const productCount = ref(0)
-const confirmModal = ref()
+const confirmModal = ref<InstanceType<typeof UiConfirmModal> | null>(null)
 const pendingProduct = ref<{ id: number; title: string; image: string; price: number; restoId: number; minOrder: number } | null>(null)
 const pendingCount = ref(0)
 const currentResto = ref<any | null>(null)
+const { isLiked, toggleLike, restoLikes, foodLikes } = useLike()
+
+// Використовуємо computed для автоматичного оновлення стану лайка
+const isFoodLiked = computed(() => {
+  if (!currentFood.value?.id) return false
+  return isLiked(currentFood.value.id, 'food')
+})
 
 const { lockScroll, unlockScroll } = useScrollLock()
 const router = useRouter()
@@ -30,11 +35,28 @@ function getRestoData() {
   currentResto.value = allRestoCard.value.find((resto) => resto.restoId === currentFood.value.restoUid)
 }
 
+// Функція для відкриття RestoBlock при кліку на превью ресторану
+function openRestoBlock() {
+  if (currentResto.value) {
+    // Закриваємо поточний FoodBlock
+    closeFoodBlock(false)
+    
+    // Відкриваємо RestoBlock з поточним рестораном
+    setRestoBlockData({
+      resto: currentResto.value,
+      liked: isLiked(currentResto.value.id, 'resto'),
+      restoRating: currentResto.value.rating
+    })
+  }
+}
+
 watch(isFoodBlockVisable, (newValue) => {
   if (newValue) {
     lockScroll()
     updateProductCount()
     getRestoData()
+    // Більше не потрібно перевіряти лайки при відкритті блоку,
+    // оскільки тепер використовуємо реактивне обчислюване значення
   } else {
     unlockScroll()
   }
@@ -72,44 +94,81 @@ const unsubscribe = on(() => {
 })
 
 function updateBasket(newCount: number) {
+  console.log('updateBasket викликано з newCount:', newCount)
+  console.log('currentFood:', currentFood.value)
   productCount.value = newCount
 
-  if (!currentFood.value || !currentFood.value.price?.base || !currentFood.value.restoId) return
+  if (!currentFood.value || !currentFood.value.price || !currentFood.value.restoId) {
+    console.log('Відсутні необхідні дані:', { 
+      currentFood: currentFood.value, 
+      price: currentFood.value?.price, 
+      restoId: currentFood.value?.restoId 
+    })
+    return
+  }
+
+  // Перетворюємо ціну та minOrder на числа, якщо вони є рядками
+  const price = typeof currentFood.value.price === 'string' 
+    ? parseFloat(currentFood.value.price) 
+    : currentFood.value.price
+  
+  const minOrder = typeof currentFood.value.minOrder === 'string'
+    ? parseFloat(currentFood.value.minOrder)
+    : currentFood.value.minOrder
 
   if (newCount > 0) {
     const { restoId: basketRestoId, getAllProduct, clear } = useBasket()
+    console.log('Дані кошика:', { 
+      basketRestoId: basketRestoId.value, 
+      currentRestoId: currentFood.value.restoId,
+      basketProducts: getAllProduct().length 
+    })
 
     // Перевіряємо, чи є товари в корзині з іншого ресторану
     if (basketRestoId.value !== null && basketRestoId.value !== currentFood.value.restoId && getAllProduct().length > 0) {
+      console.log('Виявлено товари з іншого ресторану, відкриваємо модальне вікно')
       // Зберігаємо дані про товар, який хочемо додати
       pendingProduct.value = {
         id: currentFood.value.id,
         title: currentFood.value.title,
         image: currentFood.value.image,
-        price: currentFood.value.price.base,
+        price: price,
         restoId: currentFood.value.restoId,
-        minOrder: currentFood.value.minOrder,
+        minOrder: minOrder,
       }
       pendingCount.value = newCount
 
       // Показуємо модальне вікно підтвердження
-      confirmModal.value.openModal()
+      if (confirmModal.value && typeof confirmModal.value.openModal === 'function') {
+        console.log('Відкриваємо модальне вікно підтвердження')
+        confirmModal.value.openModal()
+      } else {
+        console.error('confirmModal не ініціалізовано або не має методу openModal')
+      }
       return
     }
 
+    console.log('Додаємо товар в кошик:', {
+      id: currentFood.value.id,
+      title: currentFood.value.title,
+      count: newCount,
+      price: price
+    })
+    
     // Якщо корзина порожня або товари з того ж ресторану, додаємо товар
     add(
       {
         id: currentFood.value.id,
         title: currentFood.value.title,
         image: currentFood.value.image,
-        price: currentFood.value.price.base,
+        price: price,
         restoId: currentFood.value.restoId,
-        minOrder: currentFood.value.minOrder,
+        minOrder: minOrder,
       },
       newCount,
     )
   } else {
+    console.log('Видаляємо товар з кошика:', currentFood.value.id)
     remove(currentFood.value.id)
   }
 }
@@ -145,6 +204,14 @@ function handleConfirm(value: boolean) {
     updateProductCount()
   }
 }
+
+// Функція для обробки зміни стану лайка
+function handleLikeToggle() {
+  if (currentFood.value?.id) {
+    // Зберігаємо зміну в localStorage через useLike
+    toggleLike(currentFood.value.id, 'food')
+  }
+}
 </script>
 
 <template>
@@ -163,7 +230,7 @@ function handleConfirm(value: boolean) {
           <div class="food-block__top">
             <div class="food-block__title">{{ currentFood.title }}</div>
 
-            <UiLike v-model="isLiked" modifier="resto" />
+            <UiLike v-model="isFoodLiked" @update:modelValue="handleLikeToggle" />
           </div>
 
           <div class="food-block__description">
@@ -175,7 +242,7 @@ function handleConfirm(value: boolean) {
               <div class="food-block__price-title">Ціна:</div>
 
               <div class="food-block__price-price">
-                <UiPrice :price="{ base: currentFood.basePrice || 0, old: currentFood.oldPrice || 0 }" modifier="big" />
+                <UiPrice :price="{ base: Number(currentFood.price) || 0, old: 0 }" modifier="big" />
               </div>
             </div>
 
@@ -188,6 +255,7 @@ function handleConfirm(value: boolean) {
               :title="currentResto.title"
               :description="currentResto.description"
               :image="currentResto.imageUrl"
+              @click="openRestoBlock"
             />
           </div>
 

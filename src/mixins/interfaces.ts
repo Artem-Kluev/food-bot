@@ -77,3 +77,6 @@ export interface Tag {
   title: string
   value: Array<string>
 }
+
+// Типи для лайків
+export type LikeType = 'resto' | 'food'
