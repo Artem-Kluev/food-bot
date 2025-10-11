@@ -115,6 +115,7 @@ function submitOrder(values: any) {
     quantity: item.count,
     price: item.price,
     image: item.image,
+    title: item.title,
   }))
 
   const newOrder = {
