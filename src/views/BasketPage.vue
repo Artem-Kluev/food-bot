@@ -1,64 +1,3 @@
-<template>
-  <div class="basket-page">
-    <!-- <h1 class="basket-page__title">Кошик</h1> -->
-
-    <div v-if="products.length" class="basket-page__content">
-      <div class="basket-page__products">
-        <div v-for="product in products" :key="product.id" class="basket-product">
-          <div class="basket-product__image">
-            <img :src="product.image" alt="product image" />
-          </div>
-          <div class="basket-product__info">
-            <h3 class="basket-product__title">{{ product.title }}</h3>
-
-            <div class="basket-product__data">
-              <div class="basket-product__price">{{ product.price * product.count }} ₴</div>
-              <div class="basket-product__count">
-                <UiCounter v-model="product.count" modifier="basket" @update:model-value="updateProductCount(product.id, $event)" />
-              </div>
-            </div>
-          </div>
-          <button class="basket-product__remove" @click="removeProduct(product.id)">
-            <BaseSvg id="close-icon" />
-          </button>
-        </div>
-      </div>
-
-      <div class="basket-page__summary">
-        <div class="basket-page__total">
-          <span>Загальна сума:</span>
-          <span class="basket-page__total-price">{{ totalPrice }} ₴</span>
-        </div>
-
-        <div class="basket-page__min-order">
-          <div v-if="showMinOrderError" class="basket-page__error">Мінімальна сума замовлення: {{ minOrderValue }} ₴</div>
-        </div>
-
-        <button class="basket-page__checkout" @click="validateAndOpenOrderForm">Оформити замовлення</button>
-
-        <button class="basket-page__clear" @click="clearBasket">Очистити кошик</button>
-      </div>
-    </div>
-
-    <div v-else class="basket-page__empty">
-      <BaseLottie class="basket-page__animation" :src="'/animations/6/animate.json'" :loop="true" :autoplay="true" />
-
-      <div class="basket-page__empty-text">Ваш кошик порожній</div>
-    </div>
-  </div>
-
-  <OrderForm />
-
-  <UiConfirmModal
-    ref="confirmModal"
-    title="Очищення кошика"
-    text="Ви впевнені, що хочете очистити кошик?"
-    confirm-text="Підтвердити"
-    cancel-text="Скасувати"
-    @confirm="handleClearConfirm"
-  />
-</template>
-
 <script setup lang="ts">
 import { useBasket } from '@/composable/useBasket'
 import { ref, onMounted, computed, onActivated, watch } from 'vue'
@@ -143,6 +82,8 @@ onActivated(() => {
 })
 
 function removeProduct(id: number) {
+  console.log('removeProduct викликано з id:', id)
+
   remove(id)
 
   // Перевіряємо мінімальну суму після видалення товару, але тільки якщо була спроба оформити замовлення
@@ -155,6 +96,8 @@ function removeProduct(id: number) {
     showMinOrderError.value = false
     wasCheckoutAttempted.value = false
   }
+
+  products.value = getAllProduct()
 }
 
 function clearBasket() {
@@ -176,6 +119,70 @@ function handleClearConfirm(confirmed: boolean) {
   }
 }
 </script>
+
+<template>
+  <div class="basket-page">
+    <!-- <h1 class="basket-page__title">Кошик</h1> -->
+
+    <div v-if="products.length" class="basket-page__content">
+      <div class="basket-page__products">
+        <div v-for="product in products" :key="product.id" class="basket-product">
+          <div class="basket-product__image">
+            <img :src="product.image" alt="product image" />
+          </div>
+
+          <div class="basket-product__info">
+            <h3 class="basket-product__title">{{ product.title }}</h3>
+
+            <div class="basket-product__data">
+              <div class="basket-product__price">{{ product.price * product.count }} ₴</div>
+
+              <div class="basket-product__count">
+                <UiCounter v-model="product.count" modifier="basket" @update:model-value="updateProductCount(product.id, $event)" />
+              </div>
+            </div>
+          </div>
+
+          <button class="basket-product__remove" @click="removeProduct(product.id)">
+            <BaseSvg id="close-icon" />
+          </button>
+        </div>
+      </div>
+
+      <div class="basket-page__summary">
+        <div class="basket-page__total">
+          <span>Загальна сума:</span>
+          <span class="basket-page__total-price">{{ totalPrice }} ₴</span>
+        </div>
+
+        <div class="basket-page__min-order">
+          <div v-if="showMinOrderError" class="basket-page__error">Мінімальна сума замовлення: {{ minOrderValue }} ₴</div>
+        </div>
+
+        <button class="basket-page__checkout" @click="validateAndOpenOrderForm">Оформити замовлення</button>
+
+        <button class="basket-page__clear" @click="clearBasket">Очистити кошик</button>
+      </div>
+    </div>
+
+    <div v-else class="basket-page__empty">
+      <BaseLottie class="basket-page__animation" :src="'/animations/6/animate.json'" :loop="true" :autoplay="true" />
+
+      <div class="basket-page__empty-text">Ваш кошик порожній</div>
+    </div>
+  </div>
+
+  <OrderForm />
+
+  <UiConfirmModal
+    ref="confirmModal"
+    title="Очищення кошика"
+    text="Ви впевнені, що хочете очистити кошик?"
+    confirm-text="Підтвердити"
+    cancel-text="Скасувати"
+    @confirm="handleClearConfirm"
+  />
+</template>
 
 <style scoped lang="scss">
 @use '@/assets/styles/vars.scss' as *;

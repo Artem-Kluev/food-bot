@@ -6,12 +6,11 @@ import RestoBlock from '@/components/widgets/RestoBlock.vue'
 import BottomBar from '@/components/widgets/BottomBar.vue'
 import UiSearch from '@/components/ui/UiSearch.vue'
 
-import { onMounted, ref } from 'vue'
+import { onMounted } from 'vue'
 import FoodBlock from './components/widgets/FoodBlock.vue'
 import useElementObserver from '@/composable/useElementObserver'
-import { supabase } from '@/plugins/supabase'
 
-const tg = ref<any>(null)
+useElementObserver()
 
 onMounted(() => {
   const tgWebApp = window.Telegram?.WebApp

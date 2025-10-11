@@ -1,31 +1,42 @@
 import { ref } from 'vue'
 import type { LikeType } from '@/mixins/interfaces'
+import { userData } from '@/composable/useUserSupabase'
 
-// Ключі для localStorage
-const RESTO_LIKES_KEY = 'resto_likes'
-const FOOD_LIKES_KEY = 'food_likes'
-
-// Створюємо глобальні реактивні стани для лайків
-// Це дозволить синхронізувати стан між різними компонентами
+// Глобальні реактивні стани лайків (синхронізуються між компонентами)
 const restoLikes = ref<number[]>([])
 const foodLikes = ref<number[]>([])
 
-// Функція для отримання лайків з localStorage
-function getLikesFromStorage(type: LikeType): number[] {
-  const storageKey = type === 'resto' ? RESTO_LIKES_KEY : FOOD_LIKES_KEY
-  const storedLikes = localStorage.getItem(storageKey)
-  return storedLikes ? JSON.parse(storedLikes) : []
+// Ініціалізація лайків з сервера
+async function initLikesFromServer() {
+  try {
+    const data = await userData()
+    const row = data?.res?.data?.[0] || {}
+
+    const favoritesFood = (row.favoritesFood || []) as Array<string>
+    const favoritesResto = (row.favoritesResto || []) as Array<string>
+
+    // Перетворюємо значення з сервера (рядки) у числа для локальної логіки
+    foodLikes.value = favoritesFood.map((id) => Number(id)).filter((n) => !Number.isNaN(n))
+    restoLikes.value = favoritesResto.map((id) => Number(id)).filter((n) => !Number.isNaN(n))
+  } catch (e) {
+    console.error('Не вдалося ініціалізувати лайки з сервера:', e)
+    // У разі помилки лишаємо порожні масиви
+    foodLikes.value = []
+    restoLikes.value = []
+  }
 }
 
-// Функція для збереження лайків в localStorage
-function saveLikesToStorage(type: LikeType, likes: number[]): void {
-  const storageKey = type === 'resto' ? RESTO_LIKES_KEY : FOOD_LIKES_KEY
-  localStorage.setItem(storageKey, JSON.stringify(likes))
-}
+// Оновлення лайків на сервері після локальних змін
+async function persistLikesToServer() {
+  try {
+    const favoritesFood = foodLikes.value.map((id) => String(id))
+    const favoritesResto = restoLikes.value.map((id) => String(id))
 
-// Ініціалізуємо стан з localStorage при завантаженні
-restoLikes.value = getLikesFromStorage('resto')
-foodLikes.value = getLikesFromStorage('food')
+    await userData({ favoritesFood, favoritesResto })
+  } catch (e) {
+    console.error('Не вдалося зберегти лайки на сервері:', e)
+  }
+}
 
 // Основний composable для роботи з лайками
 export function useLike() {
@@ -35,26 +46,23 @@ export function useLike() {
     return likes.includes(id)
   }
 
-  // Додавання/видалення лайку
+  // Додавання/видалення лайку (локально) та асинхронне збереження на сервері
   function toggleLike(id: number, type: LikeType): boolean {
     const likes = type === 'resto' ? restoLikes.value : foodLikes.value
     const likeIndex = likes.indexOf(id)
     let isNowLiked = false
 
     if (likeIndex === -1) {
-      // Додаємо лайк
       likes.push(id)
       isNowLiked = true
     } else {
-      // Видаляємо лайк
       likes.splice(likeIndex, 1)
       isNowLiked = false
     }
 
-    // Зберігаємо оновлений список в localStorage
-    saveLikesToStorage(type, likes)
+    // Асинхронно синхронізуємо поточні списки лайків із сервером
+    persistLikesToServer().catch((e) => console.error(e))
 
-    // Повертаємо новий стан лайку
     return isNowLiked
   }
 
@@ -65,3 +73,6 @@ export function useLike() {
     foodLikes,
   }
 }
+
+// Ініціалізуємо лайки при завантаженні модуля
+initLikesFromServer()

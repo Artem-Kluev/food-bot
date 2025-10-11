@@ -40,12 +40,12 @@ function openRestoBlock() {
   if (currentResto.value) {
     // Закриваємо поточний FoodBlock
     closeFoodBlock(false)
-    
+
     // Відкриваємо RestoBlock з поточним рестораном
     setRestoBlockData({
       resto: currentResto.value,
       liked: isLiked(currentResto.value.id, 'resto'),
-      restoRating: currentResto.value.rating
+      restoRating: currentResto.value.rating,
     })
   }
 }
@@ -95,45 +95,41 @@ const unsubscribe = on(() => {
 
 function updateBasket(newCount: number) {
   console.log('updateBasket викликано з newCount:', newCount)
-  console.log('currentFood:', currentFood.value)
+  console.log(currentFood.value, currentFood.value.basePrice, currentFood.value.restoUid)
   productCount.value = newCount
 
-  if (!currentFood.value || !currentFood.value.price || !currentFood.value.restoId) {
-    console.log('Відсутні необхідні дані:', { 
-      currentFood: currentFood.value, 
-      price: currentFood.value?.price, 
-      restoId: currentFood.value?.restoId 
+  if (!currentFood.value || !currentFood.value.basePrice || !currentFood.value.restoUid) {
+    console.log('Відсутні необхідні дані:', {
+      currentFood: currentFood.value,
+      price: currentFood.value?.price,
+      restoId: currentFood.value?.restoUid,
     })
     return
   }
 
   // Перетворюємо ціну та minOrder на числа, якщо вони є рядками
-  const price = typeof currentFood.value.price === 'string' 
-    ? parseFloat(currentFood.value.price) 
-    : currentFood.value.price
-  
-  const minOrder = typeof currentFood.value.minOrder === 'string'
-    ? parseFloat(currentFood.value.minOrder)
-    : currentFood.value.minOrder
+  const price = typeof currentFood.value.basePrice === 'string' ? parseFloat(currentFood.value.basePrice) : currentFood.value.basePrice
+
+  const minOrder = currentResto.value?.minOrder || 0
 
   if (newCount > 0) {
     const { restoId: basketRestoId, getAllProduct, clear } = useBasket()
-    console.log('Дані кошика:', { 
-      basketRestoId: basketRestoId.value, 
-      currentRestoId: currentFood.value.restoId,
-      basketProducts: getAllProduct().length 
+    console.log('Дані кошика:', {
+      basketRestoId: basketRestoId.value,
+      currentRestoId: currentFood.value.restoUid,
+      basketProducts: getAllProduct().length,
     })
 
     // Перевіряємо, чи є товари в корзині з іншого ресторану
-    if (basketRestoId.value !== null && basketRestoId.value !== currentFood.value.restoId && getAllProduct().length > 0) {
+    if (basketRestoId.value !== null && basketRestoId.value !== currentFood.value.restoUid && getAllProduct().length > 0) {
       console.log('Виявлено товари з іншого ресторану, відкриваємо модальне вікно')
       // Зберігаємо дані про товар, який хочемо додати
       pendingProduct.value = {
         id: currentFood.value.id,
         title: currentFood.value.title,
-        image: currentFood.value.image,
+        image: currentFood.value.imageUrl,
         price: price,
-        restoId: currentFood.value.restoId,
+        restoId: currentFood.value.restoUid,
         minOrder: minOrder,
       }
       pendingCount.value = newCount
@@ -152,17 +148,17 @@ function updateBasket(newCount: number) {
       id: currentFood.value.id,
       title: currentFood.value.title,
       count: newCount,
-      price: price
+      price: price,
     })
-    
+
     // Якщо корзина порожня або товари з того ж ресторану, додаємо товар
     add(
       {
         id: currentFood.value.id,
         title: currentFood.value.title,
-        image: currentFood.value.image,
+        image: currentFood.value.imageUrl,
         price: price,
-        restoId: currentFood.value.restoId,
+        restoId: currentFood.value.restoUid,
         minOrder: minOrder,
       },
       newCount,
@@ -230,7 +226,7 @@ function handleLikeToggle() {
           <div class="food-block__top">
             <div class="food-block__title">{{ currentFood.title }}</div>
 
-            <UiLike v-model="isFoodLiked" @update:modelValue="handleLikeToggle" />
+            <UiLike :modelValue="isFoodLiked" @update:modelValue="handleLikeToggle" />
           </div>
 
           <div class="food-block__description">
@@ -242,7 +238,7 @@ function handleLikeToggle() {
               <div class="food-block__price-title">Ціна:</div>
 
               <div class="food-block__price-price">
-                <UiPrice :price="{ base: Number(currentFood.price) || 0, old: 0 }" modifier="big" />
+                <UiPrice :price="{ base: currentFood.basePrice, old: currentFood.oldPrice || 0 }" modifier="big" />
               </div>
             </div>
 
@@ -481,6 +477,6 @@ function handleLikeToggle() {
 .fade-scale-enter-from,
 .fade-scale-leave-to {
   opacity: 0;
-  transform: scale(0.9);
+  transform: scale(0.9) translateX(-50%);
 }
 </style>

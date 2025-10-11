@@ -152,7 +152,7 @@ function handleLikeToggle() {
           <div class="resto-block__top">
             <div v-if="currentResto" class="resto-block__title">{{ currentResto.title }}</div>
 
-            <UiLike v-model="isRestoLiked" modifier="resto" @update:modelValue="handleLikeToggle" />
+            <UiLike :modelValue="isRestoLiked" modifier="resto" @update:modelValue="handleLikeToggle" />
           </div>
 
           <TagGrid v-if="getTags().length" :tags="getTags()" class="resto-block__tags" />

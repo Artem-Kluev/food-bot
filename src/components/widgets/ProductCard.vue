@@ -39,21 +39,14 @@ const pendingCount = ref(0)
 
 const { getProduct, add, remove, on } = useBasket()
 
-const unsubscribe = on(() => {
-  if (props.counter && props.slideData.type === 'food') {
-    const basketProduct = getProduct(props.slideData.id)
-
-    if (basketProduct) productCount.value = basketProduct.count
-    else {
-      productCount.value = 0
-    }
-  }
+on(() => {
+  getCount()
 })
 
 // Відписуємося від слухача при розмонтуванні компонента
-onUnmounted(() => {
-  unsubscribe()
-})
+// onUnmounted(() => {
+//   unsubscribe()
+// })
 
 function handleProductClick() {
   if (props.modifier === 'resto') {
@@ -68,16 +61,19 @@ function handleProductClick() {
 }
 
 onMounted(() => {
+  getCount()
+})
+
+function getCount() {
   if (props.counter && props.modifier === 'food') {
     const basketProduct = getProduct(props.slideData.id)
-    console.log(basketProduct)
 
     if (basketProduct) productCount.value = basketProduct.count
+    else {
+      productCount.value = 0
+    }
   }
-
-  // Більше не потрібно перевіряти лайки при монтуванні,
-  // оскільки тепер використовуємо реактивне обчислюване значення
-})
+}
 
 function updateBasket(newCount: number) {
   if (props.modifier !== 'food' || !props.counter || !props.slideData.basePrice || !props.slideData.restoUid) return
@@ -157,7 +153,7 @@ function handleLikeToggle() {
 <template>
   <div class="product" :class="{ [`product_${size}`]: size, observer: observer }" @click="handleProductClick">
     <div class="product__like">
-      <UiLike v-model="isItemLiked" @click.stop @update:modelValue="handleLikeToggle" />
+      <UiLike :modelValue="isItemLiked" @click.stop @update:modelValue="handleLikeToggle" />
     </div>
 
     <div class="product__image">
