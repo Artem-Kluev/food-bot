@@ -113,6 +113,8 @@ function submitOrder(values: any) {
   const order = basketData.map((item: OrderProduct) => ({
     productId: item.id,
     quantity: item.count,
+    price: item.price,
+    image: item.image,
   }))
 
   const newOrder = {
