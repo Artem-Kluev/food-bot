@@ -34,7 +34,7 @@ const isItemLiked = computed(() => {
 })
 
 const confirmModal = ref()
-const pendingProduct = ref<{ id: number; title: string; image: string; price: number; restoId: number; minOrder: number } | null>(null)
+const pendingProduct = ref<{ id: number; title: string; image: string; price: number; restoId: string; minOrder: number } | null>(null)
 const pendingCount = ref(0)
 
 const { getProduct, add, remove, on } = useBasket()

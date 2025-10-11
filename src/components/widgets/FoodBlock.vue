@@ -17,7 +17,7 @@ import type { LikeType } from '@/mixins/interfaces'
 
 const productCount = ref(0)
 const confirmModal = ref<InstanceType<typeof UiConfirmModal> | null>(null)
-const pendingProduct = ref<{ id: number; title: string; image: string; price: number; restoId: number; minOrder: number } | null>(null)
+const pendingProduct = ref<{ id: number; title: string; image: string; price: number; restoId: string; minOrder: number } | null>(null)
 const pendingCount = ref(0)
 const currentResto = ref<any | null>(null)
 const { isLiked, toggleLike, restoLikes, foodLikes } = useLike()
