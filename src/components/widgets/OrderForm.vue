@@ -122,6 +122,7 @@ function submitOrder(values: any) {
     orderPhone: formatDate.orderPhone,
     orderPaymentMethod: formatDate.orderPaymentMethod,
     comment: formatDate.orderComment,
+    status: 'new',
   }
 
   orderData(newOrder)
