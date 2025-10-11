@@ -97,7 +97,12 @@ async function handleTabChange() {
     <UiTabs v-model="activeTab" :tabs="['Ресторани', 'Їжа']" class="ui-tabs" @update:modelValue="handleTabChange" />
 
     <div v-if="isLoading" class="favorite-page__loading">
-      <BaseLottie class="favorite-page__animation" :src="'/animations/5/animate.json'" :loop="true" :autoplay="true" />
+      <BaseLottie
+        class="favorite-page__animation favorite-page__animation-load"
+        :src="'/animations/5/animate.json'"
+        :loop="true"
+        :autoplay="true"
+      />
     </div>
 
     <div v-else class="favorite-page__cards">
@@ -105,14 +110,20 @@ async function handleTabChange() {
         <template v-if="favoriteRestos.length > 0">
           <ProductCard v-for="restaurant in favoriteRestos" :key="restaurant.id" :slide-data="restaurant" modifier="resto" />
         </template>
-        <div v-else class="favorite-page__empty">У вас немає збережених ресторанів</div>
+        <div v-else class="favorite-page__empty">
+          <BaseLottie class="favorite-page__animation" :src="'/animations/6/animate.json'" :loop="true" :autoplay="true" />
+          <div class="favorite-page__empty-text">У вас немає збережених ресторанів</div>
+        </div>
       </div>
 
       <div v-else-if="activeTab === 1" class="menu-container">
         <template v-if="favoriteFoods.length > 0">
           <ProductCard v-for="item in favoriteFoods" :key="item.id" :slide-data="item" modifier="food" />
         </template>
-        <div v-else class="favorite-page__empty">У вас немає збереженої їжі</div>
+        <div v-else class="favorite-page__empty">
+          <BaseLottie class="favorite-page__animation" :src="'/animations/6/animate.json'" :loop="true" :autoplay="true" />
+          <div class="favorite-page__empty-text">У вас немає збереженої їжі</div>
+        </div>
       </div>
     </div>
   </div>
@@ -139,10 +150,19 @@ async function handleTabChange() {
   }
 
   &__empty {
-    text-align: center;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
     padding: 40px 0;
     color: $text;
-    font-size: 18px;
+    min-height: 60vh;
+
+    &-text {
+      margin-top: -25px;
+      font-size: 16px;
+    }
   }
 
   &__loading {
@@ -156,8 +176,13 @@ async function handleTabChange() {
   }
 
   &__animation {
-    width: 100px;
-    height: 100px;
+    width: 150px;
+    height: 150px;
+
+    &-load {
+      width: 100px;
+      height: 100px;
+    }
   }
 
   &__cards {

@@ -1,100 +1,17 @@
-<template>
-  <Transition name="fade-slide">
-    <div v-if="isOrderFormVisible" class="order-form">
-      <div class="order-form__main" @click.self="closeOrderForm">
-        <div class="order-form__wrapper">
-          <div class="order-form__header">
-            <div class="order-form__back" @click="closeOrderForm">
-              <BaseSvg class="order-form__back-icon" id="arrow-logo" />
-            </div>
-            <div class="order-form__title">Оформлення замовлення</div>
-          </div>
-
-          <div class="order-form__content">
-            <Form @submit="submitOrder" :validation-schema="validationSchema" v-slot="{ handleSubmit }">
-              <div class="order-form__field">
-                <Field name="orderAddress" v-slot="{ field, errorMessage }">
-                  <UiInput
-                    v-model="formatDate.orderAddress"
-                    type="text"
-                    label="Адреса доставки"
-                    placeholder="Введіть адресу доставки"
-                    :error="errorMessage"
-                    v-bind="field"
-                  />
-                </Field>
-              </div>
-
-              <div class="order-form__field">
-                <Field name="orderPhone" v-slot="{ field, errorMessage }">
-                  <UiInput
-                    v-model="formatDate.orderPhone"
-                    type="tel"
-                    label="Номер телефону"
-                    placeholder="+380XXXXXXXXX"
-                    :error="errorMessage"
-                    v-bind="field"
-                  />
-                </Field>
-              </div>
-
-              <div class="order-form__field">
-                <UiSelect
-                  v-model="formatDate.orderPaymentMethod"
-                  :options="[
-                    { value: 'card', label: 'Картка' },
-                    { value: 'cash', label: 'Готівка' },
-                  ]"
-                  label="Спосіб оплати"
-                />
-              </div>
-
-              <div class="order-form__summary">
-                <div class="order-form__summary-title">Ваше замовлення</div>
-                <div class="order-form__products">
-                  <div v-for="product in products" :key="product.id" class="order-form__product">
-                    <div class="order-form__product-title">{{ product.title }}</div>
-                    <div class="order-form__product-count">{{ product.count }} шт.</div>
-                    <div class="order-form__product-price">{{ product.price * product.count }} ₴</div>
-                  </div>
-                </div>
-                <div class="order-form__total">
-                  <span>Загальна сума:</span>
-                  <span class="order-form__total-price">{{ totalPrice }} ₴</span>
-                </div>
-              </div>
-
-              <Transition name="fade-scale">
-                <button type="submit" class="order-form__button" @click="handleSubmit">
-                  <div class="order-form__button-text">
-                    {{ 'Підтвердити замовлення' }}
-                  </div>
-                  <hr class="order-form__button-line" />
-                  <div class="order-form__button-price">
-                    <div class="order-form__button-sum">{{ totalPrice }}</div>
-                    грн
-                  </div>
-                </button>
-              </Transition>
-            </Form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </Transition>
-</template>
-
 <script setup lang="ts">
-import { ref, computed, watch, reactive } from 'vue'
+import { ref, computed, onActivated, watch, reactive, onMounted } from 'vue'
 import { useBasket } from '@/composable/useBasket'
 import { useScrollLock } from '@/composable/useScrollLock'
 import BaseSvg from '@/components/base/BaseSvg.vue'
 import UiSelect from '@/components/ui/UiSelect.vue'
 import UiInput from '@/components/ui/UiInput.vue'
+import UiToast from '@/components/ui/UiToast.vue'
 import { useRouter } from 'vue-router'
 import type { OrderProduct } from '@/mixins/interfaces'
+import { allRestoCard, request } from '@/composable/useResto'
 import { isOrderFormVisible, openOrderForm, closeOrderForm } from '@/composable/useOrderForm'
 import { Form, Field, ErrorMessage, useField } from 'vee-validate'
+import { orderData } from '@/composable/useOrderSupabase'
 import * as yup from 'yup'
 
 const { getAllProduct, getTotalPrice, clear } = useBasket()
@@ -102,13 +19,72 @@ const products = ref(getAllProduct())
 const totalPrice = computed(() => getTotalPrice())
 const router = useRouter()
 
+// Дані та типи для способів оплати
+const optionsData: Record<string, string> = {
+  cash: 'Готівка при отриманні',
+  card: 'Картка',
+  'card-postpayment': 'Картка після отримання',
+}
+
+type PaymentMethodKey = keyof typeof optionsData
+type PaymentOption = { label: string; value: PaymentMethodKey }
+
+const options = ref<PaymentOption[]>([])
+
 const { lockScroll, unlockScroll } = useScrollLock()
 
-const formatDate = reactive({
-  orderAddress: '',
-  orderPhone: '',
-  orderPaymentMethod: 'card',
+onMounted(async () => {
+  await request()
+
+  getOptions()
 })
+
+onActivated(async () => {
+  await request()
+
+  getOptions()
+})
+
+function getRestoData(restoUid: string) {
+  console.log(allRestoCard.value)
+  return allRestoCard.value.find((resto) => resto.restoId === restoUid)
+}
+
+function getOptions() {
+  const basketData = getAllProduct()
+
+  const restoId = basketData[0].restoId
+
+  const currentResto = getRestoData(restoId)
+
+  console.log(currentResto)
+
+  const paymentMethodsRaw = JSON.parse(currentResto?.selectedPaymentMethod || '[]') as unknown
+  const paymentMethods = Array.isArray(paymentMethodsRaw)
+    ? paymentMethodsRaw.filter((method): method is PaymentMethodKey => method in optionsData)
+    : []
+
+  options.value = paymentMethods.map((method) => ({
+    label: optionsData[method],
+    value: method,
+  }))
+
+  formatDate.orderPaymentMethod = options.value.length ? options.value[0].value : ''
+}
+
+const formatDate = reactive<{
+  orderAddress: string
+  orderPhone: string
+  orderPaymentMethod: PaymentMethodKey | ''
+  orderComment: string
+}>({
+  orderAddress: 'eadfwefw',
+  orderPhone: '380958195946',
+  orderPaymentMethod: '',
+  orderComment: '',
+})
+
+const toastRef = ref<{ show: () => void } | null>(null)
 
 // Схема валідації для форми замовлення
 const validationSchema = yup.object({
@@ -130,14 +106,25 @@ watch(isOrderFormVisible, (newValue) => {
 })
 
 function submitOrder(values: any) {
-  // Перевірка валідності форми перед відправкою
-  if (!values.orderAddress || !values.orderPhone) {
-    return
+  const basketData = getAllProduct()
+
+  const restoId = basketData[0].restoId
+
+  const order = basketData.map((item: OrderProduct) => ({
+    productId: item.id,
+    quantity: item.count,
+  }))
+
+  const newOrder = {
+    restoUid: restoId,
+    data: JSON.stringify(order),
+    orderAddress: formatDate.orderAddress,
+    orderPhone: formatDate.orderPhone,
+    orderPaymentMethod: formatDate.orderPaymentMethod,
+    comment: formatDate.orderComment,
   }
 
-  // Оновлюємо дані форми
-  formatDate.orderAddress = values.orderAddress
-  formatDate.orderPhone = values.orderPhone
+  orderData(newOrder)
 
   // Очищаємо кошик
   clear()
@@ -145,10 +132,146 @@ function submitOrder(values: any) {
   // Закриваємо форму
   closeOrderForm()
 
+  // Показати успішний тост
+  toastRef.value?.show()
+
   // Переходимо на сторінку підтвердження
   router.push('/order')
 }
 </script>
+
+<template>
+  <UiToast ref="toastRef" message="Замовлення оформлено" type="success" />
+  <Transition name="fade-slide">
+    <div v-if="isOrderFormVisible" class="order-form">
+      <div class="order-form__main" @click.self="closeOrderForm">
+        <div class="order-form__wrapper">
+          <div class="order-form__header">
+            <div class="order-form__back" @click="closeOrderForm">
+              <BaseSvg class="order-form__back-icon" id="arrow-logo" />
+            </div>
+            <div class="order-form__title">Оформлення замовлення</div>
+          </div>
+
+          <div class="order-form__content">
+            <Form
+              @submit="submitOrder"
+              :validation-schema="validationSchema"
+              :initial-values="{
+                orderAddress: formatDate.orderAddress,
+                orderPhone: formatDate.orderPhone,
+                orderPaymentMethod: formatDate.orderPaymentMethod,
+              }"
+            >
+              <div class="order-form__field">
+                <Field name="orderAddress" v-slot="{ field, errorMessage, handleChange, handleBlur }">
+                  <UiInput
+                    :modelValue="formatDate.orderAddress"
+                    @update:modelValue="
+                      (v) => {
+                        formatDate.orderAddress = v
+                        handleChange(v as any)
+                      }
+                    "
+                    @blur="handleBlur"
+                    type="text"
+                    label="Адреса доставки"
+                    placeholder="Введіть адресу доставки"
+                    :error="errorMessage"
+                  />
+                </Field>
+              </div>
+
+              <div class="order-form__field">
+                <Field name="orderPhone" v-slot="{ field, errorMessage, handleChange, handleBlur }">
+                  <UiInput
+                    :modelValue="formatDate.orderPhone"
+                    @update:modelValue="
+                      (v) => {
+                        formatDate.orderPhone = v
+                        handleChange(v as any)
+                      }
+                    "
+                    @blur="handleBlur"
+                    type="tel"
+                    label="Номер телефону"
+                    placeholder="+380XXXXXXXXX"
+                    :error="errorMessage"
+                  />
+                </Field>
+              </div>
+
+              <div class="order-form__field">
+                <Field name="orderPaymentMethod" v-slot="{ field, handleChange }">
+                  <UiSelect
+                    :modelValue="formatDate.orderPaymentMethod"
+                    @update:modelValue="
+                      (v) => {
+                        formatDate.orderPaymentMethod = v
+                        handleChange(v as any)
+                      }
+                    "
+                    :options="options"
+                    label="Спосіб оплати"
+                  />
+                </Field>
+              </div>
+
+              <!-- Коментар до замовлення (без валідації) -->
+              <div class="order-form__field">
+                <Field name="orderComment" v-slot="{ handleChange, handleBlur }">
+                  <UiInput
+                    :modelValue="formatDate.orderComment"
+                    @update:modelValue="
+                      (v) => {
+                        formatDate.orderComment = v
+                        handleChange(v as any)
+                      }
+                    "
+                    @blur="handleBlur"
+                    type="text"
+                    label="Коментар до замовлення"
+                    placeholder="Додайте коментар (необов'язково)"
+                  />
+                </Field>
+              </div>
+
+              <div class="order-form__summary">
+                <div class="order-form__summary-title">Ваше замовлення</div>
+                <div class="order-form__products">
+                  <div v-for="product in products" :key="product.id" class="order-form__product">
+                    <div class="order-form__product-title">{{ product.title }}</div>
+                    <div class="order-form__product-count">{{ product.count }} шт.</div>
+                    <div class="order-form__product-price">{{ product.price * product.count }} ₴</div>
+                  </div>
+                </div>
+                <div class="order-form__total">
+                  <span>Загальна сума:</span>
+                  <span class="order-form__total-price">{{ totalPrice }} ₴</span>
+                </div>
+              </div>
+
+              <Transition name="fade-scale">
+                <button type="submit" class="order-form__button">
+                  <div class="order-form__button-text">
+                    {{ 'Підтвердити замовлення' }}
+                  </div>
+
+                  <hr class="order-form__button-line" />
+
+                  <div class="order-form__button-price">
+                    <div class="order-form__button-sum">{{ totalPrice }}</div>
+                    грн
+                  </div>
+                </button>
+              </Transition>
+            </Form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Transition>
+</template>
 
 <style scoped lang="scss">
 @use '@/assets/styles/vars.scss' as *;

@@ -8,7 +8,7 @@ import BaseLottie from '@/components/base/BaseLottie.vue'
 import UiCounter from '@/components/ui/UiCounter.vue'
 import UiConfirmModal from '@/components/ui/UiConfirmModal.vue'
 
-const { getAllProduct, getTotalPrice, remove, clear, add } = useBasket()
+const { getAllProduct, getTotalPrice, remove, clear, add, on } = useBasket()
 const confirmModal = ref(null)
 
 function updateProductCount(productId: number, count: number) {
@@ -68,6 +68,10 @@ watch(totalPrice, () => {
   if (wasCheckoutAttempted.value) {
     validateMinOrder()
   }
+})
+
+on(() => {
+  products.value = getAllProduct()
 })
 
 onActivated(() => {

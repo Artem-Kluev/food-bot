@@ -6,7 +6,7 @@ interface BasketProduct {
   price: number
   title: string
   image: string
-  restoId: number
+  restoId: string
   minOrder: number
 }
 
@@ -20,7 +20,7 @@ interface BasketReturn {
   getAllProduct: () => BasketProduct[]
   clear: () => void
   getTotalPrice: () => number
-  restoId: import('vue').Ref<number | null>
+  restoId: import('vue').Ref<string | null>
 }
 
 let singleton: BasketReturn | null = null
@@ -34,7 +34,7 @@ export function useBasket(): BasketReturn {
 function basket(): BasketReturn {
   const STORAGE_KEY = 'telegram-food-basket'
   const products = ref<BasketProduct[]>([])
-  const restoId = ref<number | null>(null)
+  const restoId = ref<string | null>(null)
   const callbacks: BasketChangeCallback[] = []
 
   function init() {
