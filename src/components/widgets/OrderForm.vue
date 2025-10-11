@@ -106,6 +106,9 @@ watch(isOrderFormVisible, (newValue) => {
 })
 
 function submitOrder(values: any) {
+  const tg = window.Telegram?.WebApp
+  const user = tg?.initDataUnsafe?.user
+
   const basketData = getAllProduct()
 
   const restoId = basketData[0].restoId
@@ -126,6 +129,8 @@ function submitOrder(values: any) {
     orderPaymentMethod: formatDate.orderPaymentMethod,
     comment: formatDate.orderComment,
     status: 'new',
+    username: `${user?.first_name || ''} ${user?.last_name || ''}`,
+    nickname: user?.username || '',
   }
 
   orderData(newOrder)
