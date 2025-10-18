@@ -1,73 +1,10 @@
-<template>
-  <Transition name="fade-slide">
-    <div v-if="isVisible" class="payment-form">
-      <div class="payment-form__main" @click.self="closeForm">
-        <div class="payment-form__wrapper">
-          <div class="payment-form__header">
-            <div class="payment-form__back" @click="closeForm">
-              <BaseSvg class="payment-form__back-icon" id="arrow-logo" />
-            </div>
-            <div class="payment-form__title">Оплата за реквізитами</div>
-          </div>
-
-          <div class="payment-form__content">
-            <div class="payment-form__requisites">
-              <div class="payment-form__requisites-title">Реквізити для оплати</div>
-              <div class="payment-form__requisites-box">
-                <div class="payment-form__requisites-text" ref="requisitesText">
-                  <div class="payment-form__requisites-card">{{ cardNumber }}</div>
-                  <div>{{ otherRequisites }}</div>
-                </div>
-
-                <div
-                  class="payment-form__requisites-copy"
-                  @click="copyCardNumber"
-                  :class="{ 'payment-form__requisites-copy_copied': copied }"
-                >
-                  <BaseSvg id="copy-icon" class="payment-form__requisites-copy-icon" />
-                </div>
-              </div>
-            </div>
-
-            <div class="payment-form__screenshot">
-              <div class="payment-form__screenshot-title">Скріншот оплати</div>
-              <div class="payment-form__screenshot-note">
-                Рекомендуємо прикріпити скріншот підтвердження оплати для швидшої обробки замовлення
-              </div>
-
-              <div
-                class="payment-form__screenshot-upload"
-                :class="{ 'payment-form__screenshot-upload_has-file': screenshotFile }"
-                @click="triggerFileInput"
-              >
-                <input type="file" ref="fileInput" class="payment-form__screenshot-input" accept="image/*" @change="handleFileChange" />
-                <div v-if="!screenshotFile" class="payment-form__screenshot-placeholder">
-                  <div class="payment-form__screenshot-icon">+</div>
-                  <div class="payment-form__screenshot-text">Натисніть, щоб завантажити скріншот</div>
-                </div>
-                <div v-else class="payment-form__screenshot-preview">
-                  <img :src="screenshotPreview" alt="Скріншот оплати" class="payment-form__screenshot-image" />
-                  <button class="payment-form__screenshot-remove" @click.stop="removeScreenshot">×</button>
-                </div>
-              </div>
-            </div>
-
-            <div class="payment-form__info">Після здійснення оплати натисніть кнопку "Підтвердити оплату" нижче</div>
-
-            <button class="payment-form__button" @click="confirmPayment">
-              <div class="payment-form__button-text">Підтвердити оплату</div>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </Transition>
-</template>
-
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useScrollLock } from '@/composable/useScrollLock'
 import BaseSvg from '@/components/base/BaseSvg.vue'
+import { supabase } from '@/plugins/supabase'
+import { orderData } from '@/composable/useOrderSupabase'
+import heic2any from 'heic2any'
 
 interface Props {
   orderId: number
@@ -117,16 +54,68 @@ function copyCardNumber() {
     })
 }
 
+async function sendImage(file: File | null) {
+  if (!file) return null
+
+  // Функція для безпечного імені файлу
+  function sanitizeFileName(name: string) {
+    return name
+      .replace(/\s+/g, '_') // пробіли → підкреслення
+      .replace(/[^a-zA-Z0-9_.-]/g, '') // тільки латиниця, цифри, _, -, .
+  }
+
+  const today = new Date().toISOString().slice(0, 10)
+  const safeName = sanitizeFileName(file.name)
+  const filePath = `${today}/${safeName}`
+
+  const { data, error } = await supabase.storage.from('screen').upload(filePath, file)
+
+  if (error) {
+    console.error('❌ Помилка при завантаженні:', error)
+    return null
+  }
+
+  // Отримуємо публічний URL
+  const { data: publicUrlData } = supabase.storage.from('screen').getPublicUrl(filePath)
+  const publicUrl = publicUrlData.publicUrl
+
+  console.log('✅ Файл збережено:', publicUrl)
+  return publicUrl
+}
+
 function triggerFileInput() {
   if (fileInput.value) {
     fileInput.value.click()
   }
 }
 
-function handleFileChange(event: Event) {
+async function handleFileChange(event: Event) {
   const target = event.target as HTMLInputElement
+
   if (target.files && target.files.length > 0) {
-    screenshotFile.value = target.files[0]
+    const file = target.files[0]
+
+    if (file.type === 'image/heic' || file.name.toLowerCase().endsWith('.heic')) {
+      try {
+        const convertedBlob = (await heic2any({
+          blob: file,
+          toType: 'image/jpeg',
+          quality: 0.8,
+        })) as Blob
+
+        const convertedFile = new File([convertedBlob], file.name.replace(/\.heic$/i, '.jpg'), {
+          type: 'image/jpeg',
+        })
+
+        screenshotFile.value = convertedFile
+      } catch (error) {
+        console.error('Помилка конвертації HEIC:', error)
+        screenshotFile.value = file
+      }
+    } else {
+      screenshotFile.value = file
+    }
+
     const reader = new FileReader()
     reader.onload = (e) => {
       if (e.target) {
@@ -146,11 +135,23 @@ function removeScreenshot(event: Event) {
   }
 }
 
-function confirmPayment() {
-  emit('confirm', {
-    orderId: props.orderId,
-    screenshot: screenshotFile.value || undefined,
-  })
+async function confirmPayment() {
+  // emit('confirm', {
+  //   orderId: props.orderId,
+  //   screenshot: screenshotFile.value || undefined,
+  // })
+  const imageUrl = await sendImage(screenshotFile.value)
+
+  if (imageUrl) {
+    await orderData(null, {
+      id: props.orderId,
+      data: {
+        status: 'paid',
+        payScreenshot: imageUrl,
+      },
+    })
+  }
+
   closeForm()
 }
 
@@ -158,6 +159,75 @@ defineExpose({
   openForm,
 })
 </script>
+
+<template>
+  <Transition name="fade-slide">
+    <div v-if="isVisible" class="payment-form">
+      <div class="payment-form__main" @click.self="closeForm">
+        <div class="payment-form__wrapper">
+          <div class="payment-form__header">
+            <div class="payment-form__back" @click="closeForm">
+              <BaseSvg class="payment-form__back-icon" id="arrow-logo" />
+            </div>
+
+            <div class="payment-form__title">Оплата за реквізитами</div>
+          </div>
+
+          <div class="payment-form__content">
+            <div class="payment-form__requisites">
+              <div class="payment-form__requisites-title">Реквізити для оплати</div>
+              <div class="payment-form__requisites-box">
+                <div class="payment-form__requisites-text" ref="requisitesText">
+                  <div class="payment-form__requisites-card">{{ cardNumber }}</div>
+
+                  <div>{{ otherRequisites }}</div>
+                </div>
+
+                <div
+                  class="payment-form__requisites-copy"
+                  @click="copyCardNumber"
+                  :class="{ 'payment-form__requisites-copy_copied': copied }"
+                >
+                  <BaseSvg id="copy-icon" class="payment-form__requisites-copy-icon" />
+                </div>
+              </div>
+            </div>
+
+            <div class="payment-form__screenshot">
+              <div class="payment-form__screenshot-title">Скріншот оплати</div>
+
+              <div class="payment-form__screenshot-note">
+                Рекомендуємо прикріпити скріншот підтвердження оплати для швидшої обробки замовлення
+              </div>
+
+              <div
+                class="payment-form__screenshot-upload"
+                :class="{ 'payment-form__screenshot-upload_has-file': screenshotFile }"
+                @click="triggerFileInput"
+              >
+                <input type="file" ref="fileInput" class="payment-form__screenshot-input" accept="image/*" @change="handleFileChange" />
+                <div v-if="!screenshotFile" class="payment-form__screenshot-placeholder">
+                  <div class="payment-form__screenshot-icon">+</div>
+                  <div class="payment-form__screenshot-text">Натисніть, щоб завантажити скріншот</div>
+                </div>
+                <div v-else class="payment-form__screenshot-preview">
+                  <img :src="screenshotPreview" alt="Скріншот оплати" class="payment-form__screenshot-image" />
+                  <button class="payment-form__screenshot-remove" @click.stop="removeScreenshot">×</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="payment-form__info">Після здійснення оплати натисніть кнопку "Підтвердити оплату" нижче</div>
+
+            <button class="payment-form__button" @click="confirmPayment">
+              <div class="payment-form__button-text">Підтвердити оплату</div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Transition>
+</template>
 
 <style scoped lang="scss">
 @use '@/assets/styles/vars.scss' as *;

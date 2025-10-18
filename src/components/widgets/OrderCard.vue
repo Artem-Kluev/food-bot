@@ -1,8 +1,96 @@
+<script setup lang="ts">
+import { defineProps, defineEmits, ref } from 'vue'
+import BaseSvg from '@/components/base/BaseSvg.vue'
+import UiConfirmModal from '@/components/ui/UiConfirmModal.vue'
+import PaymentRequisitesForm from '@/components/widgets/PaymentRequisitesForm.vue'
+import CourierInfoForm from '@/components/widgets/CourierInfoForm.vue'
+import RestoPreview from '@/components/widgets/RestoPreview.vue'
+import { orderData } from '@/composable/useOrderSupabase'
+import type { Order } from '@/mixins/orders'
+
+const props = defineProps<{
+  order: Order
+  isExpanded: boolean
+}>()
+
+const emit = defineEmits<{
+  toggle: [orderId: number]
+}>()
+
+const confirmModalRef = ref()
+const cancelConfirmVisible = ref(false)
+const paymentFormRef = ref()
+const courierFormRef = ref()
+
+function toggleOrder() {
+  emit('toggle', props.order.id)
+}
+
+function formatDate(dateString: string) {
+  const date = new Date(dateString)
+  return (
+    date.toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' }) +
+    ' ' +
+    date.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })
+  )
+}
+
+function showCancelConfirm() {
+  if (confirmModalRef.value) {
+    confirmModalRef.value.openModal()
+  }
+}
+
+async function handleCancelConfirm(confirmed: boolean) {
+  if (confirmed) {
+    await orderData(null, {
+      id: props.order.id,
+      data: {
+        status: 'canceled',
+      },
+    })
+
+    console.log('Замовлення скасовано:', props.order.id)
+  }
+}
+
+function showPaymentForm() {
+  if (paymentFormRef.value) {
+    paymentFormRef.value.openForm()
+  }
+}
+
+function handlePaymentConfirm(data: { orderId: number; screenshot?: File }) {
+  // Тут можна додати логіку для обробки підтвердження оплати
+  console.log('Оплата підтверджена:', data)
+}
+
+function handlePaymentClose() {
+  // Додаткова логіка при закритті форми оплати (якщо потрібно)
+}
+
+function showCourierInfo() {
+  if (courierFormRef.value) {
+    courierFormRef.value.openForm()
+  }
+}
+
+function handleCourierInfoClose() {
+  // Додаткова логіка при закритті форми з даними кур'єра (якщо потрібно)
+}
+
+// function repeatOrder() {
+//   // Тут буде логіка повторення замовлення
+//   console.log('Повторити замовлення:', props.order.id)
+// }
+</script>
+
 <template>
   <div class="order-card">
     <div class="order-card__header" @click="toggleOrder">
       <div class="order-card__info">
         <div class="order-card__number">Замовлення #{{ order.id }}</div>
+
         <div class="order-card__date">{{ formatDate(order.date) }}</div>
       </div>
       <div class="order-card__header-right">
@@ -12,13 +100,18 @@
               ? 'Виконано'
               : order.status === 'processing'
                 ? 'В обробці'
-                : order.status === 'awaiting_payment'
-                  ? 'Очікує оплату'
-                  : order.status === 'delivering'
-                    ? 'Доставляється'
-                    : 'Скасовано'
+                : order.status === 'new'
+                  ? 'Нове'
+                  : order.status === 'awaiting_payment'
+                    ? 'Очікує оплату'
+                    : order.status === 'delivering'
+                      ? 'Доставляється'
+                      : order.status === 'paid'
+                        ? 'Оплачено'
+                        : 'Скасовано'
           }}
         </div>
+
         <div class="order-card__toggle" :class="{ 'order-card__toggle_expanded': isExpanded }">
           <BaseSvg class="order-card__toggle-icon" id="arrow-logo" />
         </div>
@@ -57,14 +150,19 @@
           <div class="order-card__details">
             <div class="order-card__address">
               <span class="order-card__label">Адреса доставки:</span>
+
               <span>{{ order.address }}</span>
             </div>
+
             <div class="order-card__payment">
               <span class="order-card__label">Спосіб оплати:</span>
+
               <span>{{ order.paymentMethod === 'card' ? 'Картка' : 'Готівка' }}</span>
             </div>
+
             <div class="order-card__total">
               <span class="order-card__label">Загальна сума:</span>
+
               <span class="order-card__total-price">{{ order.totalPrice }} ₴</span>
             </div>
           </div>
@@ -77,7 +175,7 @@
           <div class="order-card__actions">
             <!-- Для замовлень в обробці - одна кнопка "Скасувати" на всю ширину -->
             <button
-              v-if="order.status === 'processing'"
+              v-if="order.status === 'processing' || order.status === 'new'"
               class="order-card__cancel-btn order-card__cancel-btn_full-width"
               @click="showCancelConfirm"
             >
@@ -87,6 +185,7 @@
             <!-- Для очікуючих оплату - дві кнопки "Скасувати" і "Оплатити" -->
             <template v-if="order.status === 'awaiting_payment'">
               <button class="order-card__cancel-btn" @click="showCancelConfirm">Скасувати</button>
+
               <button class="order-card__pay-btn" @click="showPaymentForm">Оплатити</button>
             </template>
 
@@ -99,13 +198,14 @@
               Дані кур'єра
             </button>
 
-            <!-- Для виконаних і скасованих - кнопка "Повторити замовлення" на всю ширину -->
-            <button
-              v-if="order.status === 'completed' || order.status === 'canceled'"
+            <!-- Для виконаних, скасованих і оплачених - кнопка "Повторити замовлення" на всю ширину -->
+            <!-- <button
+              v-if="order.status === 'completed' || order.status === 'canceled' || order.status === 'paid'"
               class="order-card__repeat-btn order-card__repeat-btn_full-width"
+              @click="repeatOrder"
             >
               Повторити замовлення
-            </button>
+            </button> -->
           </div>
         </div>
       </div>
@@ -133,81 +233,6 @@
     />
   </div>
 </template>
-
-<script setup lang="ts">
-import { defineProps, defineEmits, ref } from 'vue'
-import BaseSvg from '@/components/base/BaseSvg.vue'
-import UiConfirmModal from '@/components/ui/UiConfirmModal.vue'
-import PaymentRequisitesForm from '@/components/widgets/PaymentRequisitesForm.vue'
-import CourierInfoForm from '@/components/widgets/CourierInfoForm.vue'
-import RestoPreview from '@/components/widgets/RestoPreview.vue'
-import type { Order } from '@/mixins/orders'
-
-const props = defineProps<{
-  order: Order
-  isExpanded: boolean
-}>()
-
-const emit = defineEmits<{
-  toggle: [orderId: number]
-}>()
-
-const confirmModalRef = ref()
-const cancelConfirmVisible = ref(false)
-const paymentFormRef = ref()
-const courierFormRef = ref()
-
-function toggleOrder() {
-  emit('toggle', props.order.id)
-}
-
-function formatDate(dateString: string) {
-  const date = new Date(dateString)
-  return (
-    date.toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' }) +
-    ' ' +
-    date.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })
-  )
-}
-
-function showCancelConfirm() {
-  if (confirmModalRef.value) {
-    confirmModalRef.value.openModal()
-  }
-}
-
-function handleCancelConfirm(confirmed: boolean) {
-  if (confirmed) {
-    // Тут буде логіка скасування замовлення
-    console.log('Замовлення скасовано:', props.order.id)
-  }
-}
-
-function showPaymentForm() {
-  if (paymentFormRef.value) {
-    paymentFormRef.value.openForm()
-  }
-}
-
-function handlePaymentConfirm(data: { orderId: number; screenshot?: File }) {
-  // Тут можна додати логіку для обробки підтвердження оплати
-  console.log('Оплата підтверджена:', data)
-}
-
-function handlePaymentClose() {
-  // Додаткова логіка при закритті форми оплати (якщо потрібно)
-}
-
-function showCourierInfo() {
-  if (courierFormRef.value) {
-    courierFormRef.value.openForm()
-  }
-}
-
-function handleCourierInfoClose() {
-  // Додаткова логіка при закритті форми з даними кур'єра (якщо потрібно)
-}
-</script>
 
 <style scoped lang="scss">
 @use '@/assets/styles/vars.scss' as *;
@@ -276,12 +301,20 @@ function handleCourierInfoClose() {
       background-color: $blue;
     }
 
+    &_new {
+      background-color: $blue;
+    }
+
     &_awaiting_payment {
       background-color: $orange;
     }
 
     &_delivering {
       background-color: $purple;
+    }
+
+    &_paid {
+      background-color: $orange;
     }
 
     &_canceled {

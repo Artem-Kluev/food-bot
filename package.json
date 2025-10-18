@@ -15,6 +15,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
     "@vee-validate/rules": "^4.15.1",
+    "heic2any": "^0.0.4",
     "lottie-web": "^5.13.0",
     "sass": "^1.89.2",
     "swiper": "^11.2.10",

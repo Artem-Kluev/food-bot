@@ -53,6 +53,8 @@ function getRestoData(restoUid: string) {
 function getOptions() {
   const basketData = getAllProduct()
 
+  if (!basketData.length) return
+
   const restoId = basketData[0].restoId
 
   const currentResto = getRestoData(restoId)
@@ -72,14 +74,45 @@ function getOptions() {
   formatDate.orderPaymentMethod = options.value.length ? options.value[0].value : ''
 }
 
+// Функції для роботи з localStorage
+function saveOrderDataToStorage() {
+  const orderData = {
+    orderAddress: formatDate.orderAddress,
+    orderPhone: formatDate.orderPhone,
+  }
+  localStorage.setItem('savedOrderData', JSON.stringify(orderData))
+}
+
+function loadOrderDataFromStorage() {
+  try {
+    const savedData = localStorage.getItem('savedOrderData')
+    if (savedData) {
+      const parsedData = JSON.parse(savedData)
+      return {
+        orderAddress: parsedData.orderAddress || '',
+        orderPhone: parsedData.orderPhone || '',
+      }
+    }
+  } catch (error) {
+    console.error('Помилка завантаження даних з localStorage:', error)
+  }
+  return {
+    orderAddress: '',
+    orderPhone: '',
+  }
+}
+
+// Завантажуємо збережені дані
+const savedOrderData = loadOrderDataFromStorage()
+
 const formatDate = reactive<{
   orderAddress: string
   orderPhone: string
   orderPaymentMethod: PaymentMethodKey | ''
   orderComment: string
 }>({
-  orderAddress: 'eadfwefw',
-  orderPhone: '380958195946',
+  orderAddress: savedOrderData.orderAddress,
+  orderPhone: savedOrderData.orderPhone,
   orderPaymentMethod: '',
   orderComment: '',
 })
@@ -99,7 +132,7 @@ const validationSchema = yup.object({
 watch(isOrderFormVisible, (newValue) => {
   if (newValue) {
     lockScroll()
-    products.value = getAllProduct() // Оновлюємо список продуктів при відкритті форми
+    products.value = getAllProduct()
   } else {
     unlockScroll()
   }
@@ -129,11 +162,14 @@ function submitOrder(values: any) {
     orderPaymentMethod: formatDate.orderPaymentMethod,
     comment: formatDate.orderComment,
     status: 'new',
-    username: `${user?.first_name || ''} ${user?.last_name || ''}`,
+    username: user?.first_name || user?.last_name ? `${user?.first_name || ''} ${user?.last_name || ''}` : '',
     nickname: user?.username || '',
   }
 
   orderData(newOrder)
+
+  // Зберігаємо дані форми в localStorage
+  saveOrderDataToStorage()
 
   // Очищаємо кошик
   clear()
@@ -145,12 +181,13 @@ function submitOrder(values: any) {
   toastRef.value?.show()
 
   // Переходимо на сторінку підтвердження
-  router.push('/order')
+  // router.push('/order')
 }
 </script>
 
 <template>
   <UiToast ref="toastRef" message="Замовлення оформлено" type="success" />
+
   <Transition name="fade-slide">
     <div v-if="isOrderFormVisible" class="order-form">
       <div class="order-form__main" @click.self="closeOrderForm">

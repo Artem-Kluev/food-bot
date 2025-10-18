@@ -3,7 +3,7 @@ import type { Food } from './interfaces'
 export interface Order {
   id: number
   date: string
-  status: 'completed' | 'processing' | 'canceled' | 'awaiting_payment' | 'delivering'
+  status: 'completed' | 'processing' | 'canceled' | 'awaiting_payment' | 'delivering' | 'new' | 'paid'
   totalPrice: number
   products: Array<{
     id: number
