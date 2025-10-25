@@ -6,11 +6,16 @@ import { ref, computed, onMounted, onActivated } from 'vue'
 import { useLike } from '@/composable/useLike'
 import { allRestoCard, request as requestRestoData } from '@/composable/useResto'
 import { supabase } from '@/plugins/supabase'
+import { usePreloader } from '@/composable/usePreloader'
 
 const activeTab = ref(0)
 const { restoLikes, foodLikes } = useLike()
 const isLoading = ref(true)
 const foodItems = ref<any[]>([])
+const { showPreloader, hidePreloader } = usePreloader()
+
+// Показуємо прелоадер при завантаженні сторінки
+showPreloader()
 
 // Локальні копії списків для збереження стану під час перебування на сторінці
 const localRestoLikes = ref<number[]>([])
@@ -65,7 +70,11 @@ async function refreshData() {
 }
 
 // Завантажуємо дані при монтуванні компонента
-onMounted(refreshData)
+onMounted(() => {
+  refreshData()
+  // Вимикаємо прелоадер після завантаження компонента
+  hidePreloader()
+})
 
 // Оновлюємо дані при активації компонента (коли повертаємось на сторінку)
 onActivated(refreshData)

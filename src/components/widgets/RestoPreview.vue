@@ -39,6 +39,7 @@ defineProps<Props>()
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin: 15px 10px;
   border-radius: 10px;
+  cursor: pointer;
 
   &__image {
     overflow: hidden;
@@ -86,15 +87,21 @@ defineProps<Props>()
   }
 
   &_order {
+    background-color: unset;
+
     .resto-preview {
       &__image {
-        flex: 0 0 20%;
+        flex: 0 0 15%;
         display: flex;
         align-items: center;
       }
 
       &__title {
         font-size: 14px;
+      }
+
+      &__content {
+        padding: 5px;
       }
 
       &__description {

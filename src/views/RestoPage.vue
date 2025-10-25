@@ -2,7 +2,7 @@
 import CategorySlider from '@/components/widgets/CategorySlider.vue'
 import ButtonGrid from '@/components/widgets/ButtonGrid.vue'
 import UiSlider from '@/components/ui/UiSlider.vue'
-import { ref, onMounted, computed, onActivated } from 'vue'
+import { ref, onMounted, computed, onActivated, onDeactivated } from 'vue'
 import { getCategories } from '@/mixins/categories'
 import ProductCard from '@/components/widgets/ProductCard.vue'
 import { sliders } from '@/mixins/resto'
@@ -13,15 +13,21 @@ import { useIsWorkingNow } from '@/composable/useIsWorkingNow'
 import type { Category } from '@/mixins/interfaces'
 import { tags } from '@/mixins/tags'
 import { allRestoCard, request } from '@/composable/useResto'
+import { usePreloader } from '@/composable/usePreloader'
 
 const route = useRoute()
 const selectedCategories = ref<string[]>([])
 const selectedTags = ref<string[]>([])
 const categories = ref<Category[]>([])
 const sliderValue = ref(700)
+const { showPreloader, hidePreloader } = usePreloader()
+
+// Показуємо прелоадер при завантаженні сторінки
+showPreloader()
 
 onMounted(() => {
   request()
+  getFoodCategories()
 })
 
 function checkQueryCategory() {
@@ -75,9 +81,9 @@ const viewResto = computed(() => {
 
 async function getFoodCategories() {
   categories.value = await getCategories('lubny')
-}
 
-getFoodCategories()
+  hidePreloader()
+}
 </script>
 
 <template>

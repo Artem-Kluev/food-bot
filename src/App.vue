@@ -2,15 +2,19 @@
 import { RouterView } from 'vue-router'
 import SvgManager from '@/components/base/SvgManager.vue'
 import RestoBlock from '@/components/widgets/RestoBlock.vue'
-
+import BaseLottie from '@/components/base/BaseLottie.vue'
 import BottomBar from '@/components/widgets/BottomBar.vue'
 import UiSearch from '@/components/ui/UiSearch.vue'
 
 import { onMounted } from 'vue'
 import FoodBlock from './components/widgets/FoodBlock.vue'
 import useElementObserver from '@/composable/useElementObserver'
+import { usePreloader } from '@/composable/usePreloader'
 
 useElementObserver()
+
+// Ініціалізуємо прелоадер
+const { isPreloaderActive } = usePreloader()
 
 onMounted(() => {
   const tgWebApp = window.Telegram?.WebApp
@@ -26,12 +30,18 @@ onMounted(() => {
       <UiSearch />
     </div>
 
-    <main class="main">
+    <main class="main" :class="{ 'main_preloader-active': isPreloaderActive }">
       <router-view v-slot="{ Component }">
         <keep-alive>
           <component :is="Component" />
         </keep-alive>
       </router-view>
+
+      <div class="preloader">
+        <div class="preloader__spinner">
+          <BaseLottie class="ui-search__animation" :src="'/animations/5/animate.json'" :loop="true" :autoplay="true" />
+        </div>
+      </div>
     </main>
 
     <BottomBar class="bottom" />
@@ -69,5 +79,33 @@ onMounted(() => {
   flex: 1 1 auto;
   margin-bottom: 90px;
   margin-top: 10px;
+
+  &_preloader-active {
+    height: calc(101vh - 170px);
+
+    .preloader {
+      display: flex;
+    }
+  }
+}
+
+.preloader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(0, 0);
+  width: 100%;
+  height: 100%;
+  background: $background;
+  z-index: 2;
+  display: none;
+  align-items: center;
+  justify-content: center;
+
+  &__spinner {
+    aspect-ratio: 1/1;
+    width: 25vw;
+    max-width: 150px;
+  }
 }
 </style>

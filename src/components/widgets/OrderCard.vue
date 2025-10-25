@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, ref } from 'vue'
+import { defineProps, defineEmits, ref, onMounted, computed } from 'vue'
 import BaseSvg from '@/components/base/BaseSvg.vue'
 import UiConfirmModal from '@/components/ui/UiConfirmModal.vue'
 import PaymentRequisitesForm from '@/components/widgets/PaymentRequisitesForm.vue'
@@ -7,20 +7,53 @@ import CourierInfoForm from '@/components/widgets/CourierInfoForm.vue'
 import RestoPreview from '@/components/widgets/RestoPreview.vue'
 import { orderData } from '@/composable/useOrderSupabase'
 import type { Order } from '@/mixins/orders'
+import { allRestoCard, request } from '@/composable/useResto'
+import { setRestoBlockData } from '@/composable/useRestoBlock'
+import { useLike } from '@/composable/useLike'
 
 const props = defineProps<{
   order: Order
   isExpanded: boolean
 }>()
 
-const emit = defineEmits<{
-  toggle: [orderId: number]
-}>()
+interface Emit {
+  (e: 'toggle', orderId: number): void
+  (e: 'confirm'): void
+}
+
+const emit = defineEmits<Emit>()
 
 const confirmModalRef = ref()
 const cancelConfirmVisible = ref(false)
 const paymentFormRef = ref()
 const courierFormRef = ref()
+const currentResto = ref<any | null>(null)
+const { isLiked } = useLike()
+
+// Отримання даних ресторану за restoUid
+async function getRestoData() {
+  await request() // Завантажуємо всі ресторани
+  //  currentResto.value = allRestoCard.value.find((resto) => resto.restoId === props.order.restoUid)
+  currentResto.value = allRestoCard.value.find((resto) => resto.restoId === props.order.restoUid)
+
+  console.log(currentResto.value)
+}
+
+// Функція для відкриття RestoBlock при кліку на превью ресторану
+function openRestoBlock() {
+  if (currentResto.value) {
+    // Відкриваємо RestoBlock з поточним рестораном
+    setRestoBlockData({
+      resto: currentResto.value,
+      liked: isLiked(currentResto.value.id, 'resto'),
+      restoRating: currentResto.value.rating,
+    })
+  }
+}
+
+onMounted(() => {
+  getRestoData()
+})
 
 function toggleOrder() {
   emit('toggle', props.order.id)
@@ -58,11 +91,6 @@ function showPaymentForm() {
   if (paymentFormRef.value) {
     paymentFormRef.value.openForm()
   }
-}
-
-function handlePaymentConfirm(data: { orderId: number; screenshot?: File }) {
-  // Тут можна додати логіку для обробки підтвердження оплати
-  console.log('Оплата підтверджена:', data)
 }
 
 function handlePaymentClose() {
@@ -136,17 +164,6 @@ function handleCourierInfoClose() {
             </div>
           </div>
 
-          <!-- Превью ресторану -->
-          <RestoPreview
-            v-if="order.restaurant"
-            :title="order.restaurant.title"
-            :description="order.restaurant.description"
-            :image="order.restaurant.image"
-            :rating="order.restaurant.rating"
-            modifier="order"
-            class="order-card__resto-preview"
-          />
-
           <div class="order-card__details">
             <div class="order-card__address">
               <span class="order-card__label">Адреса доставки:</span>
@@ -166,6 +183,17 @@ function handleCourierInfoClose() {
               <span class="order-card__total-price">{{ order.totalPrice }} ₴</span>
             </div>
           </div>
+
+          <RestoPreview
+            v-if="currentResto"
+            :title="currentResto.title"
+            :description="currentResto.description"
+            :image="currentResto.imageUrl"
+            :rating="currentResto.rating"
+            modifier="order"
+            class="order-card__resto-preview"
+            @click="openRestoBlock"
+          />
 
           <!-- Попередження для замовлень в обробці з оплатою карткою -->
           <div v-if="order.status === 'processing' && order.paymentMethod === 'card'" class="order-card__warning">
@@ -221,16 +249,15 @@ function handleCourierInfoClose() {
       @confirm="handleCancelConfirm"
     />
 
-    <PaymentRequisitesForm ref="paymentFormRef" :orderId="order.id" @confirm="handlePaymentConfirm" @close="handlePaymentClose" />
-
-    <CourierInfoForm
-      ref="courierFormRef"
+    <PaymentRequisitesForm
+      ref="paymentFormRef"
+      :resto="currentResto"
       :orderId="order.id"
-      :address="order.address"
-      :deliveryType="'Кур\'єрська доставка'"
-      :courierContact="'+380 50 123 4567'"
-      @close="handleCourierInfoClose"
+      @confirm="$emit('confirm')"
+      @close="handlePaymentClose"
     />
+
+    <CourierInfoForm ref="courierFormRef" :order="order" @close="handleCourierInfoClose" />
   </div>
 </template>
 
@@ -341,7 +368,7 @@ function handleCourierInfoClose() {
     gap: 8px;
     margin-bottom: 15px;
     padding: 10px;
-    background-color: $background;
+    // background-color: $background;
     border-radius: 6px;
   }
 

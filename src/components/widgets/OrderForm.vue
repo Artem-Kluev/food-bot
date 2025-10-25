@@ -5,7 +5,7 @@ import { useScrollLock } from '@/composable/useScrollLock'
 import BaseSvg from '@/components/base/BaseSvg.vue'
 import UiSelect from '@/components/ui/UiSelect.vue'
 import UiInput from '@/components/ui/UiInput.vue'
-import UiToast from '@/components/ui/UiToast.vue'
+import { useToast } from '@/composable/useToast'
 import { useRouter } from 'vue-router'
 import type { OrderProduct } from '@/mixins/interfaces'
 import { allRestoCard, request } from '@/composable/useResto'
@@ -117,7 +117,8 @@ const formatDate = reactive<{
   orderComment: '',
 })
 
-const toastRef = ref<{ show: () => void } | null>(null)
+// Ініціалізуємо toast
+const toast = useToast()
 
 // Схема валідації для форми замовлення
 const validationSchema = yup.object({
@@ -138,7 +139,7 @@ watch(isOrderFormVisible, (newValue) => {
   }
 })
 
-function submitOrder(values: any) {
+async function submitOrder(values: any) {
   const tg = window.Telegram?.WebApp
   const user = tg?.initDataUnsafe?.user
 
@@ -166,7 +167,7 @@ function submitOrder(values: any) {
     nickname: user?.username || '',
   }
 
-  orderData(newOrder)
+  await orderData(newOrder)
 
   // Зберігаємо дані форми в localStorage
   saveOrderDataToStorage()
@@ -178,16 +179,14 @@ function submitOrder(values: any) {
   closeOrderForm()
 
   // Показати успішний тост
-  toastRef.value?.show()
+  toast.success('Замовлення оформлено')
 
   // Переходимо на сторінку підтвердження
-  // router.push('/order')
+  router.push('/order')
 }
 </script>
 
 <template>
-  <UiToast ref="toastRef" message="Замовлення оформлено" type="success" />
-
   <Transition name="fade-slide">
     <div v-if="isOrderFormVisible" class="order-form">
       <div class="order-form__main" @click.self="closeOrderForm">

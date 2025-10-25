@@ -1,25 +1,31 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onActivated, onDeactivated, onMounted } from 'vue'
 import OrderCard from '@/components/widgets/OrderCard.vue'
 import { orderData } from '@/composable/useOrderSupabase'
 import type { Order } from '@/mixins/orders'
+import { usePreloader } from '@/composable/usePreloader'
 
 console.log(orderData)
 
 const ordersList = ref<Order[]>([])
 const expandedOrders = ref<number[]>([])
+const { showPreloader, hidePreloader } = usePreloader()
+
+// Показуємо прелоадер при завантаженні сторінки
+showPreloader()
 
 async function getData() {
   const data = await orderData()
 
   const orders = data.res.data || []
 
-  // Трансформуємо дані з бекенду в формат, який очікує компонент
-  ordersList.value = orders.map((order: any) => {
-    // Парсимо JSON з продуктами
+  const sortOrders = orders.sort((a: any, b: any) => {
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  })
+
+  ordersList.value = sortOrders.map((order: any) => {
     const products = JSON.parse(order.data || '[]')
 
-    // Обчислюємо загальну суму
     const totalPrice = products.reduce((sum: number, product: any) => {
       return sum + parseFloat(product.price) * parseInt(product.quantity)
     }, 0)
@@ -44,11 +50,38 @@ async function getData() {
       userId: order.userId,
       nickname: order.nickname,
       username: order.username,
+      courierPhone: order.courierPhone,
     }
   })
 }
 
 getData()
+
+const intervalId = ref<number | null>(null)
+
+function startDataInterval() {
+  // Очищаємо попередній інтервал, якщо він існує
+  if (intervalId.value) {
+    clearInterval(intervalId.value)
+  }
+
+  // Створюємо новий інтервал
+  intervalId.value = setInterval(() => {
+    getData()
+  }, 15000) as unknown as number
+}
+
+onActivated(() => {
+  getData()
+  startDataInterval()
+})
+
+onDeactivated(() => {
+  if (intervalId.value) {
+    clearInterval(intervalId.value)
+    intervalId.value = null
+  }
+})
 
 function toggleOrder(orderId: number) {
   const index = expandedOrders.value.indexOf(orderId)
@@ -62,6 +95,11 @@ function toggleOrder(orderId: number) {
 function isOrderExpanded(orderId: number) {
   return expandedOrders.value.includes(orderId)
 }
+onMounted(() => {
+  getData()
+  // Вимикаємо прелоадер після завантаження даних
+  hidePreloader()
+})
 </script>
 
 <template>
@@ -75,6 +113,7 @@ function isOrderExpanded(orderId: number) {
         :order="order"
         :is-expanded="isOrderExpanded(order.id)"
         @toggle="toggleOrder"
+        @confirm="getData"
       />
     </div>
 

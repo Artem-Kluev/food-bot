@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
 interface Props {
   message: string
@@ -39,7 +39,9 @@ function hide() {
   isVisible.value = false
 }
 
-
+onMounted(() => {
+  show()
+})
 
 defineExpose({
   show,

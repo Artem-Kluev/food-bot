@@ -9,10 +9,15 @@ import { banners } from '@/mixins/banners'
 import { sliders } from '@/mixins/resto'
 import { ref } from 'vue'
 import type { Category } from '@/mixins/interfaces'
+import { usePreloader } from '@/composable/usePreloader'
 
 // Вибираємо перші 4 ресторани для відображення в грід-сітці
 const popularRestaurants = ref(sliders.slice(0, 4))
 const categories = ref<Category[]>([])
+const { showPreloader, hidePreloader } = usePreloader()
+
+// Показуємо прелоадер при завантаженні сторінки
+showPreloader()
 
 // Референції на модальні вікна
 const privacyPolicyModalRef = ref()
@@ -29,6 +34,8 @@ function openPartnershipModal() {
 
 async function getFoodCategories() {
   categories.value = await getCategories('lubny')
+  // Вимикаємо прелоадер після завантаження даних
+  hidePreloader()
 }
 
 getFoodCategories()

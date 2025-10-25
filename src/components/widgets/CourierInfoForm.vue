@@ -14,21 +14,21 @@
             <div class="courier-form__info-block">
               <div class="courier-form__info-title">Адреса доставки</div>
               <div class="courier-form__info-box">
-                <div class="courier-form__info-text">{{ deliveryAddress }}</div>
+                <div class="courier-form__info-text">{{ order.address }}</div>
               </div>
             </div>
 
             <div class="courier-form__info-block">
-              <div class="courier-form__info-title">Спосіб доставки</div>
+              <div class="courier-form__info-title">Спосіб оплати</div>
               <div class="courier-form__info-box">
-                <div class="courier-form__info-text">{{ deliveryMethod }}</div>
+                <div class="courier-form__info-text">{{ optionsData[order.paymentMethod] }}</div>
               </div>
             </div>
 
-            <div class="courier-form__info-block">
+            <div v-if="order.courierPhone" class="courier-form__info-block">
               <div class="courier-form__info-title">Контакт кур'єра</div>
               <div class="courier-form__info-box">
-                <div class="courier-form__info-text">{{ courierPhone }}</div>
+                <div class="courier-form__info-text">{{ order.courierPhone }}</div>
                 <div class="courier-form__info-copy" @click="copyPhone" :class="{ 'courier-form__info-copy_copied': copied }">
                   <BaseSvg id="copy-icon" class="courier-form__info-copy-icon" />
                 </div>
@@ -36,7 +36,7 @@
             </div>
 
             <div class="courier-form__note">
-              Якщо кур'єр не виходить на зв'язок протягом 15 хвилин, будь ласка, зверніться до служби підтримки
+              Середній час доставки становить 30-45 хвилин залежно від завантаженості та відстані. Статус замовлення оновлюється автоматично
             </div>
 
             <button class="courier-form__button" @click="closeForm">
@@ -53,12 +53,10 @@
 import { ref } from 'vue'
 import { useScrollLock } from '@/composable/useScrollLock'
 import BaseSvg from '@/components/base/BaseSvg.vue'
+import { useToast } from '@/composable/useToast'
 
 interface Props {
-  orderId: number
-  address?: string
-  deliveryType?: string
-  courierContact?: string
+  order: any
 }
 
 interface Emit {
@@ -71,12 +69,16 @@ const emit = defineEmits<Emit>()
 const isVisible = ref(false)
 const copied = ref(false)
 
+const optionsData: Record<string, string> = {
+  cash: 'Готівка при отриманні',
+  card: 'Картка',
+  'card-postpayment': 'Картка після отримання',
+}
+
 // Значення за замовчуванням, якщо не передані через props
-const deliveryAddress = ref(props.address || 'вул. Хрещатик, 1, кв. 10, Київ, 01001')
-const deliveryMethod = ref(props.deliveryType || "Кур'єрська доставка")
-const courierPhone = ref(props.courierContact || '+380 50 123 4567')
 
 const { lockScroll, unlockScroll } = useScrollLock()
+const toast = useToast()
 
 function openForm() {
   isVisible.value = true
@@ -91,17 +93,23 @@ function closeForm() {
 
 function copyPhone() {
   navigator.clipboard
-    .writeText(courierPhone.value)
+    .writeText(props.order.courierPhone)
     .then(() => {
       copied.value = true
       setTimeout(() => {
         copied.value = false
       }, 2000)
+
+      // Показуємо тост про успішне копіювання
+      toast.success('Номер телефону скопійовано')
     })
     .catch((err) => {
       console.error('Помилка при копіюванні номера телефону: ', err)
+      toast.error('Не вдалося скопіювати номер телефону')
     })
 }
+
+console.log(props.order)
 
 defineExpose({
   openForm,

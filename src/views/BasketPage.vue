@@ -7,9 +7,14 @@ import BaseSvg from '@/components/base/BaseSvg.vue'
 import BaseLottie from '@/components/base/BaseLottie.vue'
 import UiCounter from '@/components/ui/UiCounter.vue'
 import UiConfirmModal from '@/components/ui/UiConfirmModal.vue'
+import { usePreloader } from '@/composable/usePreloader'
 
 const { getAllProduct, getTotalPrice, remove, clear, add, on } = useBasket()
 const confirmModal = ref(null)
+const { showPreloader, hidePreloader } = usePreloader()
+
+// Показуємо прелоадер при завантаженні сторінки
+showPreloader()
 
 function updateProductCount(productId: number, count: number) {
   const product = products.value.find((p) => p.id === productId)
@@ -72,6 +77,11 @@ watch(totalPrice, () => {
 
 on(() => {
   products.value = getAllProduct()
+})
+
+onMounted(() => {
+  // Вимикаємо прелоадер після завантаження компонента
+  hidePreloader()
 })
 
 onActivated(() => {

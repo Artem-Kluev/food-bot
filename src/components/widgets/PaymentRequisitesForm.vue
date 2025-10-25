@@ -8,18 +8,18 @@ import heic2any from 'heic2any'
 
 interface Props {
   orderId: number
+  resto: any
 }
 
 interface Emit {
   (e: 'close'): void
-  (e: 'confirm', data: { orderId: number; screenshot?: File }): void
+  (e: 'confirm'): void
 }
 
 const props = defineProps<Props>()
 const emit = defineEmits<Emit>()
 
 const isVisible = ref(false)
-const cardNumber = ref('5168 7520 1234 5678')
 const otherRequisites = ref('Банк: ПриватБанк\nОтримувач: ТОВ "Телеграм Фуд"\nПризначення: Оплата замовлення')
 const requisitesText = ref<HTMLElement | null>(null)
 const copied = ref(false)
@@ -40,17 +40,25 @@ function closeForm() {
   emit('close')
 }
 
+import { useToast } from '@/composable/useToast'
+
+const toast = useToast()
+
 function copyCardNumber() {
   navigator.clipboard
-    .writeText(cardNumber.value)
+    .writeText(props.resto.cardPaymentInfo)
     .then(() => {
       copied.value = true
       setTimeout(() => {
         copied.value = false
       }, 2000)
+
+      // Показуємо тост про успішне копіювання
+      toast.success('Номер карти скопійовано')
     })
     .catch((err) => {
       console.error('Помилка при копіюванні номера карти: ', err)
+      toast.error('Не вдалося скопіювати номер карти')
     })
 }
 
@@ -68,7 +76,9 @@ async function sendImage(file: File | null) {
   const safeName = sanitizeFileName(file.name)
   const filePath = `${today}/${safeName}`
 
-  const { data, error } = await supabase.storage.from('screen').upload(filePath, file)
+  const { data, error } = await supabase.storage.from('screen').upload(filePath, file, {
+    upsert: true,
+  })
 
   if (error) {
     console.error('❌ Помилка при завантаженні:', error)
@@ -136,10 +146,6 @@ function removeScreenshot(event: Event) {
 }
 
 async function confirmPayment() {
-  // emit('confirm', {
-  //   orderId: props.orderId,
-  //   screenshot: screenshotFile.value || undefined,
-  // })
   const imageUrl = await sendImage(screenshotFile.value)
 
   if (imageUrl) {
@@ -150,7 +156,16 @@ async function confirmPayment() {
         payScreenshot: imageUrl,
       },
     })
+
+    // Показуємо тост про успішну оплату
+    toast.success('Оплату підтверджено! Дякуємо за замовлення')
+  } else {
+    // Показуємо тост про помилку, якщо не вдалося завантажити зображення
+    toast.error('Не вдалося завантажити скріншот. Спробуйте ще раз')
+    return
   }
+
+  emit('confirm')
 
   closeForm()
 }
@@ -178,9 +193,13 @@ defineExpose({
               <div class="payment-form__requisites-title">Реквізити для оплати</div>
               <div class="payment-form__requisites-box">
                 <div class="payment-form__requisites-text" ref="requisitesText">
-                  <div class="payment-form__requisites-card">{{ cardNumber }}</div>
+                  <div class="payment-form__requisites-card">{{ resto.cardPaymentInfo }}</div>
 
-                  <div>{{ otherRequisites }}</div>
+                  <div v-if="resto.cardPaymentInfoDescription" class="payment-form__requisites-other">
+                    <div>Дані для оплати:</div>
+
+                    {{ resto.cardPaymentInfoDescription }}
+                  </div>
                 </div>
 
                 <div
@@ -197,7 +216,7 @@ defineExpose({
               <div class="payment-form__screenshot-title">Скріншот оплати</div>
 
               <div class="payment-form__screenshot-note">
-                Рекомендуємо прикріпити скріншот підтвердження оплати для швидшої обробки замовлення
+                Будь ласка, прикріпіть скріншот підтвердження оплати — це необхідно для обробки вашого замовлення
               </div>
 
               <div
@@ -219,7 +238,7 @@ defineExpose({
 
             <div class="payment-form__info">Після здійснення оплати натисніть кнопку "Підтвердити оплату" нижче</div>
 
-            <button class="payment-form__button" @click="confirmPayment">
+            <button class="payment-form__button" :class="{ 'payment-form__button_disabled': !screenshotFile }" @click="confirmPayment">
               <div class="payment-form__button-text">Підтвердити оплату</div>
             </button>
           </div>
@@ -339,12 +358,15 @@ defineExpose({
 
     &-card {
       font-weight: 600;
-      margin-bottom: 5px;
       user-select: all;
       background-color: $background;
       // background-color: $main-color;
       border-radius: 5px;
       padding: 5px 10px;
+    }
+
+    &-other {
+      margin-top: 15px;
     }
 
     &-copy {
@@ -486,6 +508,7 @@ defineExpose({
 
   &__button {
     position: fixed;
+    user-select: none;
     z-index: 2;
     bottom: 20px;
     height: 50px;
@@ -510,6 +533,12 @@ defineExpose({
     left: 50%;
     transform: translateX(-50%);
     transform-origin: 0 0;
+
+    &_disabled {
+      background-color: $gray;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
 
     &:active {
       transform: scale(0.95) translateX(-50%);
