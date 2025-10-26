@@ -25,7 +25,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="wrapper">
+  <div v-if="$route.meta.standalone" class="standalone-wrapper">
+    <router-view v-slot="{ Component }">
+      <keep-alive>
+        <component :is="Component" />
+      </keep-alive>
+    </router-view>
+  </div>
+  <div v-else class="wrapper">
     <div class="search-container">
       <UiSearch />
     </div>
@@ -107,5 +114,13 @@ onMounted(() => {
     width: 25vw;
     max-width: 150px;
   }
+}
+
+.standalone-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  background-color: $background;
 }
 </style>
