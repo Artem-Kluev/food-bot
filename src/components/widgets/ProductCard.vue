@@ -18,6 +18,7 @@ interface Props {
   size?: 'min'
   observer?: boolean
   currentResto?: Resto | null
+  hideBtn?: boolean
 }
 
 const props = defineProps<Props>()
@@ -174,7 +175,13 @@ function handleLikeToggle() {
     <div class="product__info">
       <h3 class="product__name">{{ slideData.title }}</h3>
 
-      <UiCounter v-if="modifier === 'food'" v-model="productCount" class="product__counter" @update:modelValue="updateBasket" @click.stop />
+      <UiCounter
+        v-if="modifier === 'food' && !hideBtn"
+        v-model="productCount"
+        class="product__counter"
+        @update:modelValue="updateBasket"
+        @click.stop
+      />
     </div>
   </div>
 

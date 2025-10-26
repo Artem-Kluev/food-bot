@@ -46,11 +46,6 @@ const items: NavItem[] = [
 ]
 
 const activeIndex = ref(0)
-const navWidth = ref(0)
-
-function updateWidth() {
-  navWidth.value = nav.value?.clientWidth || 0
-}
 
 function updateActiveTab() {
   const currentPath = route.path
@@ -61,7 +56,8 @@ function updateActiveTab() {
 }
 
 const progress = computed(() => {
-  const point = navWidth.value / items.length
+  const width = nav.value?.clientWidth || 0
+  const point = width / items.length
   return `translateX(${activeIndex.value * (point * 1.02)}px)`
 })
 
@@ -70,16 +66,11 @@ const navigateTo = (path: string, index: number) => {
 }
 
 onMounted(() => {
-  updateWidth()
-  updateActiveTab() // Визначаємо активний таб при монтуванні компонента
-  window.addEventListener('resize', updateWidth)
+  updateActiveTab()
 })
 
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', updateWidth)
-})
+onBeforeUnmount(() => {})
 
-// Відстежуємо зміни маршруту
 watch(
   () => route.path,
   () => {
@@ -93,6 +84,12 @@ watch(
 
 .fade-in-enter-active {
   transition: opacity 0.3s ease;
+
+  .bottom-nav {
+    &__highlight {
+      transition: unset;
+    }
+  }
 }
 
 .fade-in-leave-active {
@@ -133,7 +130,6 @@ watch(
     height: 100%;
     aspect-ratio: 1 / 1;
     border-radius: 50%;
-
     background: $main-color;
     transition: transform 360ms;
     z-index: 0;

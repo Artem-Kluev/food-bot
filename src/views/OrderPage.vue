@@ -11,7 +11,6 @@ const ordersList = ref<Order[]>([])
 const expandedOrders = ref<number[]>([])
 const { showPreloader, hidePreloader } = usePreloader()
 
-// Показуємо прелоадер при завантаженні сторінки
 showPreloader()
 
 async function getData() {
@@ -95,9 +94,9 @@ function toggleOrder(orderId: number) {
 function isOrderExpanded(orderId: number) {
   return expandedOrders.value.includes(orderId)
 }
-onMounted(() => {
-  getData()
-  // Вимикаємо прелоадер після завантаження даних
+onMounted(async () => {
+  await getData()
+
   hidePreloader()
 })
 </script>

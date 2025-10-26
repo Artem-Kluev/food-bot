@@ -8,7 +8,7 @@ import ProductCard from '@/components/widgets/ProductCard.vue'
 import { sliders } from '@/mixins/resto'
 import { useRoute } from 'vue-router'
 import { setRestoBlockData } from '@/composable/useRestoBlock'
-import { FoodCategory } from '@/mixins/categories'
+import BaseLottie from '@/components/base/BaseLottie.vue'
 import { useIsWorkingNow } from '@/composable/useIsWorkingNow'
 import type { Category } from '@/mixins/interfaces'
 import { tags } from '@/mixins/tags'
@@ -95,6 +95,12 @@ async function getFoodCategories() {
 
   <div class="resto-container">
     <ProductCard v-for="restaurant in viewResto" :key="restaurant.title" :slide-data="restaurant" modifier="resto" />
+
+    <div v-if="!viewResto.length" class="resto-container__empty">
+      <BaseLottie class="resto-container__empty-animation" :src="'/animations/6/animate.json'" :loop="true" :autoplay="true" />
+
+      <div class="resto-container__empty-text">У даній категорії нічого не знайдено</div>
+    </div>
   </div>
 </template>
 
@@ -122,8 +128,26 @@ async function getFoodCategories() {
 }
 
 .resto-container {
-  min-height: 700px;
+  min-height: 80vh;
   padding: 10px;
   margin-top: 20px;
+
+  &__empty {
+    margin-top: 10vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &-animation {
+      width: 150px;
+      margin: 0 auto;
+    }
+
+    &-text {
+      text-align: center;
+      font-size: 16px;
+    }
+  }
 }
 </style>

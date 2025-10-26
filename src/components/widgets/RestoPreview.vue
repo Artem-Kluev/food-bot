@@ -44,6 +44,7 @@ defineProps<Props>()
   &__image {
     overflow: hidden;
     flex-basis: 30%;
+    max-width: 100px;
     padding: 10px;
     flex: 0 0 30%;
     align-self: center;
@@ -91,7 +92,9 @@ defineProps<Props>()
 
     .resto-preview {
       &__image {
-        flex: 0 0 15%;
+        flex: 0 0 auto;
+        width: 20vw;
+        min-width: 70px;
         display: flex;
         align-items: center;
       }
@@ -101,7 +104,7 @@ defineProps<Props>()
       }
 
       &__content {
-        padding: 5px;
+        padding: 5px 10px 5px 5px;
       }
 
       &__description {

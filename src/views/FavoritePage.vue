@@ -66,7 +66,13 @@ async function refreshData() {
   // Завантажуємо дані про їжу
   await fetchFoodData()
 
-  isLoading.value = false
+  showFavouritePreloader()
+}
+
+function showFavouritePreloader() {
+  setTimeout(() => {
+    isLoading.value = false
+  }, 300)
 }
 
 // Завантажуємо дані при монтуванні компонента
@@ -95,7 +101,7 @@ async function handleTabChange() {
     await fetchFoodData()
   }
 
-  isLoading.value = false
+  showFavouritePreloader()
 }
 </script>
 
@@ -127,7 +133,7 @@ async function handleTabChange() {
 
       <div v-else-if="activeTab === 1" class="menu-container">
         <template v-if="favoriteFoods.length > 0">
-          <ProductCard v-for="item in favoriteFoods" :key="item.id" :slide-data="item" modifier="food" />
+          <ProductCard v-for="item in favoriteFoods" :key="item.id" :slide-data="item" modifier="food" hide-btn />
         </template>
         <div v-else class="favorite-page__empty">
           <BaseLottie class="favorite-page__animation" :src="'/animations/6/animate.json'" :loop="true" :autoplay="true" />
