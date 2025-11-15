@@ -17,6 +17,9 @@ export enum FoodCategory {
   FASTFOOD = 'fastfood',
   BEER = 'beer',
   ITALIAN = 'italian',
+  PASTA = 'pasta',
+  FISH = 'fish',
+  PROMO = 'promo',
 }
 
 export const categories: Category[] = [
@@ -107,6 +110,23 @@ export const categories: Category[] = [
     title: 'Азіатська кухня',
     type: FoodCategory.ASIAN,
     image: '/images/category/asian.png',
+  },
+  {
+    title: 'Макарони',
+    type: FoodCategory.PASTA,
+    image: '/images/category/spaguetti.png',
+  },
+
+  {
+    title: 'Риба',
+    type: FoodCategory.FISH,
+    image: '/images/category/fish.png',
+  },
+
+  {
+    title: 'Акція',
+    type: FoodCategory.PROMO,
+    image: '/images/category/promo.png',
   },
 ]
 

@@ -28,7 +28,9 @@ async function requestData(): Promise<void> {
     return
   }
 
-  allRestoCard.value = data as Resto[]
+  const filterEmptyResto = data.filter((item) => item.quantityFood > 0)
+
+  allRestoCard.value = filterEmptyResto as Resto[]
 }
 
 export { allRestoCard, request }

@@ -12,7 +12,7 @@ export const tags = <Tag[]>[
   },
 
   {
-    title: 'Акція',
+    title: 'Знижка',
     value: ['sale'],
   },
 

@@ -127,6 +127,16 @@ function openTelegramModal() {
   telegramModal.value?.openModal()
 }
 
+function numberFormat(val: any) {
+  const num = Number(val)
+
+  if (!isNaN(num)) {
+    return num + ' ₴'
+  } else {
+    return val
+  }
+}
+
 // Функція для обробки зміни стану лайка
 function handleLikeToggle() {
   if (currentResto.value?.id) {
@@ -178,7 +188,7 @@ function handleLikeToggle() {
                   <td>
                     <div class="resto-block__info-label">Ціна доставки</div>
                   </td>
-                  <td class="resto-block__info-value">{{ currentResto?.deliveryPrice }} ₴</td>
+                  <td class="resto-block__info-value">{{ numberFormat(currentResto?.deliveryPrice) }}</td>
                 </tr>
 
                 <tr>
