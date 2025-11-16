@@ -30,7 +30,9 @@ async function requestData(): Promise<void> {
 
   const filterEmptyResto = data.filter((item) => item.quantityFood > 0)
 
-  allRestoCard.value = filterEmptyResto as Resto[]
+  const sortResto = filterEmptyResto.sort((a, b) => a.id - b.id)
+
+  allRestoCard.value = sortResto as Resto[]
 }
 
 export { allRestoCard, request }

@@ -8,6 +8,7 @@ import { setFoodBlockData } from '@/composable/useFoodBlock'
 import { useBasket } from '@/composable/useBasket'
 import { useLike } from '@/composable/useLike'
 import { ref, onMounted, onUnmounted, computed } from 'vue'
+import BaseSvg from '@/components/base/BaseSvg.vue'
 import UiConfirmModal from '@/components/ui/UiConfirmModal.vue'
 import type { LikeType } from '@/mixins/interfaces'
 
@@ -149,6 +150,9 @@ function handleLikeToggle() {
   // Викликаємо toggleLike для оновлення стану в localStorage
   toggleLike(props.slideData.id, type)
 }
+
+const imgErr = ref(false)
+const showImg = computed(() => !!props.slideData?.imageUrl && !imgErr.value)
 </script>
 
 <template>
@@ -158,7 +162,8 @@ function handleLikeToggle() {
     </div>
 
     <div class="product__image">
-      <img :src="slideData.imageUrl" alt="product image" />
+      <img v-if="showImg" :src="slideData.imageUrl" alt="product image" class="product__img" @error="imgErr = true" />
+      <BaseSvg v-if="!showImg" id="image-icon" class="product__image-icon" />
 
       <!-- <UiRating v-if="slideData.rating" :rating="slideData.rating" class="product__rating" /> -->
       <!-- <UiTime v-if="slideData.type === 'resto' && slideData.time" :time="slideData.time" class="product__time" /> -->
@@ -232,6 +237,16 @@ function handleLikeToggle() {
       width: 100%;
       height: 100%;
       object-fit: cover;
+    }
+
+    &-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100px;
+      height: 100px;
+      color: $gray;
     }
   }
 

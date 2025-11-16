@@ -64,6 +64,7 @@ watch(isFoodBlockVisable, (newValue) => {
 
 // Оновлюємо лічильник при зміні продукту
 watch(currentFood, () => {
+  imgErr.value = false
   updateProductCount()
 })
 
@@ -80,6 +81,9 @@ function navigateToBasket() {
   router.push('/basket')
   closeFoodBlock(true)
 }
+
+const imgErr = ref(false)
+const showImg = computed(() => !!currentFood.value?.imageUrl && !imgErr.value)
 
 // Використовуємо isLiked та rating з useFoodBlock.ts
 
@@ -220,7 +224,8 @@ function handleLikeToggle() {
               <BaseSvg class="food-block__back-icon" id="arrow-logo" />
             </div>
 
-            <img class="food-block__img" :src="currentFood.imageUrl" />
+            <img v-if="showImg" :src="currentFood.imageUrl" class="food-block__img" @error="imgErr = true" />
+            <BaseSvg v-if="!showImg" id="image-icon" class="food-block__img-placeholder" />
           </div>
 
           <div class="food-block__top">
@@ -324,6 +329,16 @@ function handleLikeToggle() {
       width: 100%;
       height: 100%;
       object-fit: cover;
+    }
+
+    .food-block__img-placeholder {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100px;
+      height: 100px;
+      color: $gray;
     }
   }
 
