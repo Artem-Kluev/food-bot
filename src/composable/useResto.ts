@@ -28,7 +28,7 @@ async function requestData(): Promise<void> {
     return
   }
 
-  const filterEmptyResto = data.filter((item) => item.quantityFood > 0)
+  const filterEmptyResto = data.filter((item) => item.quantityFood > 0 && item.show)
 
   const sortResto = filterEmptyResto.sort((a, b) => a.id - b.id)
 
